@@ -6,7 +6,7 @@ const LanguageSwitcher = () => {
   const { language, setLanguage } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
 
-  const toggleLanguage = (lang: 'en' | 'mn') => {
+  const toggleLanguage = (lang: 'en' | 'mn' | 'zh') => {
     setLanguage(lang);
     setIsOpen(false);
   };
@@ -35,6 +35,13 @@ const LanguageSwitcher = () => {
                   <path fill="#C8102E" d="M0 193v96h640v-96H0zM273 0v480h96V0h-96z"/>
                 </g>
               </svg>
+            ) : language === 'zh' ? (
+              /* Chinese Flag */
+              <svg className="w-full h-full" viewBox="0 0 640 480">
+                <path fill="#de2910" d="M0 0h640v480H0z"/>
+                <path fill="#ffde00" d="M120 54.9 98.5 119l54.3-39.4H67.2L121.5 119z"/>
+                <path fill="#ffde00" d="m176.3 24.7-24.9 6.7 18.8 17.4-2.6-25.7-17.9 18.8zm37 43.2-9.2 23.9 23-12-23.8-8.5 6.6 24.9zm-9.6 55.7 5.9-24.5-21.6 14zm-50.2 26.3 24.9-6.7-18.8-17.4 2.6 25.7 17.9-18.8z"/>
+              </svg>
             ) : (
               /* Mongolian Flag */
               <svg className="w-full h-full" viewBox="0 0 640 480">
@@ -49,7 +56,7 @@ const LanguageSwitcher = () => {
             )}
           </div>
           <span className="ml-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-            {language === 'en' ? 'EN' : 'МН'}
+            {language === 'en' ? 'EN' : language === 'zh' ? '中文' : 'МН'}
           </span>
           {/* Dropdown arrow */}
           <svg 
@@ -118,9 +125,26 @@ const LanguageSwitcher = () => {
           </div>
           <span className="text-sm font-medium">Монгол</span>
         </button>
+        <button
+          onClick={() => toggleLanguage('zh')}
+          className="w-full px-4 py-2 flex items-center space-x-3 
+                   text-gray-700 dark:text-gray-200
+                   hover:bg-gray-50 dark:hover:bg-gray-700/50
+                   hover:text-teal-500 dark:hover:text-teal-400
+                   transition-colors duration-200"
+        >
+          <div className="w-6 h-4 overflow-hidden rounded-sm shadow-sm">
+            <svg className="w-full h-full" viewBox="0 0 640 480">
+              <path fill="#de2910" d="M0 0h640v480H0z"/>
+              <path fill="#ffde00" d="M120 54.9 98.5 119l54.3-39.4H67.2L121.5 119z"/>
+              <path fill="#ffde00" d="m176.3 24.7-24.9 6.7 18.8 17.4-2.6-25.7-17.9 18.8zm37 43.2-9.2 23.9 23-12-23.8-8.5 6.6 24.9zm-9.6 55.7 5.9-24.5-21.6 14zm-50.2 26.3 24.9-6.7-18.8-17.4 2.6 25.7 17.9-18.8z"/>
+            </svg>
+          </div>
+          <span className="text-sm font-medium">中文</span>
+        </button>
       </div>
     </div>
   );
 };
 
-export default LanguageSwitcher; 
+export default LanguageSwitcher;
