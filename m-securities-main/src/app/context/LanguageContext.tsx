@@ -2,7 +2,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { translations } from '../translations';
 
-type Language = 'mn' | 'en';
+type Language = 'mn' | 'en' | 'zh';
 
 type TranslationKey = string;
 type TranslationValue = string | string[] | Record<string, string>;
