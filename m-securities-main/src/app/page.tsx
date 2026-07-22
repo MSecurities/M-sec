@@ -242,6 +242,72 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── MINING BROKER ── */}
+      <section className={`py-24 px-6 ${bg}`}>
+        <div className="max-w-6xl mx-auto">
+          <div className={`rounded-3xl border p-10 sm:p-14 relative overflow-hidden ${cardBg} ${cardBorder}`}>
+            {/* Glow */}
+            <div className="absolute top-0 left-0 w-64 h-64 rounded-full blur-3xl opacity-10 bg-teal-400 pointer-events-none" />
+
+            <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+              <div>
+                <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium mb-6 border
+                  ${isDarkMode ? 'bg-teal-500/10 text-teal-400 border-teal-500/20' : 'bg-teal-50 text-teal-700 border-teal-200'}`}>
+                  <span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse" />
+                  {language === 'mn' ? 'Уул уурхайн брокер · МХБ зөвшөөрөлтэй' : language === 'zh' ? '矿业经纪 · 持牌运营' : 'Mining Broker · MSE Licensed'}
+                </div>
+                <h2 className={`text-3xl sm:text-4xl font-bold mb-5 leading-tight ${textPrimary}`}>
+                  {language === 'mn' ? 'Уул уурхайн\nцахим арилжаа'
+                    : language === 'zh' ? '矿产品\n在线交易平台'
+                    : 'Mining Products\nOnline Trading'}
+                </h2>
+                <p className={`text-base leading-relaxed mb-8 ${textSecondary}`}>
+                  {language === 'mn'
+                    ? 'М Секьюритис ҮЦК нь Монголын Хөрөнгийн Биржээр дамжуулан нүүрс, зэсийн баяжмал болон бусад уул уурхайн бүтээгдэхүүний арилжааг мэргэжлийн түвшинд хэрэгжүүлдэг.'
+                    : language === 'zh'
+                    ? 'M Securities 通过蒙古证券交易所专业开展煤炭、铜精矿等矿产品交易。'
+                    : 'M Securities professionally conducts coal, copper concentrate and other mining product trading through the Mongolian Stock Exchange.'}
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  <a href="https://mining.msecurities.mn/dashboard/app" target="_blank" rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full text-sm font-semibold text-white
+                      bg-teal-500 hover:bg-teal-400 transition-all hover:-translate-y-0.5 shadow-lg shadow-teal-500/20">
+                    {language === 'mn' ? 'Арилжааны платформ' : language === 'zh' ? '交易平台' : 'Trading Platform'} ↗
+                  </a>
+                  <Link href="/services/mining-broker"
+                    className={`inline-flex items-center gap-2 px-7 py-3.5 rounded-full text-sm font-semibold border transition-all hover:-translate-y-0.5
+                      ${isDarkMode ? 'bg-white/6 text-white border-white/10 hover:bg-white/10' : 'bg-white text-gray-800 border-gray-200 shadow-sm hover:border-teal-300'}`}>
+                    {language === 'mn' ? 'Дэлгэрэнгүй' : language === 'zh' ? '了解更多' : 'Learn More'}
+                  </Link>
+                </div>
+              </div>
+
+              {/* Products */}
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { icon: '⬛', name: language === 'mn' ? 'Нүүрс' : language === 'zh' ? '煤炭' : 'Coal', tag: language === 'mn' ? 'Арилжаанд' : language === 'zh' ? '交易中' : 'Trading' },
+                  { icon: '🟤', name: language === 'mn' ? 'Зэсийн баяжмал' : language === 'zh' ? '铜精矿' : 'Copper Concentrate', tag: language === 'mn' ? 'Арилжаанд' : language === 'zh' ? '交易中' : 'Trading' },
+                  { icon: '🔵', name: language === 'mn' ? 'Төмрийн хүдэр' : language === 'zh' ? '铁矿石' : 'Iron Ore', tag: language === 'mn' ? 'Арилжаанд' : language === 'zh' ? '交易中' : 'Trading' },
+                  { icon: '⚪', name: language === 'mn' ? 'Бусад эрдэс' : language === 'zh' ? '其他矿产' : 'Other Minerals', tag: language === 'mn' ? 'Удахгүй' : language === 'zh' ? '即将推出' : 'Coming Soon' },
+                ].map(p => (
+                  <div key={p.name} className={`rounded-2xl border p-5 text-center transition-all hover:-translate-y-1
+                    ${isDarkMode ? 'bg-white/3 border-white/6 hover:border-teal-500/20' : 'bg-gray-50 border-gray-100 hover:border-teal-200'}`}>
+                    <div className="text-3xl mb-3">{p.icon}</div>
+                    <div className={`text-sm font-semibold mb-2 ${textPrimary}`}>{p.name}</div>
+                    <span className={`text-xs px-2.5 py-1 rounded-full font-medium
+                      ${p.tag === (language === 'mn' ? 'Удахгүй' : language === 'zh' ? '即将推出' : 'Coming Soon')
+                        ? isDarkMode ? 'bg-white/5 text-gray-500' : 'bg-gray-100 text-gray-500'
+                        : isDarkMode ? 'bg-teal-500/10 text-teal-400' : 'bg-teal-50 text-teal-700'}`}>
+                      {p.tag}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── HEATMAP ── */}
       <section className={`py-16 px-6 ${sectionAlt}`}>
         <div className="max-w-6xl mx-auto">
