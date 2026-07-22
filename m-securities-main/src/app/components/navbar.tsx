@@ -43,8 +43,8 @@ const Navbar = () => {
   };
 
   const navBg = isDarkMode
-    ? scrolled ? 'bg-[#0a0c10]/90 backdrop-blur-md border-b border-white/5' : 'bg-transparent'
-    : scrolled ? 'bg-white/90 backdrop-blur-md border-b border-gray-200/80 shadow-sm' : 'bg-transparent';
+    ? scrolled ? 'bg-[#0a0c10]/95 backdrop-blur-md border-b border-white/6' : 'bg-[#0a0c10]/80 backdrop-blur-sm'
+    : scrolled ? 'bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm' : 'bg-white/80 backdrop-blur-sm';
 
   const renderDropdownButton = (name: string, label: string) => (
     <button
@@ -52,10 +52,8 @@ const Navbar = () => {
       className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200
         ${activeDropdown === name
           ? 'text-teal-500 dark:text-teal-400'
-          : 'text-gray-600 dark:text-gray-300 hover:text-teal-500 dark:hover:text-teal-400'
-        }`}
-      aria-expanded={activeDropdown === name}
-    >
+          : 'text-gray-600 dark:text-gray-300 hover:text-teal-500 dark:hover:text-teal-400'}`}
+      aria-expanded={activeDropdown === name}>
       {label}
       <svg className={`w-3.5 h-3.5 transition-transform duration-200 ${activeDropdown === name ? 'rotate-180' : ''}`}
         fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -66,18 +64,16 @@ const Navbar = () => {
 
   const renderDropdownMenu = (name: string, items: { href: string; label: string }[]) => (
     <div className={`absolute left-0 mt-2 w-56 rounded-xl overflow-hidden z-50
-      bg-white dark:bg-[#12141a]
-      shadow-xl shadow-black/10 dark:shadow-black/40
-      border border-gray-100 dark:border-white/8
+      ${isDarkMode ? 'bg-[#12141a] border border-white/8' : 'bg-white border border-gray-100 shadow-xl shadow-black/8'}
       transition-all duration-200 ease-out
       ${activeDropdown === name ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'}`}>
       <div className="py-1.5">
         {items.map((item, i) => (
           <Link key={i} href={item.href}
-            className="block px-4 py-2.5 text-sm text-gray-600 dark:text-gray-300
-              hover:bg-teal-50 dark:hover:bg-teal-500/10
-              hover:text-teal-600 dark:hover:text-teal-400
-              transition-all duration-150"
+            className={`block px-4 py-2.5 text-sm transition-all duration-150
+              ${isDarkMode
+                ? 'text-gray-300 hover:bg-teal-500/10 hover:text-teal-400'
+                : 'text-gray-600 hover:bg-teal-50 hover:text-teal-600'}`}
             onClick={handleLinkClick}>
             {item.label}
           </Link>
@@ -87,27 +83,34 @@ const Navbar = () => {
   );
 
   return (
-    <nav ref={navRef}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${navBg}`}>
-      <div className="max-w-7xl mx-auto px-6 py-4">
+    <nav ref={navRef} className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${navBg}`}>
+      <div className="max-w-7xl mx-auto px-6 py-3.5">
         <div className="flex items-center justify-between">
 
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 flex-shrink-0">
-            <Image
-              src={isDarkMode ? "/logo-dark.png" : "/logo.png"}
-              alt="M Securities"
-              width={160}
-              height={40}
-              className="h-8 w-auto object-contain"
-            />
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link href="/" className="flex items-center">
+              <Image
+                src={isDarkMode ? "/logo-dark.png" : "/logo.png"}
+                alt="M Securities"
+                width={140}
+                height={36}
+                className="h-8 w-auto object-contain"
+              />
+            </Link>
+            {/* MMI link */}
+            <a href="https://mmi.msecurities.mn" target="_blank" rel="noopener noreferrer"
+              className={`hidden sm:flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full border transition-all
+                ${isDarkMode
+                  ? 'bg-teal-500/10 text-teal-400 border-teal-500/20 hover:bg-teal-500/20'
+                  : 'bg-teal-50 text-teal-700 border-teal-200 hover:bg-teal-100'}`}>
+              <span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse" />
+              M Market Intelligence
+            </a>
+          </div>
 
-          {/* Desktop — pill nav (Үнэт Секьюритис загвар) */}
-          <div className={`hidden md:flex items-center gap-1 px-3 py-2 rounded-full border transition-all duration-300
-            ${isDarkMode
-              ? 'bg-white/5 border-white/10'
-              : 'bg-white/80 border-gray-200/80 backdrop-blur-sm shadow-sm'}`}>
+          {/* Desktop nav */}
+          <div className="hidden md:flex items-center gap-1">
             <div className="relative">
               {renderDropdownButton('about', t('navbar.about'))}
               {renderDropdownMenu('about', [
@@ -152,16 +155,15 @@ const Navbar = () => {
             <Link href="https://trader.msecurities.mn/auth/login?callbackUrl=/dashboard/profile/info/stock">
               <button className="px-5 py-2.5 rounded-lg text-sm font-semibold text-white
                 bg-gradient-to-r from-teal-500 to-cyan-500
-                hover:from-teal-400 hover:to-cyan-400
-                shadow-lg shadow-teal-500/25 hover:shadow-teal-500/40
-                transition-all duration-200 hover:-translate-y-0.5">
+                shadow-lg shadow-teal-500/20
+                transition-all hover:-translate-y-0.5 hover:shadow-teal-500/35">
                 {t('navbar.trade')} ↗
               </button>
             </Link>
           </div>
 
-          {/* Mobile hamburger */}
-          <button className="md:hidden p-2 rounded-lg text-gray-600 dark:text-gray-300"
+          {/* Mobile */}
+          <button className="md:hidden p-2 rounded-lg text-gray-500 dark:text-gray-400"
             onClick={() => setIsMenuOpen(!isMenuOpen)}>
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -203,8 +205,8 @@ const Navbar = () => {
                 <div key={section.key}>
                   <button
                     onClick={(e) => handleDropdownClick(`${section.key}-m`, e)}
-                    className="w-full flex justify-between items-center px-3 py-2.5 rounded-lg text-sm font-medium
-                      text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                    className={`w-full flex justify-between items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                      ${isDarkMode ? 'text-gray-200 hover:bg-white/5' : 'text-gray-700 hover:bg-gray-50'}`}>
                     {section.label}
                     <svg className={`w-3.5 h-3.5 transition-transform ${activeDropdown === `${section.key}-m` ? 'rotate-180' : ''}`}
                       fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -215,9 +217,8 @@ const Navbar = () => {
                     <div className="ml-3 mt-1 space-y-0.5">
                       {section.items.map((item, i) => (
                         <Link key={i} href={item.href}
-                          className="block px-3 py-2 text-sm text-gray-500 dark:text-gray-400
-                            hover:text-teal-500 dark:hover:text-teal-400 transition-colors rounded-lg
-                            hover:bg-teal-50 dark:hover:bg-teal-500/10"
+                          className={`block px-3 py-2 text-sm rounded-lg transition-colors
+                            ${isDarkMode ? 'text-gray-400 hover:text-teal-400 hover:bg-teal-500/10' : 'text-gray-500 hover:text-teal-600 hover:bg-teal-50'}`}
                           onClick={handleLinkClick}>
                           {item.label}
                         </Link>
@@ -226,14 +227,15 @@ const Navbar = () => {
                   )}
                 </div>
               ))}
-              <div className="pt-3 mt-3 border-t border-gray-100 dark:border-white/8 flex items-center justify-between">
+              <div className={`pt-3 mt-3 border-t flex items-center justify-between
+                ${isDarkMode ? 'border-white/8' : 'border-gray-100'}`}>
                 <div className="flex items-center gap-3">
                   <LanguageSwitcher />
                   <DarkModeToggle />
                 </div>
                 <Link href="https://trader.msecurities.mn/auth/login?callbackUrl=/dashboard/profile/info/stock">
                   <button className="px-4 py-2 rounded-lg text-sm font-semibold text-white
-                    bg-gradient-to-r from-teal-500 to-cyan-500 transition-all">
+                    bg-gradient-to-r from-teal-500 to-cyan-500">
                     {t('navbar.trade')}
                   </button>
                 </Link>
