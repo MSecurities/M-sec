@@ -6,7 +6,7 @@ const MiningBrokerService = () => {
   const { language } = useLanguage();
   const { isDarkMode } = useDarkMode();
 
-  const bg = isDarkMode ? 'bg-[#080a0d]' : 'bg-[#f8f9fb]';
+  const bg = isDarkMode ? 'bg-[#080a0d]' : 'bg-gradient-to-b from-teal-50/60 via-white to-teal-50/30';
   const cardBg = isDarkMode ? 'bg-[#111318]' : 'bg-white';
   const cardBorder = isDarkMode ? 'border-white/6' : 'border-gray-200';
   const textPrimary = isDarkMode ? 'text-white' : 'text-gray-900';
@@ -17,10 +17,14 @@ const MiningBrokerService = () => {
     <div className={`min-h-screen pt-20 transition-colors duration-300 ${bg}`}>
 
       {/* ── HERO ── */}
-      <section className={`relative min-h-[80vh] flex flex-col items-center justify-center text-center overflow-hidden px-6 ${bg}`}>
+      <section className={`relative min-h-[80vh] flex flex-col items-center justify-center text-center overflow-hidden px-6 ${isDarkMode ? 'bg-[#080a0d]' : 'bg-gradient-to-br from-teal-50 via-white to-cyan-50'}`}>
         {/* Glow */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full blur-[120px] opacity-10 ${isDarkMode ? 'bg-teal-400' : 'bg-teal-300'}`} />
+          <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full blur-[120px] ${isDarkMode ? 'opacity-10 bg-teal-400' : 'opacity-25 bg-teal-200'}`} />
+          {!isDarkMode && <>
+            <div className="absolute -top-20 -left-20 w-[350px] h-[350px] rounded-full blur-[100px] opacity-20 bg-teal-300" />
+            <div className="absolute -bottom-20 -right-20 w-[350px] h-[350px] rounded-full blur-[100px] opacity-20 bg-cyan-300" />
+          </>}
         </div>
 
         <div className="relative z-10 max-w-3xl mx-auto">
