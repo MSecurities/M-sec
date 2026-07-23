@@ -1,52 +1,37 @@
 'use client';
-
-import React from 'react';
-import Image from 'next/image';
 import { useLanguage } from '../../context/LanguageContext';
 import { useDarkMode } from '../../context/DarkModeContext';
+import Image from 'next/image';
 import {
   GlobeAltIcon,
   ArrowTrendingUpIcon,
   ShieldCheckIcon,
+  BanknotesIcon,
   ChartBarIcon,
   DevicePhoneMobileIcon,
+  BuildingOffice2Icon,
+  CurrencyDollarIcon,
   ArrowRightIcon,
   CheckCircleIcon,
 } from '@heroicons/react/24/outline';
 
-export default function ForeignTradingPage() {
+const ForeignTradingPage = () => {
   const { language } = useLanguage();
   const { isDarkMode } = useDarkMode();
 
   const bg = isDarkMode ? 'bg-[#080a0d]' : 'bg-gradient-to-b from-teal-50/60 via-white to-teal-50/30';
   const cardBg = isDarkMode ? 'bg-[#111318]' : 'bg-white';
-  const cardBorder = isDarkMode ? 'border-white/10' : 'border-gray-200';
+  const cardBorder = isDarkMode ? 'border-white/6' : 'border-gray-200';
   const textPrimary = isDarkMode ? 'text-white' : 'text-gray-900';
   const textSecondary = isDarkMode ? 'text-gray-400' : 'text-gray-500';
   const sectionAlt = isDarkMode ? 'bg-[#0d0f14]' : 'bg-white';
   const iconBg = isDarkMode ? 'bg-teal-500/10' : 'bg-teal-50';
 
   const features = [
-    {
-      Icon: GlobeAltIcon,
-      title: language === 'mn' ? 'Дэлхийн тэргүүлэх биржүүд' : language === 'zh' ? '全球领先交易所' : 'Global Leading Exchanges',
-      desc: language === 'mn' ? 'NYSE, NASDAQ, LSE болон бусад дэлхийн тэргүүлэх хөрөнгийн биржүүд дээр хөрөнгө оруулах боломж.' : language === 'zh' ? '可在NYSE、纳斯达克、伦交所等全球主要交易所投资。' : 'Access NYSE, NASDAQ, LSE and other leading global stock exchanges.'
-    },
-    {
-      Icon: ChartBarIcon,
-      title: language === 'mn' ? 'Хувьцаа, бонд, ETF' : language === 'zh' ? '股票、债券、ETF' : 'Stocks, Bonds, ETFs',
-      desc: language === 'mn' ? 'Олон улсын хувьцаа, бонд, ETF болон бусад санхүүгийн хэрэглүүрт хөрөнгө оруулах боломж.' : language === 'zh' ? '可投资国际股票、债券、ETF及其他金融工具。' : 'Invest in international stocks, bonds, ETFs and other financial instruments.'
-    },
-    {
-      Icon: DevicePhoneMobileIcon,
-      title: language === 'mn' ? 'Аппликейшнаар арилжаа' : language === 'zh' ? '手机APP交易' : 'Mobile App Trading',
-      desc: language === 'mn' ? 'М Секьюритисийн аппликейшнаар хаанаас ч гадаад зах зээлд хялбараар нэвтрэх боломж.' : language === 'zh' ? '通过M Securities应用随时随地轻松进入国际市场。' : 'Access foreign markets easily from anywhere via the M Securities app.'
-    },
-    {
-      Icon: ShieldCheckIcon,
-      title: language === 'mn' ? 'Найдвартай, аюулгүй' : language === 'zh' ? '安全可靠' : 'Safe & Secure',
-      desc: language === 'mn' ? 'СЗХ-ны хяналт дор мэргэжлийн брокерийн үйлчилгээ.' : language === 'zh' ? '在金融监管委员会监管下提供专业经纪服务。' : 'Professional brokerage service under FRC supervision.'
-    },
+    { Icon: GlobeAltIcon, title: language === 'mn' ? 'Дэлхийн тэргүүлэх биржүүд' : language === 'zh' ? '全球领先交易所' : 'Global Leading Exchanges', desc: language === 'mn' ? 'NYSE, NASDAQ, LSE болон бусад дэлхийн тэргүүлэх хөрөнгийн биржүүд дээр хөрөнгө оруулах боломж.' : language === 'zh' ? '可在NYSE、纳斯达克、伦交所等全球主要交易所投资。' : 'Access NYSE, NASDAQ, LSE and other leading global stock exchanges.' },
+    { Icon: ChartBarIcon, title: language === 'mn' ? 'Хувьцаа, бонд, ETF' : language === 'zh' ? '股票、债券、ETF' : 'Stocks, Bonds, ETFs', desc: language === 'mn' ? 'Олон улсын хувьцаа, бонд, ETF болон бусад санхүүгийн хэрэглүүрт хөрөнгө оруулах боломж.' : language === 'zh' ? '可投资国际股票、债券、ETF及其他金融工具。' : 'Invest in international stocks, bonds, ETFs and other financial instruments.' },
+    { Icon: DevicePhoneMobileIcon, title: language === 'mn' ? 'Аппликейшнаар арилжаа' : language === 'zh' ? '手机APP交易' : 'Mobile App Trading', desc: language === 'mn' ? 'М Секьюритисийн аппликейшнаар хаанаас ч гадаад зах зээлд хялбараар нэвтрэх боломж.' : language === 'zh' ? '通过M Securities应用随时随地轻松进入国际市场。' : 'Access foreign markets easily from anywhere via the M Securities app.' },
+    { Icon: ShieldCheckIcon, title: language === 'mn' ? 'Найдвартай, аюулгүй' : language === 'zh' ? '安全可靠' : 'Safe & Secure', desc: language === 'mn' ? 'СЗХ-ны хяналт дор мэргэжлийн брокерийн үйлчилгээ.' : language === 'zh' ? '在金融监管委员会监管下提供专业经纪服务。' : 'Professional brokerage service under FRC supervision.' },
   ];
 
   const steps = [
@@ -66,6 +51,7 @@ export default function ForeignTradingPage() {
 
   return (
     <div className={`min-h-screen pt-20 transition-colors duration-300 ${bg}`}>
+
       {/* ── BANNER ── */}
       <section className="relative w-full overflow-hidden">
         <div className="relative w-full" style={{ aspectRatio: '1500/750', maxHeight: '560px' }}>
@@ -76,14 +62,12 @@ export default function ForeignTradingPage() {
             className="object-cover object-center"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-transparent" />
+          {/* Overlay gradient */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-transparent" />
+          {/* CTA overlay */}
           <div className="absolute bottom-8 left-8 sm:bottom-12 sm:left-12">
-            <a
-              href="https://trader.msecurities.mn/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full text-sm font-semibold text-white border border-white/40 hover:bg-white/10 backdrop-blur-sm transition-all hover:-translate-y-0.5"
-            >
+            <a href="https://trader.msecurities.mn/" target="_blank" rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full text-sm font-semibold text-white border border-white/40 hover:bg-white/10 backdrop-blur-sm transition-all hover:-translate-y-0.5">
               {language === 'mn' ? 'Одоо эхлэх' : language === 'zh' ? '立即开始' : 'Get Started'} →
             </a>
           </div>
@@ -94,7 +78,7 @@ export default function ForeignTradingPage() {
       <section className={`py-20 px-6 ${sectionAlt}`}>
         <div className="max-w-4xl mx-auto text-center">
           <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium mb-8 border
-            ${isDarkMode ? 'bg-white/5 border-white/10 text-gray-300' : 'bg-white/80 border-teal-200 text-teal-700 shadow-sm'}`}>
+            ${isDarkMode ? 'bg-white/4 border-white/10 text-gray-300' : 'bg-white/80 border-teal-200 text-teal-700 shadow-sm'}`}>
             <GlobeAltIcon className="w-3.5 h-3.5" />
             {language === 'mn' ? 'Гадаад арилжаа · шинэ үйлчилгээ' : language === 'zh' ? '境外交易 · 全新服务' : 'Foreign Trading · New Service'}
           </div>
@@ -111,22 +95,15 @@ export default function ForeignTradingPage() {
               : 'M Securities now gives you access to foreign capital markets. Invest on NYSE, NASDAQ and the world\'s leading exchanges.'}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="https://trader.msecurities.mn/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full text-base font-semibold text-white bg-teal-500 hover:bg-teal-400 transition-all hover:-translate-y-0.5 shadow-lg shadow-teal-500/20"
-            >
+            <a href="https://trader.msecurities.mn/" target="_blank" rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full text-base font-semibold text-white
+                bg-teal-500 hover:bg-teal-400 transition-all hover:-translate-y-0.5 shadow-lg shadow-teal-500/20">
               {language === 'mn' ? 'Арилжаа эхлэх' : language === 'zh' ? '开始交易' : 'Start Trading'}
               <ArrowTrendingUpIcon className="w-4 h-4" />
             </a>
-            <a
-              href="https://apps.apple.com/mn/app/m-securities-mn/id6745858855"
-              target="_blank"
-              rel="noopener noreferrer"
+            <a href="https://apps.apple.com/mn/app/m-securities-mn/id6745858855" target="_blank" rel="noopener noreferrer"
               className={`inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full text-base font-semibold border transition-all hover:-translate-y-0.5
-                ${isDarkMode ? 'bg-white/5 text-white border-white/10 hover:bg-white/10' : 'bg-white text-gray-800 border-gray-200 shadow-sm hover:border-teal-300'}`}
-            >
+                ${isDarkMode ? 'bg-white/6 text-white border-white/10 hover:bg-white/10' : 'bg-white text-gray-800 border-gray-200 shadow-sm hover:border-teal-300'}`}>
               <DevicePhoneMobileIcon className="w-4 h-4 text-teal-500" />
               {language === 'mn' ? 'Апп татах' : language === 'zh' ? '下载应用' : 'Download App'}
             </a>
@@ -146,7 +123,7 @@ export default function ForeignTradingPage() {
             </h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {features.map((f) => (
+            {features.map(f => (
               <div key={f.title} className={`rounded-2xl border p-6 transition-all hover:-translate-y-1
                 ${cardBg} ${cardBorder} ${isDarkMode ? 'hover:border-teal-500/20' : 'hover:border-teal-200 hover:shadow-md'}`}>
                 <div className={`w-11 h-11 rounded-xl flex items-center justify-center mb-4 ${iconBg}`}>
@@ -172,7 +149,7 @@ export default function ForeignTradingPage() {
             </h2>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            {markets.map((m) => (
+            {markets.map(m => (
               <div key={m.name} className={`rounded-2xl border p-6 flex items-center gap-4 transition-all hover:-translate-y-0.5
                 ${cardBg} ${cardBorder} ${isDarkMode ? 'hover:border-teal-500/20' : 'hover:border-teal-200 hover:shadow-sm'}`}>
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm text-teal-500 ${iconBg}`}>
@@ -220,12 +197,9 @@ export default function ForeignTradingPage() {
             ))}
           </div>
           <div className="text-center mt-10">
-            <a
-              href="https://trader.msecurities.mn/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-10 py-4 rounded-full text-base font-semibold text-white bg-teal-500 hover:bg-teal-400 transition-all hover:-translate-y-0.5 shadow-lg shadow-teal-500/20"
-            >
+            <a href="https://trader.msecurities.mn/" target="_blank" rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-10 py-4 rounded-full text-base font-semibold text-white
+                bg-teal-500 hover:bg-teal-400 transition-all hover:-translate-y-0.5 shadow-lg shadow-teal-500/20">
               {language === 'mn' ? 'Одоо эхлэх' : language === 'zh' ? '立即开始' : 'Start Now'}
               <ArrowTrendingUpIcon className="w-4 h-4" />
             </a>
@@ -236,7 +210,7 @@ export default function ForeignTradingPage() {
       {/* ── CTA ── */}
       <section className={`py-24 px-6 ${sectionAlt}`}>
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className={`text-4xl sm:text-5xl font-bold mb-6 leading-tight whitespace-pre-line ${textPrimary}`}>
+          <h2 className={`text-4xl sm:text-5xl font-bold mb-6 leading-tight ${textPrimary}`}>
             {language === 'mn' ? 'Дэлхийгээс өгөөж\nхүртэх гүүр' : language === 'zh' ? '连接全球\n收益的桥梁' : 'Bridge to Global\nOpportunity'}
           </h2>
           <p className={`text-lg mb-10 ${textSecondary}`}>
@@ -245,28 +219,24 @@ export default function ForeignTradingPage() {
               : 'Invest in global capital markets with M Securities.'}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="https://trader.msecurities.mn/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 px-10 py-4 rounded-full text-base font-semibold text-white bg-teal-500 hover:bg-teal-400 transition-all hover:-translate-y-0.5 shadow-xl shadow-teal-500/20"
-            >
+            <a href="https://trader.msecurities.mn/" target="_blank" rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 px-10 py-4 rounded-full text-base font-semibold text-white
+                bg-teal-500 hover:bg-teal-400 transition-all hover:-translate-y-0.5 shadow-xl shadow-teal-500/20">
               {language === 'mn' ? 'Арилжаа эхлэх' : language === 'zh' ? '开始交易' : 'Start Trading'}
               <ArrowTrendingUpIcon className="w-5 h-5" />
             </a>
-            <a
-              href="https://apps.apple.com/mn/app/m-securities-mn/id6745858855"
-              target="_blank"
-              rel="noopener noreferrer"
+            <a href="https://apps.apple.com/mn/app/m-securities-mn/id6745858855" target="_blank" rel="noopener noreferrer"
               className={`inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full text-base font-semibold border transition-all hover:-translate-y-0.5
-                ${isDarkMode ? 'bg-white/5 text-white border-white/10 hover:bg-white/10' : 'bg-white text-gray-800 border-gray-200 shadow-sm'}`}
-            >
+                ${isDarkMode ? 'bg-white/5 text-white border-white/10 hover:bg-white/10' : 'bg-white text-gray-800 border-gray-200 shadow-sm'}`}>
               <DevicePhoneMobileIcon className="w-4 h-4 text-teal-500" />
               {language === 'mn' ? 'Апп татах' : language === 'zh' ? '下载应用' : 'Download App'}
             </a>
           </div>
         </div>
       </section>
+
     </div>
   );
-}
+};
+
+export default ForeignTradingPage;
