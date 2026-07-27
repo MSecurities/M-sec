@@ -250,6 +250,21 @@ export const translations = {
           description2:
             "M Securities SC LLC is committed to delivering up-to-date market insights and analysis, adapting international standards to the Mongolian context, and offering high-return investment opportunities. We combine customer-centric services with technological innovation, while upholding the highest standards of professional ethics.",
         },
+        board: {
+          title: "Board of Directors",
+          chairman: {
+            name: "G.Myagmarjav",
+            position: "Chairman of the Board",
+          },
+          member1: {
+            name: "B.Temuulen",
+            position: "Board Member",
+          },
+          member2: {
+            name: "B.Ariunbayar",
+            position: "Board Member",
+          },
+        },
       },
       team: {
         title: "Our Team",
@@ -700,6 +715,21 @@ export const translations = {
           description2:
             "М Секьюритис ҮЦК нь үнэт цаасны зах зээлийн оролцогчдод цаг үеийн мэдээлэл, судалгааг хүргэх, олон улсын санхүүгийн стандартад нийцсэн загваруудыг Монголын нөхцөлд нийцүүлэн, мэргэжлийн ёс зүйг баримтлан харилцагч төвтэй үйлчилгээг шинэ технологитой хослуулан санал болгохыг зорин ажиллаж байна.",
         },
+        board: {
+          title: "Төлөөлөн удирдах зөвлөл",
+          chairman: {
+            name: "Г. Мягмаржав",
+            position: "ТУЗ-ийн дарга",
+          },
+          member1: {
+            name: "Б. Тэмүүлэн",
+            position: "ТУЗ-ийн гишүүн",
+          },
+          member2: {
+            name: "Б. Ариунбаяр",
+            position: "ТУЗ-ийн гишүүн",
+          },
+        },
       },
       team: {
         title: "Манай баг",
@@ -1143,6 +1173,21 @@ export const translations = {
             "M Securities 证券公司是蒙古领先的 MCS Holding LLC 旗下子公司，旨在为蒙古及海外资本市场参与者提供专业的产品与服务。",
           description2:
             "M Securities 证券公司致力于为证券市场参与者提供及时、专业的信息与研究服务，将国际金融标准与蒙古国本地市场实践有机结合，恪守专业伦理，坚持以客户为中心，推动优质服务与创新技术深度融合，为客户创造长期价值。",
+        },
+        board: {
+          title: "董事会",
+          chairman: {
+            name: "G.Myagmarjav",
+            position: "董事会主席",
+          },
+          member1: {
+            name: "B.Temuulen",
+            position: "董事会成员",
+          },
+          member2: {
+            name: "B.Ariunbayar",
+            position: "董事会成员",
+          },
         },
       },
       team: {
