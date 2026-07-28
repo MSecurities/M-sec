@@ -82,7 +82,7 @@ export default function Home() {
       desc: language === "mn" ? "Монголын Хөрөнгийн Биржээр дамжуулан уул уурхайн бүтээгдэхүүний цахим арилжаа." : language === "zh" ? "通过蒙古证券交易所进行矿产品在线交易。" : "Electronic trading of mining products through the Mongolian Stock Exchange.",
     },
     {
-      badge: language === "mn" ? "Шинэ" : language === "zh" ? "全新" : "New",
+      badge: language === "mn" ? "Гадаад арилжаа" : language === "zh" ? "境外交易" : "Foreign Trading",
       Icon: GlobeAltIcon,
       href: "/services/foreign-trading",
       title: t("navbar.sections.foreignTrading"),
@@ -174,12 +174,12 @@ export default function Home() {
               {language === "mn" ? "Үйлчилгээ" : language === "zh" ? "服务" : "Services"}
             </p>
             <h2 className={`text-3xl sm:text-4xl font-bold ${textPrimary}`}>
-              {language === "mn" ? "Мэргэжлийн брокер,\nдилерийн үйлчилгээ"
-                : language === "zh" ? "专业经纪\n交易商服务"
-                : "Professional Broker &\nDealer Services"}
+              {language === "mn" ? "Мэргэжлийн хөрөнгө\nоруулалтын үйлчилгээ"
+                : language === "zh" ? "专业投资\n服务"
+                : "Professional Investment\nServices"}
             </h2>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl mx-auto">
             {services.map(s => (
               <Link key={s.href} href={s.href}
                 className={`group rounded-2xl border p-6 block transition-all duration-300 hover:-translate-y-1
