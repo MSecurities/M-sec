@@ -41,35 +41,41 @@ const ForeignTradingPage = () => {
   ];
 
   const markets = [
-    { name: 'NYSE', desc: language === 'mn' ? 'Нью Йоркийн хөрөнгийн бирж' : language === 'zh' ? '纽约证券交易所' : 'New York Stock Exchange' },
-    { name: 'NASDAQ', desc: language === 'mn' ? 'Технологийн тэргүүлэх бирж' : language === 'zh' ? '科技领先交易所' : 'Technology leading exchange' },
-    { name: 'LSE', desc: language === 'mn' ? 'Лондонгийн хөрөнгийн бирж' : language === 'zh' ? '伦敦证券交易所' : 'London Stock Exchange' },
-    { name: 'TSE', desc: language === 'mn' ? 'Токиогийн хөрөнгийн бирж' : language === 'zh' ? '东京证券交易所' : 'Tokyo Stock Exchange' },
-    { name: 'HKEX', desc: language === 'mn' ? 'Хонконгийн хөрөнгийн бирж' : language === 'zh' ? '香港交易所' : 'Hong Kong Stock Exchange' },
-    { name: 'SSE', desc: language === 'mn' ? 'Шанхайн хөрөнгийн бирж' : language === 'zh' ? '上海证券交易所' : 'Shanghai Stock Exchange' },
+    { name: 'NYSE', flag: '🇺🇸', desc: language === 'mn' ? 'Нью Йоркийн хөрөнгийн бирж' : language === 'zh' ? '纽约证券交易所' : 'New York Stock Exchange' },
+    { name: 'NASDAQ', flag: '🇺🇸', desc: language === 'mn' ? 'Технологийн тэргүүлэх бирж' : language === 'zh' ? '科技领先交易所' : 'Technology leading exchange' },
+    { name: 'LSE', flag: '🇬🇧', desc: language === 'mn' ? 'Лондонгийн хөрөнгийн бирж' : language === 'zh' ? '伦敦证券交易所' : 'London Stock Exchange' },
+    { name: 'TSE', flag: '🇯🇵', desc: language === 'mn' ? 'Токиогийн хөрөнгийн бирж' : language === 'zh' ? '东京证券交易所' : 'Tokyo Stock Exchange' },
+    { name: 'HKEX', flag: '🇭🇰', desc: language === 'mn' ? 'Хонконгийн хөрөнгийн бирж' : language === 'zh' ? '香港交易所' : 'Hong Kong Stock Exchange' },
+    { name: 'SSE', flag: '🇨🇳', desc: language === 'mn' ? 'Шанхайн хөрөнгийн бирж' : language === 'zh' ? '上海证券交易所' : 'Shanghai Stock Exchange' },
   ];
 
   return (
     <div className={`min-h-screen pt-20 transition-colors duration-300 ${bg}`}>
 
       {/* ── BANNER ── */}
-      <section className="relative w-full overflow-hidden">
-        <div className="relative w-full" style={{ aspectRatio: '1920/960' }}>
-          <Image
-            src="/images/foreign-trading-banner.png"
-            alt={language === 'mn' ? 'Гадаад арилжаа нэвтэрлээ' : language === 'zh' ? '境外交易上线' : 'Foreign Trading Launched'}
-            fill
-            className="object-cover object-center"
-            priority
-          />
-          {/* Overlay gradient */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-transparent" />
-          {/* CTA overlay */}
-          <div className="absolute bottom-8 left-8 sm:bottom-12 sm:left-12">
-            <a href="https://trader.msecurities.mn/" target="_blank" rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full text-sm font-semibold text-white border border-white/40 hover:bg-white/10 backdrop-blur-sm transition-all hover:-translate-y-0.5">
-              {language === 'mn' ? 'Одоо эхлэх' : language === 'zh' ? '立即开始' : 'Get Started'} →
-            </a>
+      <section className={`relative w-full pt-10 pb-6 px-4 sm:px-6 overflow-hidden ${bg}`}>
+        {/* Ambient gradient orbs */}
+        <div className="pointer-events-none absolute -top-24 -left-24 w-72 h-72 rounded-full bg-teal-400/20 blur-3xl" />
+        <div className="pointer-events-none absolute -top-16 right-0 w-64 h-64 rounded-full bg-emerald-400/10 blur-3xl" />
+
+        <div className="relative max-w-6xl mx-auto">
+          <div className="relative w-full overflow-hidden rounded-3xl shadow-2xl ring-1 ring-black/5" style={{ aspectRatio: '1920/960' }}>
+            <Image
+              src="/images/foreign-trading-banner.png"
+              alt={language === 'mn' ? 'Гадаад арилжаа нэвтэрлээ' : language === 'zh' ? '境外交易上线' : 'Foreign Trading Launched'}
+              fill
+              className="object-cover object-center"
+              priority
+            />
+            {/* Overlay gradient */}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/25 via-transparent to-transparent" />
+            {/* CTA overlay */}
+            <div className="absolute bottom-6 left-6 sm:bottom-10 sm:left-10">
+              <a href="https://apps.apple.com/mn/app/id1455928972" target="_blank" rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-6 py-3 sm:px-8 sm:py-3.5 rounded-full text-sm font-semibold text-white border border-white/40 hover:bg-white/10 backdrop-blur-sm transition-all hover:-translate-y-0.5">
+                {language === 'mn' ? 'M Bank аппаар эхлэх' : language === 'zh' ? '通过M Bank应用开始' : 'Get Started with M Bank App'} →
+              </a>
+            </div>
           </div>
         </div>
       </section>
@@ -150,13 +156,14 @@ const ForeignTradingPage = () => {
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             {markets.map(m => (
-              <div key={m.name} className={`rounded-2xl border p-6 flex items-center gap-4 transition-all hover:-translate-y-0.5
-                ${cardBg} ${cardBorder} ${isDarkMode ? 'hover:border-teal-500/20' : 'hover:border-teal-200 hover:shadow-sm'}`}>
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm text-teal-500 ${iconBg}`}>
-                  {m.name}
+              <div key={m.name} className={`group relative overflow-hidden rounded-2xl border p-6 flex items-center gap-4 transition-all duration-300 hover:-translate-y-1
+                ${cardBg} ${cardBorder} ${isDarkMode ? 'hover:border-teal-500/30' : 'hover:border-teal-200 hover:shadow-lg'}`}>
+                <div className="pointer-events-none absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-teal-400/0 group-hover:bg-teal-400/10 blur-2xl transition-all duration-300" />
+                <div className={`relative w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 text-2xl ${iconBg} transition-transform duration-300 group-hover:scale-110`}>
+                  {m.flag}
                 </div>
-                <div>
-                  <div className={`text-sm font-semibold ${textPrimary}`}>{m.name}</div>
+                <div className="relative">
+                  <div className={`text-base font-bold tracking-tight ${textPrimary}`}>{m.name}</div>
                   <div className={`text-xs mt-0.5 ${textSecondary}`}>{m.desc}</div>
                 </div>
               </div>
@@ -197,10 +204,10 @@ const ForeignTradingPage = () => {
             ))}
           </div>
           <div className="text-center mt-10">
-            <a href="https://trader.msecurities.mn/" target="_blank" rel="noopener noreferrer"
+            <a href="https://apps.apple.com/mn/app/id1455928972" target="_blank" rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-10 py-4 rounded-full text-base font-semibold text-white
                 bg-teal-500 hover:bg-teal-400 transition-all hover:-translate-y-0.5 shadow-lg shadow-teal-500/20">
-              {language === 'mn' ? 'Одоо эхлэх' : language === 'zh' ? '立即开始' : 'Start Now'}
+              {language === 'mn' ? 'M Bank аппаар эхлэх' : language === 'zh' ? '通过M Bank应用开始' : 'Get Started with M Bank App'}
               <ArrowTrendingUpIcon className="w-4 h-4" />
             </a>
           </div>
