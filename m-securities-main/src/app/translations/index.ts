@@ -134,10 +134,9 @@ export const translations = {
         values: "Values",
         feedback: "Feedback",
         broker: "Broker",
-        underwriter: "Underwriter",
-        investmentAdvisor: "Investment Advisor",
         miningBroker: "Mining Broker",
         foreignTrading: "Foreign Trading",
+        news: "News",
         analysis: "Analysis",
         commonQuestions: "Common Questions",
         openAccount: "Open an Account",
@@ -332,34 +331,6 @@ export const translations = {
             ],
           },
         },
-      },
-      underwriter: {
-        title: "Underwriting Services",
-        description:
-          "We provide underwriting services to domestic companies for raising funds, implementing new projects, and expanding operations.",
-        equityFinancing: {
-          title: "Equity Financing",
-          description:
-            "We facilitate capital raising through equity financing, including public offerings, private placements, and additional share issuances.",
-        },
-        debtFinancing: {
-          title: "Debt Financing",
-          description:
-            "We manage capital raising through debt instruments, including open and closed-end bonds and asset-backed securities.",
-        },
-      },
-      investmentAdvisor: {
-        title: "Investment Advisory Services",
-        description:
-          "We offer comprehensive investment advisory services to domestic companies, covering investment strategies, policy decisions, and transaction guidance.",
-        services: [
-          "Capital raising strategy development",
-          "Open and closed-end financing advisory",
-          "Company valuation and financial structuring",
-          "Personal asset management services",
-          "Capital market awareness training",
-          "Market updates and portfolio optimization",
-        ],
       },
       miningBroker: {
         title: "Mining Broker Services",
@@ -604,10 +575,9 @@ export const translations = {
         values: "Үнэт зүйлс",
         feedback: "Санал хүсэлт",
         broker: "Брокер",
-        underwriter: "Андеррайтер",
-        investmentAdvisor: "Хөрөнгө оруулалтын зөвлөх",
         miningBroker: "Уул уурхайн брокер",
         foreignTrading: "Гадаад арилжаа",
+        news: "Мэдээ",
         analysis: "Шинжилгээ",
         commonQuestions: "Түгээмэл асуултууд",
         weekly: "7 хоногийн тойм",
@@ -793,34 +763,6 @@ export const translations = {
             ],
           },
         },
-      },
-      underwriter: {
-        title: "Андеррайтерийн үйлчилгээ",
-        description:
-          "Бид дотоодын компаниудад шинэ төсөл хэрэгжүүлэх, үйл ажиллагаагаа өгөгөжүүлэхэд шаардлагатай хөрөнгийг босгоход андеррайтерийн үйлчилгээ үзүүлдэг.",
-        equityFinancing: {
-          title: "Өөрийн хөрөнгийн санхүүжилт",
-          description:
-            "Бид хувьцаа нийтэд санал болгох, хаалттай хүрээнд санал болгох, нэмж хувьцаа гаргах зэрэг өөрийн хөрөнгийн санхүүжилтээр хөрөнгө босгох үйл ажиллагааг гүйцэтгэнэ.",
-        },
-        debtFinancing: {
-          title: "Өрийн санхүүжилт",
-          description:
-            "Бид нээлттэй болон хаалттай бонд, хөрөнгөөр баталгаажсан үнэт цаас зэрэг өрийн хэрэгслээр хөрөнгө босгох үйл ажиллагааг удирддаг.",
-        },
-      },
-      investmentAdvisor: {
-        title: "Хөрөнгө оруулалтын зөвлөх үйлчилгээ",
-        description:
-          "Бид дотоодын компаниудад хөрөнгө оруулалтын стратеги, бодлогын шийдвэр, гүйлгээний чиглэлээр иж бүрэн зөвлөх үйлчилгээ үзүүлдэг.",
-        services: [
-          "Хөрөнгө босгох стратегийн хөгжүүлэлт",
-          "Нээлттэй болон хаалттай санхүүжилтийн зөвлөгөө",
-          "Компанийн үнэлгээ болон санхүүгийн бүтцийн тодорхойлолт",
-          "Хувийн хөрөнгийн удирдлагын үйлчилгээ",
-          "Хөрөнгийн зах зээлийн мэдлэг олгох сургалт",
-          "Зах зээлийн шинэчлэл болон багцын оновчлол",
-        ],
       },
       miningBroker: {
         title: "Уул уурхайн брокерын үйлчилгээ",
@@ -1064,10 +1006,9 @@ export const translations = {
         values: "价值观",
         feedback: "意见反馈",
         broker: "经纪服务",
-        underwriter: "承销服务",
-        investmentAdvisor: "投资顾问",
         miningBroker: "矿业经纪",
         foreignTrading: "境外交易",
+        news: "新闻",
         analysis: "分析",
         commonQuestions: "常见问题",
         openAccount: "开立账户",
@@ -1233,34 +1174,6 @@ export const translations = {
             ],
           },
         },
-      },
-      underwriter: {
-        title: "承销服务",
-        description:
-          "我们为国内企业实施新项目、扩展业务所需的资金募集提供承销服务。",
-        equityFinancing: {
-          title: "股权融资",
-          description:
-            "我们提供股权融资服务，包括公开发行、定向增发及额外股票发行等方式的资金募集。",
-        },
-        debtFinancing: {
-          title: "债务融资",
-          description:
-            "我们管理通过债务工具进行的资金募集，包括公开债券、封闭式债券及资产支持证券。",
-        },
-      },
-      investmentAdvisor: {
-        title: "投资顾问服务",
-        description:
-          "我们为国内企业提供全面的投资顾问服务，涵盖投资策略、政策决策及交易指导。",
-        services: [
-          "资本募集策略制定",
-          "开放式与封闭式融资顾问",
-          "公司估值与财务结构规划",
-          "个人资产管理服务",
-          "资本市场知识培训",
-          "市场动态更新与投资组合优化",
-        ],
       },
       miningBroker: {
         title: "矿业经纪服务",
