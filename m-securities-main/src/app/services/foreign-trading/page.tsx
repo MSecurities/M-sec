@@ -30,23 +30,23 @@ const ForeignTradingPage = () => {
   const features = [
     { Icon: GlobeAltIcon, title: language === 'mn' ? 'Дэлхийн тэргүүлэх биржүүд' : language === 'zh' ? '全球领先交易所' : 'Global Leading Exchanges', desc: language === 'mn' ? 'NYSE, NASDAQ, LSE болон бусад дэлхийн тэргүүлэх хөрөнгийн биржүүд дээр хөрөнгө оруулах боломж.' : language === 'zh' ? '可在NYSE、纳斯达克、伦交所等全球主要交易所投资。' : 'Access NYSE, NASDAQ, LSE and other leading global stock exchanges.' },
     { Icon: ChartBarIcon, title: language === 'mn' ? 'Хувьцаа, бонд, ETF' : language === 'zh' ? '股票、债券、ETF' : 'Stocks, Bonds, ETFs', desc: language === 'mn' ? 'Олон улсын хувьцаа, бонд, ETF болон бусад санхүүгийн хэрэглүүрт хөрөнгө оруулах боломж.' : language === 'zh' ? '可投资国际股票、债券、ETF及其他金融工具。' : 'Invest in international stocks, bonds, ETFs and other financial instruments.' },
-    { Icon: DevicePhoneMobileIcon, title: language === 'mn' ? 'Аппликейшнаар арилжаа' : language === 'zh' ? '手机APP交易' : 'Mobile App Trading', desc: language === 'mn' ? 'М Секьюритисийн аппликейшнаар хаанаас ч гадаад зах зээлд хялбараар нэвтрэх боломж.' : language === 'zh' ? '通过M Securities应用随时随地轻松进入国际市场。' : 'Access foreign markets easily from anywhere via the M Securities app.' },
+    { Icon: DevicePhoneMobileIcon, title: language === 'mn' ? 'Аппликейшнаар арилжаа' : language === 'zh' ? '手机APP交易' : 'Mobile App Trading', desc: language === 'mn' ? 'M Hub цэснээс хаанаас ч гадаад зах зээлд хялбараар нэвтрэх боломж.' : language === 'zh' ? '通过M Hub菜单随时随地轻松进入国际市场。' : 'Access foreign markets easily from anywhere via the M Hub menu.' },
     { Icon: ShieldCheckIcon, title: language === 'mn' ? 'Найдвартай, аюулгүй' : language === 'zh' ? '安全可靠' : 'Safe & Secure', desc: language === 'mn' ? 'СЗХ-ны хяналт дор мэргэжлийн брокерийн үйлчилгээ.' : language === 'zh' ? '在金融监管委员会监管下提供专业经纪服务。' : 'Professional brokerage service under FRC supervision.' },
   ];
 
   const steps = [
-    { num: '01', title: language === 'mn' ? 'Данс нээх' : language === 'zh' ? '开立账户' : 'Open Account', desc: language === 'mn' ? 'М Секьюритисийн аппликейшн татаж аваад данс нээнэ.' : language === 'zh' ? '下载M Securities应用并开立账户。' : 'Download the M Securities app and open an account.' },
+    { num: '01', title: language === 'mn' ? 'Данс нээх' : language === 'zh' ? '开立账户' : 'Open Account', desc: language === 'mn' ? 'M Hub цэс рүү орж дансаа нээнэ.' : language === 'zh' ? '进入M Hub菜单开立账户。' : 'Go to the M Hub menu to open your account.' },
     { num: '02', title: language === 'mn' ? 'Мөнгө байршуулах' : language === 'zh' ? '存入资金' : 'Fund Account', desc: language === 'mn' ? 'Дансандаа мөнгө байршуулж гадаад арилжааны эрх нээнэ.' : language === 'zh' ? '向账户存入资金并开通境外交易权限。' : 'Deposit funds and activate foreign trading access.' },
     { num: '03', title: language === 'mn' ? 'Хөрөнгө оруулах' : language === 'zh' ? '开始投资' : 'Start Investing', desc: language === 'mn' ? 'Дэлхийн хөрөнгийн зах зээлд хөрөнгө оруулж эхэлнэ.' : language === 'zh' ? '开始在全球资本市场投资。' : 'Start investing in global capital markets.' },
   ];
 
   const markets = [
-    { name: 'NYSE', flag: '🇺🇸', desc: language === 'mn' ? 'Нью Йоркийн хөрөнгийн бирж' : language === 'zh' ? '纽约证券交易所' : 'New York Stock Exchange' },
-    { name: 'NASDAQ', flag: '🇺🇸', desc: language === 'mn' ? 'Технологийн тэргүүлэх бирж' : language === 'zh' ? '科技领先交易所' : 'Technology leading exchange' },
-    { name: 'LSE', flag: '🇬🇧', desc: language === 'mn' ? 'Лондонгийн хөрөнгийн бирж' : language === 'zh' ? '伦敦证券交易所' : 'London Stock Exchange' },
-    { name: 'TSE', flag: '🇯🇵', desc: language === 'mn' ? 'Токиогийн хөрөнгийн бирж' : language === 'zh' ? '东京证券交易所' : 'Tokyo Stock Exchange' },
-    { name: 'HKEX', flag: '🇭🇰', desc: language === 'mn' ? 'Хонконгийн хөрөнгийн бирж' : language === 'zh' ? '香港交易所' : 'Hong Kong Stock Exchange' },
-    { name: 'SSE', flag: '🇨🇳', desc: language === 'mn' ? 'Шанхайн хөрөнгийн бирж' : language === 'zh' ? '上海证券交易所' : 'Shanghai Stock Exchange' },
+    { name: 'NYSE', country: 'us', desc: language === 'mn' ? 'Нью Йоркийн хөрөнгийн бирж' : language === 'zh' ? '纽约证券交易所' : 'New York Stock Exchange' },
+    { name: 'NASDAQ', country: 'us', desc: language === 'mn' ? 'Технологийн тэргүүлэх бирж' : language === 'zh' ? '科技领先交易所' : 'Technology leading exchange' },
+    { name: 'LSE', country: 'gb', desc: language === 'mn' ? 'Лондонгийн хөрөнгийн бирж' : language === 'zh' ? '伦敦证券交易所' : 'London Stock Exchange' },
+    { name: 'TSE', country: 'jp', desc: language === 'mn' ? 'Токиогийн хөрөнгийн бирж' : language === 'zh' ? '东京证券交易所' : 'Tokyo Stock Exchange' },
+    { name: 'HKEX', country: 'hk', desc: language === 'mn' ? 'Хонконгийн хөрөнгийн бирж' : language === 'zh' ? '香港交易所' : 'Hong Kong Stock Exchange' },
+    { name: 'SSE', country: 'cn', desc: language === 'mn' ? 'Шанхайн хөрөнгийн бирж' : language === 'zh' ? '上海证券交易所' : 'Shanghai Stock Exchange' },
   ];
 
   return (
@@ -67,15 +67,6 @@ const ForeignTradingPage = () => {
               className="object-cover object-center"
               priority
             />
-            {/* Overlay gradient */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black/25 via-transparent to-transparent" />
-            {/* CTA overlay */}
-            <div className="absolute bottom-6 left-6 sm:bottom-10 sm:left-10">
-              <a href="https://apps.apple.com/mn/app/id1455928972" target="_blank" rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 sm:px-8 sm:py-3.5 rounded-full text-sm font-semibold text-white border border-white/40 hover:bg-white/10 backdrop-blur-sm transition-all hover:-translate-y-0.5">
-                {language === 'mn' ? 'M Bank аппаар эхлэх' : language === 'zh' ? '通过M Bank应用开始' : 'Get Started with M Bank App'} →
-              </a>
-            </div>
           </div>
         </div>
       </section>
@@ -95,13 +86,13 @@ const ForeignTradingPage = () => {
           </h1>
           <p className={`text-lg leading-relaxed max-w-2xl mx-auto mb-10 ${textSecondary}`}>
             {language === 'mn'
-              ? 'М Секьюритис ҮЦК нь одоо гадаад хөрөнгийн зах зээлд нэвтрэх боломжийг танд олгож байна. NYSE, NASDAQ болон дэлхийн тэргүүлэх биржүүд дээр хөрөнгө оруулаарай.'
+              ? 'M Hub цэс ашиглан хаанаас ч дэлхийн хөрөнгийн зах зээлд шууд нэвтэрч, дэлхийн тэргүүлэх биржүүд дээр хөрөнгө оруулах боломжтой боллоо.'
               : language === 'zh'
-              ? 'M Securities 现在为您提供进入境外证券市场的机会。在纽交所、纳斯达克及全球主要交易所进行投资。'
-              : 'M Securities now gives you access to foreign capital markets. Invest on NYSE, NASDAQ and the world\'s leading exchanges.'}
+              ? '通过M Hub菜单，您可以随时随地直接进入全球资本市场，在全球领先交易所进行投资。'
+              : 'With the M Hub menu, you can access global capital markets directly from anywhere and invest on the world\'s leading exchanges.'}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="https://trader.msecurities.mn/" target="_blank" rel="noopener noreferrer"
+            <a href="https://apps.apple.com/mn/app/id1455928972" target="_blank" rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full text-base font-semibold text-white
                 bg-teal-500 hover:bg-teal-400 transition-all hover:-translate-y-0.5 shadow-lg shadow-teal-500/20">
               {language === 'mn' ? 'Арилжаа эхлэх' : language === 'zh' ? '开始交易' : 'Start Trading'}
@@ -159,8 +150,12 @@ const ForeignTradingPage = () => {
               <div key={m.name} className={`group relative overflow-hidden rounded-2xl border p-6 flex items-center gap-4 transition-all duration-300 hover:-translate-y-1
                 ${cardBg} ${cardBorder} ${isDarkMode ? 'hover:border-teal-500/30' : 'hover:border-teal-200 hover:shadow-lg'}`}>
                 <div className="pointer-events-none absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-teal-400/0 group-hover:bg-teal-400/10 blur-2xl transition-all duration-300" />
-                <div className={`relative w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 text-2xl ${iconBg} transition-transform duration-300 group-hover:scale-110`}>
-                  {m.flag}
+                <div className={`relative w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 overflow-hidden ${iconBg} transition-transform duration-300 group-hover:scale-110`}>
+                  <img
+                    src={`https://flagcdn.com/w80/${m.country}.png`}
+                    alt={m.country}
+                    className="w-9 h-6 object-cover rounded-sm shadow-sm"
+                  />
                 </div>
                 <div className="relative">
                   <div className={`text-base font-bold tracking-tight ${textPrimary}`}>{m.name}</div>
@@ -203,14 +198,6 @@ const ForeignTradingPage = () => {
               </div>
             ))}
           </div>
-          <div className="text-center mt-10">
-            <a href="https://apps.apple.com/mn/app/id1455928972" target="_blank" rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-10 py-4 rounded-full text-base font-semibold text-white
-                bg-teal-500 hover:bg-teal-400 transition-all hover:-translate-y-0.5 shadow-lg shadow-teal-500/20">
-              {language === 'mn' ? 'M Bank аппаар эхлэх' : language === 'zh' ? '通过M Bank应用开始' : 'Get Started with M Bank App'}
-              <ArrowTrendingUpIcon className="w-4 h-4" />
-            </a>
-          </div>
         </div>
       </section>
 
@@ -226,7 +213,7 @@ const ForeignTradingPage = () => {
               : 'Invest in global capital markets with M Securities.'}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="https://trader.msecurities.mn/" target="_blank" rel="noopener noreferrer"
+            <a href="https://apps.apple.com/mn/app/id1455928972" target="_blank" rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 px-10 py-4 rounded-full text-base font-semibold text-white
                 bg-teal-500 hover:bg-teal-400 transition-all hover:-translate-y-0.5 shadow-xl shadow-teal-500/20">
               {language === 'mn' ? 'Арилжаа эхлэх' : language === 'zh' ? '开始交易' : 'Start Trading'}
