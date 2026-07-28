@@ -158,7 +158,7 @@ export const translations = {
         },
         phone: {
           label: "Phone",
-          numbers: ["72270008", "89819938", "86095119", "88850673"],
+          numbers: ["72270008", "89819938", "86095119"],
         },
         location: {
           label: "Find us on Google Maps",
@@ -599,7 +599,7 @@ export const translations = {
         },
         phone: {
           label: "Утас",
-          numbers: ["72270008", "89819938", "86095119", "88850673"],
+          numbers: ["72270008", "89819938", "86095119"],
         },
         location: {
           label: "Google Maps дээрээс хайх",
@@ -1030,7 +1030,7 @@ export const translations = {
         },
         phone: {
           label: "电话",
-          numbers: ["72270008", "89819938", "86095119", "88850673"],
+          numbers: ["72270008", "89819938", "86095119"],
         },
         location: {
           label: "在 Google 地图上查找",
