@@ -75,25 +75,18 @@ export default function Home() {
       desc: language === "mn" ? "МХБ-д бүртгэлтэй хувьцаа, бонд, бусад үнэт цаасны арилжаа хийх боломжтой." : language === "zh" ? "在蒙古证券交易所买卖股票、债券及其他证券。" : "Buy and sell stocks, bonds, and securities listed on the Mongolian Stock Exchange.",
     },
     {
-      badge: language === "mn" ? "Андеррайтер" : language === "zh" ? "承销" : "Underwriter",
-      Icon: BuildingLibraryIcon,
-      href: "/services/underwriter",
-      title: t("navbar.sections.underwriter"),
-      desc: language === "mn" ? "Дотоодын компаниудад хөрөнгө босгоход андеррайтерийн мэргэжлийн үйлчилгээ." : language === "zh" ? "为国内企业提供专业承销服务，协助融资。" : "Professional underwriting services to help domestic companies raise capital.",
-    },
-    {
-      badge: language === "mn" ? "Зөвлөх" : language === "zh" ? "顾问" : "Advisory",
-      Icon: BriefcaseIcon,
-      href: "/services/investment-advisor",
-      title: t("navbar.sections.investmentAdvisor"),
-      desc: language === "mn" ? "Таны хөрөнгө оруулалтын зорилгод нийцсэн мэргэжлийн зөвлөгөө, багцын удирдлага." : language === "zh" ? "根据您的投资目标提供专业建议和投资组合管理。" : "Expert investment advice and portfolio management tailored to your goals.",
-    },
-    {
       badge: language === "mn" ? "Уул уурхай" : language === "zh" ? "矿业" : "Mining",
       Icon: WrenchScrewdriverIcon,
       href: "/services/mining-broker",
       title: t("navbar.sections.miningBroker"),
       desc: language === "mn" ? "Монголын Хөрөнгийн Биржээр дамжуулан уул уурхайн бүтээгдэхүүний цахим арилжаа." : language === "zh" ? "通过蒙古证券交易所进行矿产品在线交易。" : "Electronic trading of mining products through the Mongolian Stock Exchange.",
+    },
+    {
+      badge: language === "mn" ? "Шинэ" : language === "zh" ? "全新" : "New",
+      Icon: GlobeAltIcon,
+      href: "/services/foreign-trading",
+      title: t("navbar.sections.foreignTrading"),
+      desc: language === "mn" ? "M Hub цэснээс дэлхийн тэргүүлэх биржүүд дээр гадаад хувьцаа, бонд, ETF-д хөрөнгө оруулах боломж." : language === "zh" ? "通过M Hub菜单在全球领先交易所投资境外股票、债券、ETF。" : "Invest in foreign stocks, bonds, and ETFs on the world's leading exchanges via the M Hub menu.",
     },
   ];
 
