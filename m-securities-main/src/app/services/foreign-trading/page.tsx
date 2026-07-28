@@ -54,7 +54,7 @@ const ForeignTradingPage = () => {
 
       {/* ── BANNER ── */}
       <section className="relative w-full overflow-hidden">
-        <div className="relative w-full" style={{ aspectRatio: '1500/750', maxHeight: '560px' }}>
+        <div className="relative w-full" style={{ aspectRatio: '1920/960' }}>
           <Image
             src="/images/foreign-trading-banner.png"
             alt={language === 'mn' ? 'Гадаад арилжаа нэвтэрлээ' : language === 'zh' ? '境外交易上线' : 'Foreign Trading Launched'}
@@ -101,7 +101,7 @@ const ForeignTradingPage = () => {
               {language === 'mn' ? 'Арилжаа эхлэх' : language === 'zh' ? '开始交易' : 'Start Trading'}
               <ArrowTrendingUpIcon className="w-4 h-4" />
             </a>
-            <a href="https://apps.apple.com/mn/app/m-securities-mn/id6745858855" target="_blank" rel="noopener noreferrer"
+            <a href="https://apps.apple.com/mn/app/id1455928972" target="_blank" rel="noopener noreferrer"
               className={`inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full text-base font-semibold border transition-all hover:-translate-y-0.5
                 ${isDarkMode ? 'bg-white/6 text-white border-white/10 hover:bg-white/10' : 'bg-white text-gray-800 border-gray-200 shadow-sm hover:border-teal-300'}`}>
               <DevicePhoneMobileIcon className="w-4 h-4 text-teal-500" />
@@ -225,7 +225,7 @@ const ForeignTradingPage = () => {
               {language === 'mn' ? 'Арилжаа эхлэх' : language === 'zh' ? '开始交易' : 'Start Trading'}
               <ArrowTrendingUpIcon className="w-5 h-5" />
             </a>
-            <a href="https://apps.apple.com/mn/app/m-securities-mn/id6745858855" target="_blank" rel="noopener noreferrer"
+            <a href="https://apps.apple.com/mn/app/id1455928972" target="_blank" rel="noopener noreferrer"
               className={`inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full text-base font-semibold border transition-all hover:-translate-y-0.5
                 ${isDarkMode ? 'bg-white/5 text-white border-white/10 hover:bg-white/10' : 'bg-white text-gray-800 border-gray-200 shadow-sm'}`}>
               <DevicePhoneMobileIcon className="w-4 h-4 text-teal-500" />
