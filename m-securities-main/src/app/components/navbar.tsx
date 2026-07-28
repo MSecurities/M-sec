@@ -125,8 +125,6 @@ const Navbar = () => {
               {renderDropdownButton('services', t('navbar.services'))}
               {renderDropdownMenu('services', [
                 { href: "/services/broker", label: t('navbar.sections.broker') },
-                { href: "/services/underwriter", label: t('navbar.sections.underwriter') },
-                { href: "/services/investment-advisor", label: t('navbar.sections.investmentAdvisor') },
                 { href: "/services/mining-broker", label: t('navbar.sections.miningBroker') },
                 { href: "/services/foreign-trading", label: t('navbar.sections.foreignTrading') },
               ])}
@@ -188,8 +186,6 @@ const Navbar = () => {
                 ]},
                 { key: 'services', label: t('navbar.services'), items: [
                   { href: "/services/broker", label: t('navbar.sections.broker') },
-                  { href: "/services/underwriter", label: t('navbar.sections.underwriter') },
-                  { href: "/services/investment-advisor", label: t('navbar.sections.investmentAdvisor') },
                   { href: "/services/mining-broker", label: t('navbar.sections.miningBroker') },
                   { href: "/services/foreign-trading", label: t('navbar.sections.foreignTrading') },
                 ]},
