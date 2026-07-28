@@ -128,6 +128,7 @@ const Navbar = () => {
                 { href: "/services/underwriter", label: t('navbar.sections.underwriter') },
                 { href: "/services/investment-advisor", label: t('navbar.sections.investmentAdvisor') },
                 { href: "/services/mining-broker", label: t('navbar.sections.miningBroker') },
+                { href: "/services/foreign-trading", label: t('navbar.sections.foreignTrading') },
               ])}
             </div>
             <div className="relative">
@@ -190,6 +191,7 @@ const Navbar = () => {
                   { href: "/services/underwriter", label: t('navbar.sections.underwriter') },
                   { href: "/services/investment-advisor", label: t('navbar.sections.investmentAdvisor') },
                   { href: "/services/mining-broker", label: t('navbar.sections.miningBroker') },
+                  { href: "/services/foreign-trading", label: t('navbar.sections.foreignTrading') },
                 ]},
                 { key: 'research', label: t('navbar.research'), items: [
                   { href: "/research/news", label: t('navbar.sections.news') },
