@@ -36,13 +36,12 @@ export default function Home() {
     setMouse({ x, y });
   };
 
-  const floatingMarketCards = [
-    { symbol: "BTC", price: "64,219.63", change: "+0.55%", up: true, top: "18%", left: "8%", depth: 22 },
-    { symbol: "AAPL", price: "340.08", change: "+0.94%", up: true, top: "28%", right: "9%", depth: 16 },
-    { symbol: "MSE-TOP20", price: "3,592.77", change: "+0.21%", up: true, bottom: "24%", left: "10%", depth: 14 },
-    { symbol: "USD/MNT", price: "3,592.77", change: "0.00%", up: null, bottom: "16%", right: "7%", depth: 20 },
-    { symbol: "GOLD", price: "4,037.03", change: "+0.21%", up: true, top: "58%", left: "3%", depth: 10 },
-    { symbol: "ETH", price: "1,914.81", change: "-0.59%", up: false, top: "14%", left: "42%", depth: 12 },
+  const floatingMarketSymbols = [
+    { symbol: "BINANCE:BTCUSDT", top: "14%", left: "5%", depth: 42, width: 270 },
+    { symbol: "NASDAQ:AAPL", top: "22%", right: "5%", depth: 34, width: 260 },
+    { symbol: "FX_IDC:USDMNT", bottom: "20%", left: "6%", depth: 38, width: 250 },
+    { symbol: "OANDA:XAUUSD", bottom: "10%", right: "4%", depth: 24, width: 260 },
+    { symbol: "BINANCE:ETHUSDT", top: "8%", left: "37%", depth: 28, width: 250 },
   ];
 
   useEffect(() => {
@@ -141,23 +140,19 @@ export default function Home() {
             <div className="absolute -bottom-20 -right-20 w-[400px] h-[400px] rounded-full blur-[100px] opacity-20 bg-cyan-300" />
           </>}
 
-          {/* Cursor-reactive floating market data cards */}
-          {floatingMarketCards.map((card, i) => (
+          {/* Cursor-reactive floating live market widgets (real logos + real-time data via TradingView) */}
+          {floatingMarketSymbols.map((card) => (
             <div
               key={card.symbol}
-              className={`hidden lg:flex absolute items-center gap-2 px-3 py-2 rounded-xl border backdrop-blur-sm transition-transform duration-300 ease-out
-                ${isDarkMode ? "bg-white/[0.03] border-white/8" : "bg-white/70 border-teal-100 shadow-sm"}`}
+              className="hidden lg:block absolute transition-transform duration-150 ease-out"
               style={{
                 top: card.top, left: card.left, right: card.right, bottom: card.bottom,
+                width: card.width,
                 transform: `translate(${mouse.x * card.depth}px, ${mouse.y * card.depth}px)`,
-                opacity: isDarkMode ? 0.55 : 0.65,
+                opacity: 0.9,
               }}
             >
-              <span className={`text-[11px] font-semibold ${textPrimary}`}>{card.symbol}</span>
-              <span className={`text-[11px] ${textSecondary}`}>{card.price}</span>
-              <span className={`text-[10px] font-medium ${card.up === null ? textSecondary : card.up ? "text-green-400" : "text-red-400"}`}>
-                {card.change}
-              </span>
+              <TVSymbolCard symbol={card.symbol} isDarkMode={isDarkMode} />
             </div>
           ))}
         </div>
@@ -406,5 +401,43 @@ export default function Home() {
       </section>
 
     </div>
+  );
+}
+
+// Live market card — renders a real TradingView "Symbol Info" widget
+// (real logo + real-time price, same trusted data source already used in the footer ticker).
+function TVSymbolCard({ symbol, isDarkMode }: { symbol: string; isDarkMode: boolean }) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    ref.current.innerHTML = "";
+    const container = document.createElement("div");
+    container.className = "tradingview-widget-container";
+    const widget = document.createElement("div");
+    widget.className = "tradingview-widget-container__widget";
+    container.appendChild(widget);
+    ref.current.appendChild(container);
+    const script = document.createElement("script");
+    script.type = "text/javascript";
+    script.async = true;
+    script.src = "https://s3.tradingview.com/external-embedding/embed-widget-symbol-info.js";
+    script.innerHTML = JSON.stringify({
+      symbol,
+      width: "100%",
+      colorTheme: isDarkMode ? "dark" : "light",
+      isTransparent: true,
+      locale: "en",
+    });
+    container.appendChild(script);
+    return () => { if (ref.current) ref.current.innerHTML = ""; };
+  }, [symbol, isDarkMode]);
+
+  return (
+    <div
+      ref={ref}
+      className={`rounded-2xl border overflow-hidden backdrop-blur-sm
+        ${isDarkMode ? "bg-white/[0.04] border-white/10" : "bg-white/85 border-teal-100 shadow-md"}`}
+    />
   );
 }
