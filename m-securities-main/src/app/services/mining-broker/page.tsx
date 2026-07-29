@@ -39,10 +39,10 @@ const MiningBrokerService = () => {
   ];
 
   const miningProducts = [
-    { Icon: ChartBarIcon, name: language === 'mn' ? 'Нүүрс' : language === 'zh' ? '煤炭' : 'Coal', active: true },
-    { Icon: ArrowTrendingUpIcon, name: language === 'mn' ? 'Зэсийн баяжмал' : language === 'zh' ? '铜精矿' : 'Copper Concentrate', active: true },
-    { Icon: GlobeAltIcon, name: language === 'mn' ? 'Төмрийн хүдэр' : language === 'zh' ? '铁矿石' : 'Iron Ore', active: true },
-    { Icon: DocumentTextIcon, name: language === 'mn' ? 'Бусад эрдэс' : language === 'zh' ? '其他矿产' : 'Other Minerals', active: false },
+    { Icon: ChartBarIcon, name: language === 'mn' ? 'Нүүрс' : language === 'zh' ? '煤炭' : 'Coal', active: true, accent: '#64748B' },
+    { Icon: ArrowTrendingUpIcon, name: language === 'mn' ? 'Зэсийн баяжмал' : language === 'zh' ? '铜精矿' : 'Copper Concentrate', active: true, accent: '#D97706' },
+    { Icon: GlobeAltIcon, name: language === 'mn' ? 'Төмрийн хүдэр' : language === 'zh' ? '铁矿石' : 'Iron Ore', active: true, accent: '#B45309' },
+    { Icon: DocumentTextIcon, name: language === 'mn' ? 'Бусад эрдэс' : language === 'zh' ? '其他矿产' : 'Other Minerals', active: false, accent: '#0F9D8A' },
   ];
 
   const laws = [
@@ -176,9 +176,30 @@ const MiningBrokerService = () => {
           </div>
           <div className={`grid grid-cols-1 md:grid-cols-3 rounded-2xl overflow-hidden border ${cardBorder}`}>
             {[
-              { label: language === 'mn' ? 'Өмнөх үе' : language === 'zh' ? '历史阶段' : 'Previous Era', date: '2021 хүртэл', items: [language === 'mn' ? 'Бирж байхгүй' : 'No exchange', language === 'mn' ? 'Шууд гүйлгээ' : 'Direct transactions', language === 'mn' ? 'Үнэ ил тод бус' : 'Non-transparent pricing'], active: false },
-              { label: language === 'mn' ? 'Шилжилтийн үе' : language === 'zh' ? '过渡期' : 'Transition', date: '2022 — 2026.09.30', items: [language === 'mn' ? 'МХБ эсвэл брокер — 2 сонголт' : '2 options: MSE or broker', language === 'mn' ? 'Хагас бирж төвтэй' : 'Semi-centralized', language === 'mn' ? 'Хууль эцэслэгдэж байна' : 'Regulations finalizing'], active: true },
-              { label: language === 'mn' ? 'Бүрэн шилжилт' : language === 'zh' ? '全面转型' : 'Full Transition', date: '2026.10.01-ээс', items: [language === 'mn' ? 'Зөвхөн брокероор' : 'Broker only', language === 'mn' ? 'Бүрэн бирж төвтэй' : 'Fully centralized', language === 'mn' ? 'МХБ үргэлжлүүлнэ' : 'MSE continues'], active: true },
+              {
+                label: language === 'mn' ? 'Өмнөх үе' : language === 'zh' ? '历史阶段' : 'Previous Era',
+                date: language === 'mn' ? '2021 хүртэл' : language === 'zh' ? '截至2021年' : 'Until 2021',
+                items: language === 'mn' ? ['Бирж байхгүй', 'Шууд гүйлгээ', 'Үнэ ил тод бус']
+                  : language === 'zh' ? ['无交易所', '直接交易', '价格不透明']
+                  : ['No exchange', 'Direct transactions', 'Non-transparent pricing'],
+                active: false,
+              },
+              {
+                label: language === 'mn' ? 'Шилжилтийн үе' : language === 'zh' ? '过渡期' : 'Transition',
+                date: language === 'mn' ? '2022 — 2026.09.30' : language === 'zh' ? '2022年—2026年9月30日' : '2022 — Sep 30, 2026',
+                items: language === 'mn' ? ['МХБ эсвэл брокер — 2 сонголт', 'Хагас бирж төвтэй', 'Хууль эцэслэгдэж байна']
+                  : language === 'zh' ? ['MSE或经纪商 — 2种选择', '半集中化', '法规完善中']
+                  : ['2 options: MSE or broker', 'Semi-centralized', 'Regulations finalizing'],
+                active: true,
+              },
+              {
+                label: language === 'mn' ? 'Бүрэн шилжилт' : language === 'zh' ? '全面转型' : 'Full Transition',
+                date: language === 'mn' ? '2026.10.01-ээс' : language === 'zh' ? '2026年10月1日起' : 'From Oct 1, 2026',
+                items: language === 'mn' ? ['Зөвхөн брокероор', 'Бүрэн бирж төвтэй', 'МХБ үргэлжлүүлнэ']
+                  : language === 'zh' ? ['仅限经纪商', '全面集中化', 'MSE持续运营']
+                  : ['Broker only', 'Fully centralized', 'MSE continues'],
+                active: true,
+              },
             ].map((p, i) => (
               <div key={i} className={`p-7 border-r last:border-r-0 ${cardBorder}
                 ${p.active ? isDarkMode ? 'bg-teal-500/5' : 'bg-teal-50/50' : isDarkMode ? 'bg-[#111318]' : 'bg-white'}`}>
@@ -211,15 +232,18 @@ const MiningBrokerService = () => {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {miningProducts.map(p => (
               <div key={p.name} className={`rounded-2xl border p-6 text-center transition-all hover:-translate-y-1
-                ${cardBg} ${cardBorder} ${isDarkMode ? 'hover:border-teal-500/20' : 'hover:border-teal-200 hover:shadow-sm'}`}>
-                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 ${iconBg}`}>
-                  <p.Icon className="w-7 h-7 text-teal-500" />
+                ${cardBg} ${cardBorder}`}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = `${p.accent}55`; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = ''; }}>
+                <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4"
+                  style={{ backgroundColor: `${p.accent}1A` }}>
+                  <p.Icon className="w-7 h-7" style={{ color: p.accent }} />
                 </div>
                 <div className={`text-sm font-semibold mb-3 ${textPrimary}`}>{p.name}</div>
-                <span className={`text-xs px-2.5 py-1 rounded-full font-medium
-                  ${p.active
-                    ? isDarkMode ? 'bg-teal-500/10 text-teal-400' : 'bg-teal-50 text-teal-700'
-                    : isDarkMode ? 'bg-white/5 text-gray-500' : 'bg-gray-100 text-gray-500'}`}>
+                <span className="text-xs px-2.5 py-1 rounded-full font-medium"
+                  style={p.active
+                    ? { backgroundColor: `${p.accent}1A`, color: p.accent }
+                    : { backgroundColor: isDarkMode ? 'rgba(255,255,255,0.05)' : '#F3F4F6', color: isDarkMode ? '#6B7280' : '#6B7280' }}>
                   {p.active
                     ? (language === 'mn' ? 'Арилжаанд' : language === 'zh' ? '交易中' : 'Active')
                     : (language === 'mn' ? 'Удахгүй' : language === 'zh' ? '即将推出' : 'Coming Soon')}
