@@ -262,3 +262,11 @@ textarea:-webkit-autofill:focus {
   box-shadow: 0 0 0px 1000px #f9fafb inset;
   transition: background-color 9999s ease-in-out 0s;
 }
+
+@keyframes aurora-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.aurora-rotate {
+  animation: aurora-rotate 20s linear infinite;
+}
