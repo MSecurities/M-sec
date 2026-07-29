@@ -36,11 +36,11 @@ export default function Home() {
     setMouse({ x, y });
   };
 
-  const floatingMarketSymbols = [
-    { symbol: "BINANCE:BTCUSDT", top: "24%", left: "4%", depth: 30, width: 260 },
-    { symbol: "NASDAQ:AAPL", top: "30%", right: "4%", depth: 24, width: 260 },
-    { symbol: "FX_IDC:USDMNT", bottom: "16%", left: "5%", depth: 26, width: 260 },
-    { symbol: "OANDA:XAUUSD", bottom: "8%", right: "4%", depth: 18, width: 260 },
+  const floatingChartBadges = [
+    { Icon: ArrowTrendingUpIcon, top: "22%", left: "6%", depth: 30, size: 46, rotate: -6 },
+    { Icon: ChartBarIcon, top: "30%", right: "7%", depth: 24, size: 40, rotate: 4 },
+    { Icon: GlobeAltIcon, bottom: "20%", left: "8%", depth: 26, size: 42, rotate: 3 },
+    { Icon: SparklesIcon, bottom: "14%", right: "6%", depth: 18, size: 36, rotate: -4 },
   ];
 
   useEffect(() => {
@@ -139,19 +139,41 @@ export default function Home() {
             <div className="absolute -bottom-20 -right-20 w-[400px] h-[400px] rounded-full blur-[100px] opacity-20 bg-cyan-300" />
           </>}
 
-          {/* Cursor-reactive floating live market widgets (real logos + real-time data via TradingView) */}
-          {floatingMarketSymbols.map((card) => (
+          {/* Decorative market-style visuals — pure style, no live data (real data already shown in the ticker below) */}
+          <svg className="absolute inset-0 w-full h-full opacity-[0.15]" preserveAspectRatio="none" viewBox="0 0 1200 800">
+            <polyline
+              points="0,560 90,520 180,580 270,460 360,500 450,380 540,420 630,320 720,360 810,260 900,300 990,200 1080,240 1200,150"
+              fill="none"
+              stroke={isDarkMode ? "#5DCAA5" : "#0F9D8A"}
+              strokeWidth="3"
+              style={{ transform: `translate(${mouse.x * 8}px, ${mouse.y * 8}px)` }}
+            />
+            <polyline
+              points="0,560 90,520 180,580 270,460 360,500 450,380 540,420 630,320 720,360 810,260 900,300 990,200 1080,240 1200,150 1200,800 0,800"
+              fill={isDarkMode ? "#5DCAA5" : "#0F9D8A"}
+              fillOpacity="0.06"
+              stroke="none"
+              style={{ transform: `translate(${mouse.x * 8}px, ${mouse.y * 8}px)` }}
+            />
+          </svg>
+
+          {/* Cursor-reactive floating chart icon badges (decorative only) */}
+          {floatingChartBadges.map((badge, i) => (
             <div
-              key={card.symbol}
-              className="hidden lg:block absolute transition-transform duration-150 ease-out"
+              key={i}
+              className="hidden lg:flex absolute items-center justify-center rounded-2xl border transition-transform duration-150 ease-out"
               style={{
-                top: card.top, left: card.left, right: card.right, bottom: card.bottom,
-                width: card.width,
-                transform: `translate(${mouse.x * card.depth}px, ${mouse.y * card.depth}px)`,
-                opacity: 0.9,
+                top: badge.top, left: badge.left, right: badge.right, bottom: badge.bottom,
+                width: badge.size + 28, height: badge.size + 28,
+                transform: `translate(${mouse.x * badge.depth}px, ${mouse.y * badge.depth}px) rotate(${badge.rotate}deg)`,
+                background: isDarkMode ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.6)",
+                borderColor: isDarkMode ? "rgba(255,255,255,0.08)" : "rgba(15,157,138,0.15)",
               }}
             >
-              <TVSymbolCard symbol={card.symbol} isDarkMode={isDarkMode} width={card.width} />
+              <badge.Icon
+                className="text-teal-400"
+                style={{ width: badge.size * 0.5, height: badge.size * 0.5, opacity: isDarkMode ? 0.5 : 0.6 }}
+              />
             </div>
           ))}
         </div>
@@ -400,44 +422,5 @@ export default function Home() {
       </section>
 
     </div>
-  );
-}
-
-// Live market card — renders a real TradingView "Symbol Info" widget
-// (real logo + real-time price, same trusted data source already used in the footer ticker).
-function TVSymbolCard({ symbol, isDarkMode, width }: { symbol: string; isDarkMode: boolean; width: number }) {
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!ref.current) return;
-    ref.current.innerHTML = "";
-    const container = document.createElement("div");
-    container.className = "tradingview-widget-container";
-    const widget = document.createElement("div");
-    widget.className = "tradingview-widget-container__widget";
-    container.appendChild(widget);
-    ref.current.appendChild(container);
-    const script = document.createElement("script");
-    script.type = "text/javascript";
-    script.async = true;
-    script.src = "https://s3.tradingview.com/external-embedding/embed-widget-symbol-info.js";
-    script.innerHTML = JSON.stringify({
-      symbol,
-      width,
-      colorTheme: isDarkMode ? "dark" : "light",
-      isTransparent: true,
-      locale: "en",
-    });
-    container.appendChild(script);
-    return () => { if (ref.current) ref.current.innerHTML = ""; };
-  }, [symbol, isDarkMode, width]);
-
-  return (
-    <div
-      ref={ref}
-      style={{ width }}
-      className={`rounded-2xl border overflow-hidden backdrop-blur-sm
-        ${isDarkMode ? "bg-white/[0.04] border-white/10" : "bg-white/85 border-teal-100 shadow-md"}`}
-    />
   );
 }
