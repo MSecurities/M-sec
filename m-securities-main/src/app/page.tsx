@@ -2,7 +2,7 @@
 "use client";
 
 import { useLanguage } from "./context/LanguageContext";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDarkMode } from "./context/DarkModeContext";
 import Link from "next/link";
 import {
@@ -25,6 +25,25 @@ export default function Home() {
   const { t, language } = useLanguage();
   const { isDarkMode } = useDarkMode();
   const tradingViewRef = useRef<HTMLDivElement>(null);
+  const heroRef = useRef<HTMLDivElement>(null);
+  const [mouse, setMouse] = useState({ x: 0, y: 0 });
+
+  const handleHeroMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = heroRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+    const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+    setMouse({ x, y });
+  };
+
+  const floatingMarketCards = [
+    { symbol: "BTC", price: "64,219.63", change: "+0.55%", up: true, top: "18%", left: "8%", depth: 22 },
+    { symbol: "AAPL", price: "340.08", change: "+0.94%", up: true, top: "28%", right: "9%", depth: 16 },
+    { symbol: "MSE-TOP20", price: "3,592.77", change: "+0.21%", up: true, bottom: "24%", left: "10%", depth: 14 },
+    { symbol: "USD/MNT", price: "3,592.77", change: "0.00%", up: null, bottom: "16%", right: "7%", depth: 20 },
+    { symbol: "GOLD", price: "4,037.03", change: "+0.21%", up: true, top: "58%", left: "3%", depth: 10 },
+    { symbol: "ETH", price: "1,914.81", change: "-0.59%", up: false, top: "14%", left: "42%", depth: 12 },
+  ];
 
   useEffect(() => {
     if (!tradingViewRef.current) return;
@@ -108,15 +127,39 @@ export default function Home() {
     <div className={`min-h-screen transition-colors duration-300 ${bg}`}>
 
       {/* ── HERO ── */}
-      <section className={`relative min-h-screen flex flex-col items-center justify-center text-center overflow-hidden pt-20
+      <section ref={heroRef} onMouseMove={handleHeroMouseMove}
+        className={`relative min-h-screen flex flex-col items-center justify-center text-center overflow-hidden pt-20
         ${isDarkMode ? "bg-[#080a0d]" : "bg-gradient-to-br from-teal-50 via-white to-cyan-50"}`}>
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full blur-[120px]
-            ${isDarkMode ? "opacity-10 bg-teal-400" : "opacity-30 bg-teal-200"}`} />
+          <div
+            className={`absolute top-1/2 left-1/2 w-[800px] h-[800px] rounded-full blur-[120px] transition-transform duration-300 ease-out
+              ${isDarkMode ? "opacity-10 bg-teal-400" : "opacity-30 bg-teal-200"}`}
+            style={{ transform: `translate(calc(-50% + ${mouse.x * 18}px), calc(-50% + ${mouse.y * 18}px))` }}
+          />
           {!isDarkMode && <>
             <div className="absolute -top-20 -left-20 w-[400px] h-[400px] rounded-full blur-[100px] opacity-20 bg-teal-300" />
             <div className="absolute -bottom-20 -right-20 w-[400px] h-[400px] rounded-full blur-[100px] opacity-20 bg-cyan-300" />
           </>}
+
+          {/* Cursor-reactive floating market data cards */}
+          {floatingMarketCards.map((card, i) => (
+            <div
+              key={card.symbol}
+              className={`hidden lg:flex absolute items-center gap-2 px-3 py-2 rounded-xl border backdrop-blur-sm transition-transform duration-300 ease-out
+                ${isDarkMode ? "bg-white/[0.03] border-white/8" : "bg-white/70 border-teal-100 shadow-sm"}`}
+              style={{
+                top: card.top, left: card.left, right: card.right, bottom: card.bottom,
+                transform: `translate(${mouse.x * card.depth}px, ${mouse.y * card.depth}px)`,
+                opacity: isDarkMode ? 0.55 : 0.65,
+              }}
+            >
+              <span className={`text-[11px] font-semibold ${textPrimary}`}>{card.symbol}</span>
+              <span className={`text-[11px] ${textSecondary}`}>{card.price}</span>
+              <span className={`text-[10px] font-medium ${card.up === null ? textSecondary : card.up ? "text-green-400" : "text-red-400"}`}>
+                {card.change}
+              </span>
+            </div>
+          ))}
         </div>
 
         <div className="relative z-10 max-w-4xl mx-auto px-6">
