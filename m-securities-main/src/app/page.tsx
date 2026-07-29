@@ -26,22 +26,6 @@ export default function Home() {
   const { isDarkMode } = useDarkMode();
   const tradingViewRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
-  const [mouse, setMouse] = useState({ x: 0, y: 0 });
-
-  const handleHeroMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = heroRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
-    const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
-    setMouse({ x, y });
-  };
-
-  const floatingChartBadges = [
-    { Icon: ArrowTrendingUpIcon, top: "22%", left: "6%", depth: 30, size: 46, rotate: -6 },
-    { Icon: ChartBarIcon, top: "30%", right: "7%", depth: 24, size: 40, rotate: 4 },
-    { Icon: GlobeAltIcon, bottom: "20%", left: "8%", depth: 26, size: 42, rotate: 3 },
-    { Icon: SparklesIcon, bottom: "14%", right: "6%", depth: 18, size: 36, rotate: -4 },
-  ];
 
   useEffect(() => {
     if (!tradingViewRef.current) return;
@@ -125,58 +109,22 @@ export default function Home() {
     <div className={`min-h-screen transition-colors duration-300 ${bg}`}>
 
       {/* ── HERO ── */}
-      <section ref={heroRef} onMouseMove={handleHeroMouseMove}
+      <section ref={heroRef}
         className={`relative min-h-screen flex flex-col items-center justify-center text-center overflow-hidden pt-20
         ${isDarkMode ? "bg-[#080a0d]" : "bg-gradient-to-br from-teal-50 via-white to-cyan-50"}`}>
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div
-            className={`absolute top-1/2 left-1/2 w-[800px] h-[800px] rounded-full blur-[120px] transition-transform duration-300 ease-out
+            className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full blur-[120px]
               ${isDarkMode ? "opacity-10 bg-teal-400" : "opacity-30 bg-teal-200"}`}
-            style={{ transform: `translate(calc(-50% + ${mouse.x * 18}px), calc(-50% + ${mouse.y * 18}px))` }}
           />
           {!isDarkMode && <>
             <div className="absolute -top-20 -left-20 w-[400px] h-[400px] rounded-full blur-[100px] opacity-20 bg-teal-300" />
             <div className="absolute -bottom-20 -right-20 w-[400px] h-[400px] rounded-full blur-[100px] opacity-20 bg-cyan-300" />
           </>}
-
-          {/* Decorative market-style visuals — pure style, no live data (real data already shown in the ticker below) */}
-          <svg className="absolute inset-0 w-full h-full opacity-[0.15]" preserveAspectRatio="none" viewBox="0 0 1200 800">
-            <polyline
-              points="0,560 90,520 180,580 270,460 360,500 450,380 540,420 630,320 720,360 810,260 900,300 990,200 1080,240 1200,150"
-              fill="none"
-              stroke={isDarkMode ? "#5DCAA5" : "#0F9D8A"}
-              strokeWidth="3"
-              style={{ transform: `translate(${mouse.x * 8}px, ${mouse.y * 8}px)` }}
-            />
-            <polyline
-              points="0,560 90,520 180,580 270,460 360,500 450,380 540,420 630,320 720,360 810,260 900,300 990,200 1080,240 1200,150 1200,800 0,800"
-              fill={isDarkMode ? "#5DCAA5" : "#0F9D8A"}
-              fillOpacity="0.06"
-              stroke="none"
-              style={{ transform: `translate(${mouse.x * 8}px, ${mouse.y * 8}px)` }}
-            />
-          </svg>
-
-          {/* Cursor-reactive floating chart icon badges (decorative only) */}
-          {floatingChartBadges.map((badge, i) => (
-            <div
-              key={i}
-              className="hidden lg:flex absolute items-center justify-center rounded-2xl border transition-transform duration-150 ease-out"
-              style={{
-                top: badge.top, left: badge.left, right: badge.right, bottom: badge.bottom,
-                width: badge.size + 28, height: badge.size + 28,
-                transform: `translate(${mouse.x * badge.depth}px, ${mouse.y * badge.depth}px) rotate(${badge.rotate}deg)`,
-                background: isDarkMode ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.6)",
-                borderColor: isDarkMode ? "rgba(255,255,255,0.08)" : "rgba(15,157,138,0.15)",
-              }}
-            >
-              <badge.Icon
-                className="text-teal-400"
-                style={{ width: badge.size * 0.5, height: badge.size * 0.5, opacity: isDarkMode ? 0.5 : 0.6 }}
-              />
-            </div>
-          ))}
         </div>
+
+        {/* Cursor-reactive particle network — pure style, no live data (real data already shown in the ticker below) */}
+        <ParticleNetwork isDarkMode={isDarkMode} />
 
         <div className="relative z-10 max-w-4xl mx-auto px-6">
           <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium mb-12 border
@@ -422,5 +370,124 @@ export default function Home() {
       </section>
 
     </div>
+  );
+}
+
+// Cursor-reactive particle network background — decorative only, no data.
+// Dots drift slowly and connect with lines when close together or near the cursor.
+function ParticleNetwork({ isDarkMode }: { isDarkMode: boolean }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let width = 0, height = 0, dpr = 1;
+    let particles: { x: number; y: number; vx: number; vy: number }[] = [];
+    const mouse = { x: -9999, y: -9999 };
+    let rafId = 0;
+
+    const dotColor = isDarkMode ? "93, 202, 165" : "15, 157, 138";
+    const lineColor = isDarkMode ? "93, 202, 165" : "15, 157, 138";
+
+    const resize = () => {
+      const parent = canvas.parentElement;
+      if (!parent) return;
+      width = parent.clientWidth;
+      height = parent.clientHeight;
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const count = Math.min(90, Math.floor((width * height) / 16000));
+      particles = Array.from({ length: count }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 0.35,
+        vy: (Math.random() - 0.5) * 0.35,
+      }));
+    };
+
+    const onMouseMove = (e: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+    };
+    const onMouseLeave = () => { mouse.x = -9999; mouse.y = -9999; };
+
+    const linkDist = 130;
+    const mouseDist = 200;
+
+    const tick = () => {
+      ctx.clearRect(0, 0, width, height);
+
+      for (const p of particles) {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > width) p.vx *= -1;
+        if (p.y < 0 || p.y > height) p.vy *= -1;
+        p.x = Math.max(0, Math.min(width, p.x));
+        p.y = Math.max(0, Math.min(height, p.y));
+      }
+
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const a = particles[i], b = particles[j];
+          const dx = a.x - b.x, dy = a.y - b.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < linkDist) {
+            ctx.strokeStyle = `rgba(${lineColor}, ${0.16 * (1 - dist / linkDist)})`;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.stroke();
+          }
+        }
+
+        const dxm = particles[i].x - mouse.x, dym = particles[i].y - mouse.y;
+        const dm = Math.sqrt(dxm * dxm + dym * dym);
+        if (dm < mouseDist) {
+          ctx.strokeStyle = `rgba(${lineColor}, ${0.35 * (1 - dm / mouseDist)})`;
+          ctx.lineWidth = 1.2;
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(mouse.x, mouse.y);
+          ctx.stroke();
+        }
+
+        ctx.fillStyle = `rgba(${dotColor}, 0.55)`;
+        ctx.beginPath();
+        ctx.arc(particles[i].x, particles[i].y, 1.8, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      rafId = requestAnimationFrame(tick);
+    };
+
+    resize();
+    tick();
+    window.addEventListener("resize", resize);
+    canvas.parentElement?.addEventListener("mousemove", onMouseMove);
+    canvas.parentElement?.addEventListener("mouseleave", onMouseLeave);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener("resize", resize);
+      canvas.parentElement?.removeEventListener("mousemove", onMouseMove);
+      canvas.parentElement?.removeEventListener("mouseleave", onMouseLeave);
+    };
+  }, [isDarkMode]);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="absolute inset-0 w-full h-full pointer-events-none"
+    />
   );
 }
