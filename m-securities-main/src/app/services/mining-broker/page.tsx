@@ -71,6 +71,25 @@ const MiningBrokerService = () => {
             <div className="absolute -top-20 -left-20 w-[350px] h-[350px] rounded-full blur-[100px] opacity-20 bg-teal-300" />
             <div className="absolute -bottom-20 -right-20 w-[350px] h-[350px] rounded-full blur-[100px] opacity-20 bg-cyan-300" />
           </>}
+
+          {/* Uul uurkhai vibe — faint fractured rock / ore-vein texture, pure style */}
+          <svg className={`absolute inset-0 w-full h-full ${isDarkMode ? 'opacity-[0.16]' : 'opacity-[0.08]'}`} preserveAspectRatio="none" viewBox="0 0 1400 700">
+            <defs>
+              <linearGradient id="oreVein" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#D97706" />
+                <stop offset="50%" stopColor="#F59E0B" />
+                <stop offset="100%" stopColor="#0F9D8A" />
+              </linearGradient>
+            </defs>
+            {/* Angular rock-fragment silhouettes */}
+            <polygon points="0,700 0,520 180,460 260,560 140,700" fill={isDarkMode ? '#1a1d24' : '#0F9D8A'} fillOpacity="0.5" />
+            <polygon points="1400,700 1400,480 1220,420 1120,560 1260,700" fill={isDarkMode ? '#1a1d24' : '#0F9D8A'} fillOpacity="0.5" />
+            <polygon points="1400,0 1400,140 1240,90 1180,0" fill={isDarkMode ? '#1a1d24' : '#0F9D8A'} fillOpacity="0.4" />
+            {/* Cracks / ore veins running through the rock */}
+            <path d="M 30,680 L 120,540 L 95,480 L 190,410 L 175,340" fill="none" stroke="url(#oreVein)" strokeWidth="3" strokeLinecap="round" />
+            <path d="M 1370,660 L 1260,540 L 1290,470 L 1200,400 L 1220,320" fill="none" stroke="url(#oreVein)" strokeWidth="3" strokeLinecap="round" />
+            <path d="M 1380,20 L 1300,80 L 1320,130 L 1250,170" fill="none" stroke="url(#oreVein)" strokeWidth="2.5" strokeLinecap="round" />
+          </svg>
         </div>
 
         <div className="relative z-10 max-w-3xl mx-auto">
@@ -174,13 +193,6 @@ const MiningBrokerService = () => {
                 </ul>
               </div>
             ))}
-          </div>
-          <div className={`mt-4 p-4 rounded-xl text-sm flex items-start gap-2
-            ${isDarkMode ? 'bg-white/3 text-gray-400 border border-white/5' : 'bg-amber-50 text-amber-700 border border-amber-200'}`}>
-            <ShieldCheckIcon className="w-4 h-4 flex-shrink-0 mt-0.5" />
-            {language === 'mn' ? '2026 оны 10 сараас заавал брокерийн дансаар дамжуулах шаардлагатай. Одоо бүртгүүлэхийг зөвлөж байна.'
-              : language === 'zh' ? '2026年10月起必须通过经纪商账户进行交易，建议立即注册。'
-              : 'From October 2026, trading must go through a broker account. Register now.'}
           </div>
         </div>
       </section>
@@ -312,13 +324,6 @@ const MiningBrokerService = () => {
                       <span className={`text-sm pt-1 ${textSecondary}`}>{c.text}</span>
                     </div>
                   ))}
-                </div>
-                <div className={`mt-6 p-4 rounded-xl text-sm flex items-start gap-2
-                  ${isDarkMode ? 'bg-teal-500/8 text-teal-300 border border-teal-500/15' : 'bg-teal-50 text-teal-700 border border-teal-100'}`}>
-                  <ShieldCheckIcon className="w-4 h-4 flex-shrink-0 mt-0.5" />
-                  {language === 'mn' ? '2026 оны 10 сараас уул уурхайн арилжаанд оролцохдоо заавал брокерийн дансаар дамжуулах шаардлагатай.'
-                    : language === 'zh' ? '2026年10月起，参与矿产品交易须通过经纪商账户进行。'
-                    : 'From October 2026, mining product trading must go through a broker account.'}
                 </div>
                 <a href="https://mining.msecurities.mn/dashboard/app" target="_blank" rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full text-sm font-semibold text-white mt-6
