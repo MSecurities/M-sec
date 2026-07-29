@@ -375,7 +375,7 @@ export default function Home() {
 // Cursor-reactive aurora blob background — decorative only, no data.
 // A soft rotating color-blur ring with a dark hole in the middle where the hero text sits.
 function AuroraBlob({ mouse, isDarkMode }: { mouse: { x: number; y: number }; isDarkMode: boolean }) {
-  const maskImg = "radial-gradient(circle, transparent 0%, transparent 30%, black 46%, black 64%, transparent 88%)";
+  const maskImg = "radial-gradient(circle, transparent 0%, transparent 26%, black 40%, black 68%, transparent 90%)";
   return (
     <div
       className="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none z-0"
@@ -391,10 +391,10 @@ function AuroraBlob({ mouse, isDarkMode }: { mouse: { x: number; y: number }; is
           height: 820,
           borderRadius: "9999px",
           background: isDarkMode
-            ? "conic-gradient(from 0deg, #0F9D8A, #2DD4BF, #5EEAD4, #22C1DE, #0F9D8A)"
-            : "conic-gradient(from 0deg, #0F9D8A, #2DD4BF, #7DEBD1, #38BDF8, #0F9D8A)",
-          filter: "blur(95px)",
-          opacity: isDarkMode ? 0.55 : 0.5,
+            ? "conic-gradient(from 0deg, #0B4A42, #34D399, #22D3EE, #0B4A42, #2DD4BF, #0B4A42)"
+            : "conic-gradient(from 0deg, #0F9D8A, #6EE7B7, #38BDF8, #0F9D8A, #2DD4BF, #0F9D8A)",
+          filter: "blur(48px)",
+          opacity: isDarkMode ? 0.75 : 0.65,
           WebkitMaskImage: maskImg,
           maskImage: maskImg,
         }}
