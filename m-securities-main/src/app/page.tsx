@@ -121,6 +121,26 @@ export default function Home() {
             <div className="absolute -top-20 -left-20 w-[400px] h-[400px] rounded-full blur-[100px] opacity-20 bg-teal-300" />
             <div className="absolute -bottom-20 -right-20 w-[400px] h-[400px] rounded-full blur-[100px] opacity-20 bg-cyan-300" />
           </>}
+
+          {/* Faint candlestick chart silhouette — pure market-chart texture, no real values */}
+          <svg className="absolute bottom-0 left-0 w-full h-[45%] opacity-[0.09]" preserveAspectRatio="none" viewBox="0 0 1400 300">
+            {[
+              { x: 40, y: 180, h: 60, w: 40, up: true }, { x: 110, y: 150, h: 90, w: 30, up: false }, { x: 180, y: 200, h: 40, w: 55, up: true },
+              { x: 250, y: 120, h: 110, w: 25, up: true }, { x: 320, y: 210, h: 30, w: 60, up: false }, { x: 390, y: 160, h: 80, w: 35, up: true },
+              { x: 460, y: 140, h: 100, w: 28, up: true }, { x: 530, y: 190, h: 45, w: 50, up: false }, { x: 600, y: 100, h: 130, w: 20, up: true },
+              { x: 670, y: 170, h: 70, w: 38, up: true }, { x: 740, y: 130, h: 115, w: 24, up: false }, { x: 810, y: 205, h: 35, w: 58, up: true },
+              { x: 880, y: 110, h: 125, w: 22, up: true }, { x: 950, y: 175, h: 65, w: 42, up: false }, { x: 1020, y: 90, h: 140, w: 18, up: true },
+              { x: 1090, y: 150, h: 95, w: 30, up: true }, { x: 1160, y: 60, h: 155, w: 15, up: true }, { x: 1230, y: 120, h: 110, w: 26, up: false },
+              { x: 1300, y: 40, h: 165, w: 12, up: true },
+            ].map((c, i) => (
+              <g key={i}>
+                <line x1={c.x + c.w / 2} y1={c.y - 15} x2={c.x + c.w / 2} y2={c.y + c.h + 15}
+                  stroke={c.up ? "#0F9D8A" : "#D95A5A"} strokeWidth="2" />
+                <rect x={c.x} y={c.y} width={c.w} height={c.h}
+                  fill={c.up ? "#0F9D8A" : "#D95A5A"} />
+              </g>
+            ))}
+          </svg>
         </div>
 
         {/* Cursor-reactive particle network — pure style, no live data (real data already shown in the ticker below) */}
@@ -385,13 +405,15 @@ function ParticleNetwork({ isDarkMode }: { isDarkMode: boolean }) {
     if (!ctx) return;
 
     let width = 0, height = 0, dpr = 1;
-    let particles: { x: number; y: number; vx: number; vy: number; pulse: number; pulseSpeed: number; isHub: boolean }[] = [];
+    let particles: { x: number; y: number; vx: number; vy: number; pulse: number; pulseSpeed: number; isHub: boolean; up: boolean }[] = [];
     const mouse = { x: -9999, y: -9999 };
     let rafId = 0;
 
-    const dotColor = isDarkMode ? "125, 226, 191" : "15, 157, 138";
-    const lineColor = isDarkMode ? "110, 216, 180" : "15, 157, 138";
-    const pulseColor = isDarkMode ? "180, 255, 230" : "6, 214, 160";
+    const upColor = isDarkMode ? "93, 226, 165" : "15, 157, 110";
+    const downColor = isDarkMode ? "232, 130, 130" : "217, 90, 90";
+    const upGlow = isDarkMode ? "170, 255, 210" : "6, 214, 130";
+    const downGlow = isDarkMode ? "255, 170, 170" : "224, 70, 70";
+    const lineColorNeutral = isDarkMode ? "110, 216, 180" : "15, 157, 138";
 
     const resize = () => {
       const parent = canvas.parentElement;
@@ -414,6 +436,7 @@ function ParticleNetwork({ isDarkMode }: { isDarkMode: boolean }) {
         pulse: Math.random() * Math.PI * 2,
         pulseSpeed: 0.006 + Math.random() * 0.01,
         isHub: idx % 9 === 0,
+        up: Math.random() < 0.68,
       }));
     };
 
@@ -446,7 +469,9 @@ function ParticleNetwork({ isDarkMode }: { isDarkMode: boolean }) {
           const dx = a.x - b.x, dy = a.y - b.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < linkDist) {
-            ctx.strokeStyle = `rgba(${lineColor}, ${0.32 * (1 - dist / linkDist)})`;
+            const sameSentiment = a.up === b.up;
+            const col = sameSentiment ? (a.up ? upColor : downColor) : lineColorNeutral;
+            ctx.strokeStyle = `rgba(${col}, ${0.3 * (1 - dist / linkDist)})`;
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
@@ -458,7 +483,7 @@ function ParticleNetwork({ isDarkMode }: { isDarkMode: boolean }) {
         const dxm = particles[i].x - mouse.x, dym = particles[i].y - mouse.y;
         const dm = Math.sqrt(dxm * dxm + dym * dym);
         if (dm < mouseDist) {
-          ctx.strokeStyle = `rgba(${lineColor}, ${0.6 * (1 - dm / mouseDist)})`;
+          ctx.strokeStyle = `rgba(${lineColorNeutral}, ${0.6 * (1 - dm / mouseDist)})`;
           ctx.lineWidth = 1.3;
           ctx.beginPath();
           ctx.moveTo(particles[i].x, particles[i].y);
@@ -466,21 +491,24 @@ function ParticleNetwork({ isDarkMode }: { isDarkMode: boolean }) {
           ctx.stroke();
         }
 
-        // Trade-pulse glow — simulates market activity ticking across the network
+        // Trade-pulse glow — simulates market activity ticking across the network,
+        // color-coded like a live ticker: teal/green = up, coral/red = down
         const p = particles[i];
         const pulseWave = (Math.sin(p.pulse) + 1) / 2; // 0..1
         const baseRadius = p.isHub ? 3 : 1.8;
         const radius = baseRadius + pulseWave * (p.isHub ? 2.5 : 1.2);
         const glowAlpha = 0.55 + pulseWave * 0.4;
+        const dotCol = p.up ? upColor : downColor;
+        const glowCol = p.up ? upGlow : downGlow;
 
         if (pulseWave > 0.7) {
           ctx.beginPath();
-          ctx.fillStyle = `rgba(${pulseColor}, ${(pulseWave - 0.7) * 0.5})`;
+          ctx.fillStyle = `rgba(${glowCol}, ${(pulseWave - 0.7) * 0.5})`;
           ctx.arc(p.x, p.y, radius * 2.4, 0, Math.PI * 2);
           ctx.fill();
         }
 
-        ctx.fillStyle = `rgba(${p.isHub ? pulseColor : dotColor}, ${Math.min(glowAlpha, 0.95)})`;
+        ctx.fillStyle = `rgba(${p.isHub ? glowCol : dotCol}, ${Math.min(glowAlpha, 0.95)})`;
         ctx.beginPath();
         ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
         ctx.fill();
