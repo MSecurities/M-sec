@@ -1,4 +1,5 @@
 'use client';
+import { useState } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
 import { useDarkMode } from '../../context/DarkModeContext';
 import {
@@ -17,9 +18,13 @@ import {
   ClockIcon,
 } from '@heroicons/react/24/outline';
 
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/mojgbavj';
+
 const BrokerService = () => {
   const { t, language } = useLanguage();
   const { isDarkMode } = useDarkMode();
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', company: '', message: '' });
+  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
 
   const bg = isDarkMode ? 'bg-[#080a0d]' : 'bg-gradient-to-b from-teal-50/60 via-white to-teal-50/30';
   const cardBg = isDarkMode ? 'bg-[#111318]' : 'bg-white';
@@ -196,24 +201,71 @@ const BrokerService = () => {
                   <ArrowTrendingUpIcon className="w-4 h-4" />
                 </a>
               </div>
-              <form className="space-y-3">
-                {[
-                  { type: 'text', placeholder: language === 'mn' ? 'Бүтэн нэр' : language === 'zh' ? '全名' : 'Full Name' },
-                  { type: 'email', placeholder: language === 'mn' ? 'Имэйл хаяг' : language === 'zh' ? '电子邮件' : 'Email Address' },
-                  { type: 'tel', placeholder: language === 'mn' ? 'Утасны дугаар' : language === 'zh' ? '电话号码' : 'Phone Number' },
-                  { type: 'text', placeholder: language === 'mn' ? 'Компанийн нэр' : language === 'zh' ? '公司名称' : 'Company Name' },
-                ].map(f => (
-                  <input key={f.placeholder} type={f.type} placeholder={f.placeholder}
-                    className={`w-full px-4 py-3 rounded-xl border text-sm outline-none transition-colors
-                      ${isDarkMode ? 'bg-white/4 border-white/8 text-white placeholder-gray-600 focus:border-teal-500/50' : 'bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400 focus:border-teal-400'}`} />
-                ))}
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  setStatus('sending');
+                  try {
+                    const res = await fetch(FORMSPREE_ENDPOINT, {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                      body: JSON.stringify({
+                        name: formData.name,
+                        email: formData.email,
+                        phone: formData.phone,
+                        company: formData.company,
+                        message: formData.message,
+                        _subject: language === 'mn' ? 'Брокерын үйлчилгээ - Холбоо барих хүсэлт' : language === 'zh' ? '经纪服务 - 联系请求' : 'Broker Service - Contact Request',
+                      }),
+                    });
+                    if (res.ok) {
+                      setStatus('success');
+                      setFormData({ name: '', email: '', phone: '', company: '', message: '' });
+                    } else {
+                      setStatus('error');
+                    }
+                  } catch {
+                    setStatus('error');
+                  }
+                }}
+                className="space-y-3"
+              >
+                <input required type="text" placeholder={language === 'mn' ? 'Бүтэн нэр' : language === 'zh' ? '全名' : 'Full Name'}
+                  value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className={`w-full px-4 py-3 rounded-xl border text-sm outline-none transition-colors
+                    ${isDarkMode ? 'bg-white/4 border-white/8 text-white placeholder-gray-600 focus:border-teal-500/50' : 'bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400 focus:border-teal-400'}`} />
+                <input required type="email" placeholder={language === 'mn' ? 'Имэйл хаяг' : language === 'zh' ? '电子邮件' : 'Email Address'}
+                  value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  className={`w-full px-4 py-3 rounded-xl border text-sm outline-none transition-colors
+                    ${isDarkMode ? 'bg-white/4 border-white/8 text-white placeholder-gray-600 focus:border-teal-500/50' : 'bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400 focus:border-teal-400'}`} />
+                <input type="tel" placeholder={language === 'mn' ? 'Утасны дугаар' : language === 'zh' ? '电话号码' : 'Phone Number'}
+                  value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  className={`w-full px-4 py-3 rounded-xl border text-sm outline-none transition-colors
+                    ${isDarkMode ? 'bg-white/4 border-white/8 text-white placeholder-gray-600 focus:border-teal-500/50' : 'bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400 focus:border-teal-400'}`} />
+                <input type="text" placeholder={language === 'mn' ? 'Компанийн нэр' : language === 'zh' ? '公司名称' : 'Company Name'}
+                  value={formData.company} onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                  className={`w-full px-4 py-3 rounded-xl border text-sm outline-none transition-colors
+                    ${isDarkMode ? 'bg-white/4 border-white/8 text-white placeholder-gray-600 focus:border-teal-500/50' : 'bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400 focus:border-teal-400'}`} />
                 <textarea rows={3} placeholder={language === 'mn' ? 'Санал, хүсэлт' : language === 'zh' ? '留言' : 'Message'}
+                  value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   className={`w-full px-4 py-3 rounded-xl border text-sm outline-none transition-colors resize-none
                     ${isDarkMode ? 'bg-white/4 border-white/8 text-white placeholder-gray-600 focus:border-teal-500/50' : 'bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400 focus:border-teal-400'}`} />
-                <button type="submit"
-                  className="w-full py-3.5 rounded-xl text-sm font-semibold text-white bg-teal-500 hover:bg-teal-400 transition-all">
-                  {language === 'mn' ? 'Хүсэлт илгээх' : language === 'zh' ? '提交申请' : 'Submit Request'} →
+                <button type="submit" disabled={status === 'sending'}
+                  className="w-full py-3.5 rounded-xl text-sm font-semibold text-white bg-teal-500 hover:bg-teal-400 transition-all disabled:opacity-60 disabled:cursor-not-allowed">
+                  {status === 'sending'
+                    ? (language === 'mn' ? 'Илгээж байна...' : language === 'zh' ? '发送中...' : 'Sending...')
+                    : <>{language === 'mn' ? 'Хүсэлт илгээх' : language === 'zh' ? '提交申请' : 'Submit Request'} →</>}
                 </button>
+                {status === 'success' && (
+                  <p className="text-sm text-teal-400 text-center pt-1">
+                    {language === 'mn' ? 'Амжилттай илгээгдлээ! Бид тантай удахгүй холбогдоно.' : language === 'zh' ? '发送成功！我们会尽快与您联系。' : 'Sent successfully! We will contact you soon.'}
+                  </p>
+                )}
+                {status === 'error' && (
+                  <p className="text-sm text-red-400 text-center pt-1">
+                    {language === 'mn' ? 'Алдаа гарлаа. Дахин оролдоно уу.' : language === 'zh' ? '出现错误，请重试。' : 'Something went wrong. Please try again.'}
+                  </p>
+                )}
               </form>
             </div>
           </div>
