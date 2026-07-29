@@ -236,3 +236,29 @@ body {
   .responsive-text { @apply text-sm sm:text-base lg:text-lg; }
   .section-padding { @apply py-12 sm:py-16 lg:py-20; }
 }
+
+/* Fix browser autofill forcing a white background + white text in dark mode */
+.dark input:-webkit-autofill,
+.dark input:-webkit-autofill:hover,
+.dark input:-webkit-autofill:focus,
+.dark textarea:-webkit-autofill,
+.dark textarea:-webkit-autofill:hover,
+.dark textarea:-webkit-autofill:focus {
+  -webkit-text-fill-color: #ffffff;
+  -webkit-box-shadow: 0 0 0px 1000px #1a1d24 inset;
+  box-shadow: 0 0 0px 1000px #1a1d24 inset;
+  caret-color: #ffffff;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus {
+  -webkit-text-fill-color: #111827;
+  -webkit-box-shadow: 0 0 0px 1000px #f9fafb inset;
+  box-shadow: 0 0 0px 1000px #f9fafb inset;
+  transition: background-color 9999s ease-in-out 0s;
+}
