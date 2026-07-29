@@ -37,11 +37,10 @@ export default function Home() {
   };
 
   const floatingMarketSymbols = [
-    { symbol: "BINANCE:BTCUSDT", top: "14%", left: "5%", depth: 42, width: 270 },
-    { symbol: "NASDAQ:AAPL", top: "22%", right: "5%", depth: 34, width: 260 },
-    { symbol: "FX_IDC:USDMNT", bottom: "20%", left: "6%", depth: 38, width: 250 },
-    { symbol: "OANDA:XAUUSD", bottom: "10%", right: "4%", depth: 24, width: 260 },
-    { symbol: "BINANCE:ETHUSDT", top: "8%", left: "37%", depth: 28, width: 250 },
+    { symbol: "BINANCE:BTCUSDT", top: "24%", left: "4%", depth: 30, width: 260 },
+    { symbol: "NASDAQ:AAPL", top: "30%", right: "4%", depth: 24, width: 260 },
+    { symbol: "FX_IDC:USDMNT", bottom: "16%", left: "5%", depth: 26, width: 260 },
+    { symbol: "OANDA:XAUUSD", bottom: "8%", right: "4%", depth: 18, width: 260 },
   ];
 
   useEffect(() => {
@@ -152,7 +151,7 @@ export default function Home() {
                 opacity: 0.9,
               }}
             >
-              <TVSymbolCard symbol={card.symbol} isDarkMode={isDarkMode} />
+              <TVSymbolCard symbol={card.symbol} isDarkMode={isDarkMode} width={card.width} />
             </div>
           ))}
         </div>
@@ -406,7 +405,7 @@ export default function Home() {
 
 // Live market card — renders a real TradingView "Symbol Info" widget
 // (real logo + real-time price, same trusted data source already used in the footer ticker).
-function TVSymbolCard({ symbol, isDarkMode }: { symbol: string; isDarkMode: boolean }) {
+function TVSymbolCard({ symbol, isDarkMode, width }: { symbol: string; isDarkMode: boolean; width: number }) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -424,18 +423,19 @@ function TVSymbolCard({ symbol, isDarkMode }: { symbol: string; isDarkMode: bool
     script.src = "https://s3.tradingview.com/external-embedding/embed-widget-symbol-info.js";
     script.innerHTML = JSON.stringify({
       symbol,
-      width: "100%",
+      width,
       colorTheme: isDarkMode ? "dark" : "light",
       isTransparent: true,
       locale: "en",
     });
     container.appendChild(script);
     return () => { if (ref.current) ref.current.innerHTML = ""; };
-  }, [symbol, isDarkMode]);
+  }, [symbol, isDarkMode, width]);
 
   return (
     <div
       ref={ref}
+      style={{ width }}
       className={`rounded-2xl border overflow-hidden backdrop-blur-sm
         ${isDarkMode ? "bg-white/[0.04] border-white/10" : "bg-white/85 border-teal-100 shadow-md"}`}
     />
