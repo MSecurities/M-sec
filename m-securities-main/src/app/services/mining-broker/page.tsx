@@ -169,9 +169,9 @@ const MiningBrokerService = () => {
               {language === 'mn' ? 'Бүрэн биржийн арилжаанд шилжих замнал' : language === 'zh' ? '全面转向交易所交易的路线图' : 'Roadmap to Full Exchange Trading'}
             </h2>
             <p className={`text-base max-w-xl mx-auto ${textSecondary}`}>
-              {language === 'mn' ? '2026 оны 10 дугаар сараас уул уурхайн арилжааг зөвхөн брокероор дамжуулж гүйцэтгэнэ.'
-                : language === 'zh' ? '2026年10月起，矿产品交易须通过经纪商进行。'
-                : 'From October 2026, mining product trading must be conducted through brokers.'}
+              {language === 'mn' ? '2027 оны 4 дүгээр сараас уул уурхайн арилжааг зөвхөн брокероор дамжуулж гүйцэтгэнэ.'
+                : language === 'zh' ? '2027年4月起，矿产品交易须通过经纪商进行。'
+                : 'From April 2027, mining product trading must be conducted through brokers.'}
             </p>
           </div>
           <div className={`grid grid-cols-1 md:grid-cols-3 rounded-2xl overflow-hidden border ${cardBorder}`}>
@@ -186,7 +186,7 @@ const MiningBrokerService = () => {
               },
               {
                 label: language === 'mn' ? 'Шилжилтийн үе' : language === 'zh' ? '过渡期' : 'Transition',
-                date: language === 'mn' ? '2022 — 2026.09.30' : language === 'zh' ? '2022年—2026年9月30日' : '2022 — Sep 30, 2026',
+                date: language === 'mn' ? '2022 — 2027.03.31' : language === 'zh' ? '2022年—2027年3月31日' : '2022 — Mar 31, 2027',
                 items: language === 'mn' ? ['МХБ эсвэл брокер — 2 сонголт', 'Хагас бирж төвтэй', 'Хууль эцэслэгдэж байна']
                   : language === 'zh' ? ['MSE或经纪商 — 2种选择', '半集中化', '法规完善中']
                   : ['2 options: MSE or broker', 'Semi-centralized', 'Regulations finalizing'],
@@ -194,7 +194,7 @@ const MiningBrokerService = () => {
               },
               {
                 label: language === 'mn' ? 'Бүрэн шилжилт' : language === 'zh' ? '全面转型' : 'Full Transition',
-                date: language === 'mn' ? '2026.10.01-ээс' : language === 'zh' ? '2026年10月1日起' : 'From Oct 1, 2026',
+                date: language === 'mn' ? '2027.04.01-ээс' : language === 'zh' ? '2027年4月1日起' : 'From Apr 1, 2027',
                 items: language === 'mn' ? ['Зөвхөн брокероор', 'Бүрэн бирж төвтэй', 'МХБ үргэлжлүүлнэ']
                   : language === 'zh' ? ['仅限经纪商', '全面集中化', 'MSE持续运营']
                   : ['Broker only', 'Fully centralized', 'MSE continues'],
