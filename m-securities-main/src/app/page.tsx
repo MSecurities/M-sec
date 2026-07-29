@@ -26,15 +26,6 @@ export default function Home() {
   const { isDarkMode } = useDarkMode();
   const tradingViewRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
-  const [mouse, setMouse] = useState({ x: 0, y: 0 });
-
-  const handleHeroMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = heroRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
-    const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
-    setMouse({ x, y });
-  };
 
   useEffect(() => {
     if (!tradingViewRef.current) return;
@@ -118,12 +109,22 @@ export default function Home() {
     <div className={`min-h-screen transition-colors duration-300 ${bg}`}>
 
       {/* ── HERO ── */}
-      <section ref={heroRef} onMouseMove={handleHeroMouseMove}
+      <section ref={heroRef}
         className={`relative min-h-screen flex flex-col items-center justify-center text-center overflow-hidden pt-20
         ${isDarkMode ? "bg-[#080a0d]" : "bg-gradient-to-br from-teal-50 via-white to-cyan-50"}`}>
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div
+            className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full blur-[120px]
+              ${isDarkMode ? "opacity-10 bg-teal-400" : "opacity-30 bg-teal-200"}`}
+          />
+          {!isDarkMode && <>
+            <div className="absolute -top-20 -left-20 w-[400px] h-[400px] rounded-full blur-[100px] opacity-20 bg-teal-300" />
+            <div className="absolute -bottom-20 -right-20 w-[400px] h-[400px] rounded-full blur-[100px] opacity-20 bg-cyan-300" />
+          </>}
+        </div>
 
-        {/* Cursor-reactive aurora blob — pure style, no live data (real data already shown in the ticker below) */}
-        <AuroraBlob mouse={mouse} isDarkMode={isDarkMode} />
+        {/* Cursor-reactive particle network — pure style, no live data (real data already shown in the ticker below) */}
+        <ParticleNetwork isDarkMode={isDarkMode} />
 
         <div className="relative z-10 max-w-4xl mx-auto px-6">
           <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium mb-12 border
@@ -372,47 +373,149 @@ export default function Home() {
   );
 }
 
-// Cursor-reactive aurora blob background — decorative only, no data.
-// A soft rotating color-blur ring with a dark hole in the middle where the hero text sits.
-function AuroraBlob({ mouse, isDarkMode }: { mouse: { x: number; y: number }; isDarkMode: boolean }) {
-  const maskImg = "radial-gradient(circle, transparent 0%, transparent 26%, black 40%, black 68%, transparent 90%)";
+// Cursor-reactive particle network background — decorative only, no data.
+// Dots drift slowly and connect with lines when close together or near the cursor.
+// Dots pulse like trade activity, color-coded green (up) / coral (down).
+function ParticleNetwork({ isDarkMode }: { isDarkMode: boolean }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let width = 0, height = 0, dpr = 1;
+    let particles: { x: number; y: number; vx: number; vy: number; pulse: number; pulseSpeed: number; isHub: boolean; up: boolean }[] = [];
+    const mouse = { x: -9999, y: -9999 };
+    let rafId = 0;
+
+    const upColor = isDarkMode ? "93, 226, 165" : "15, 157, 110";
+    const downColor = isDarkMode ? "232, 130, 130" : "217, 90, 90";
+    const upGlow = isDarkMode ? "170, 255, 210" : "6, 214, 130";
+    const downGlow = isDarkMode ? "255, 170, 170" : "224, 70, 70";
+    const lineColorNeutral = isDarkMode ? "110, 216, 180" : "15, 157, 138";
+
+    const resize = () => {
+      const parent = canvas.parentElement;
+      if (!parent) return;
+      width = parent.clientWidth;
+      height = parent.clientHeight;
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const count = Math.min(90, Math.floor((width * height) / 16000));
+      particles = Array.from({ length: count }, (_, idx) => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 0.35,
+        vy: (Math.random() - 0.5) * 0.35,
+        pulse: Math.random() * Math.PI * 2,
+        pulseSpeed: 0.006 + Math.random() * 0.01,
+        isHub: idx % 9 === 0,
+        up: Math.random() < 0.68,
+      }));
+    };
+
+    const onMouseMove = (e: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+    };
+    const onMouseLeave = () => { mouse.x = -9999; mouse.y = -9999; };
+
+    const linkDist = 150;
+    const mouseDist = 220;
+
+    const tick = () => {
+      ctx.clearRect(0, 0, width, height);
+
+      for (const p of particles) {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > width) p.vx *= -1;
+        if (p.y < 0 || p.y > height) p.vy *= -1;
+        p.x = Math.max(0, Math.min(width, p.x));
+        p.y = Math.max(0, Math.min(height, p.y));
+        p.pulse += p.pulseSpeed;
+      }
+
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const a = particles[i], b = particles[j];
+          const dx = a.x - b.x, dy = a.y - b.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < linkDist) {
+            const sameSentiment = a.up === b.up;
+            const col = sameSentiment ? (a.up ? upColor : downColor) : lineColorNeutral;
+            ctx.strokeStyle = `rgba(${col}, ${0.3 * (1 - dist / linkDist)})`;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.stroke();
+          }
+        }
+
+        const dxm = particles[i].x - mouse.x, dym = particles[i].y - mouse.y;
+        const dm = Math.sqrt(dxm * dxm + dym * dym);
+        if (dm < mouseDist) {
+          ctx.strokeStyle = `rgba(${lineColorNeutral}, ${0.6 * (1 - dm / mouseDist)})`;
+          ctx.lineWidth = 1.3;
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(mouse.x, mouse.y);
+          ctx.stroke();
+        }
+
+        // Trade-pulse glow — simulates market activity ticking across the network,
+        // color-coded like a live ticker: teal/green = up, coral/red = down
+        const p = particles[i];
+        const pulseWave = (Math.sin(p.pulse) + 1) / 2; // 0..1
+        const baseRadius = p.isHub ? 3 : 1.8;
+        const radius = baseRadius + pulseWave * (p.isHub ? 2.5 : 1.2);
+        const glowAlpha = 0.55 + pulseWave * 0.4;
+        const dotCol = p.up ? upColor : downColor;
+        const glowCol = p.up ? upGlow : downGlow;
+
+        if (pulseWave > 0.7) {
+          ctx.beginPath();
+          ctx.fillStyle = `rgba(${glowCol}, ${(pulseWave - 0.7) * 0.5})`;
+          ctx.arc(p.x, p.y, radius * 2.4, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        ctx.fillStyle = `rgba(${p.isHub ? glowCol : dotCol}, ${Math.min(glowAlpha, 0.95)})`;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      rafId = requestAnimationFrame(tick);
+    };
+
+    resize();
+    tick();
+    window.addEventListener("resize", resize);
+    canvas.parentElement?.addEventListener("mousemove", onMouseMove);
+    canvas.parentElement?.addEventListener("mouseleave", onMouseLeave);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener("resize", resize);
+      canvas.parentElement?.removeEventListener("mousemove", onMouseMove);
+      canvas.parentElement?.removeEventListener("mouseleave", onMouseLeave);
+    };
+  }, [isDarkMode]);
+
   return (
-    <div
-      className="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none z-0"
-      style={{
-        transform: `translate(${mouse.x * 16}px, ${mouse.y * 16}px)`,
-        transition: "transform 0.35s ease-out",
-      }}
-    >
-      <div
-        className="aurora-rotate"
-        style={{
-          width: 820,
-          height: 820,
-          borderRadius: "9999px",
-          background: isDarkMode
-            ? "conic-gradient(from 0deg, #0B4A42, #34D399, #22D3EE, #0B4A42, #2DD4BF, #0B4A42)"
-            : "conic-gradient(from 0deg, #0F9D8A, #6EE7B7, #38BDF8, #0F9D8A, #2DD4BF, #0F9D8A)",
-          filter: "blur(48px)",
-          opacity: isDarkMode ? 0.75 : 0.65,
-          WebkitMaskImage: maskImg,
-          maskImage: maskImg,
-        }}
-      />
-      <div
-        className="aurora-rotate absolute"
-        style={{
-          width: 560,
-          height: 560,
-          borderRadius: "9999px",
-          border: isDarkMode ? "2px solid rgba(94,234,212,0.5)" : "2px solid rgba(15,157,138,0.4)",
-          boxShadow: isDarkMode
-            ? "0 0 60px 10px rgba(94,234,212,0.35)"
-            : "0 0 60px 10px rgba(45,212,191,0.3)",
-          animationDirection: "reverse",
-          animationDuration: "14s",
-        }}
-      />
-    </div>
+    <canvas
+      ref={canvasRef}
+      className="absolute inset-0 w-full h-full pointer-events-none"
+    />
   );
 }
