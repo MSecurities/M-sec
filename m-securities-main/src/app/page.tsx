@@ -385,12 +385,13 @@ function ParticleNetwork({ isDarkMode }: { isDarkMode: boolean }) {
     if (!ctx) return;
 
     let width = 0, height = 0, dpr = 1;
-    let particles: { x: number; y: number; vx: number; vy: number }[] = [];
+    let particles: { x: number; y: number; vx: number; vy: number; pulse: number; pulseSpeed: number; isHub: boolean }[] = [];
     const mouse = { x: -9999, y: -9999 };
     let rafId = 0;
 
-    const dotColor = isDarkMode ? "93, 202, 165" : "15, 157, 138";
-    const lineColor = isDarkMode ? "93, 202, 165" : "15, 157, 138";
+    const dotColor = isDarkMode ? "125, 226, 191" : "15, 157, 138";
+    const lineColor = isDarkMode ? "110, 216, 180" : "15, 157, 138";
+    const pulseColor = isDarkMode ? "180, 255, 230" : "6, 214, 160";
 
     const resize = () => {
       const parent = canvas.parentElement;
@@ -405,11 +406,14 @@ function ParticleNetwork({ isDarkMode }: { isDarkMode: boolean }) {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
       const count = Math.min(90, Math.floor((width * height) / 16000));
-      particles = Array.from({ length: count }, () => ({
+      particles = Array.from({ length: count }, (_, idx) => ({
         x: Math.random() * width,
         y: Math.random() * height,
         vx: (Math.random() - 0.5) * 0.35,
         vy: (Math.random() - 0.5) * 0.35,
+        pulse: Math.random() * Math.PI * 2,
+        pulseSpeed: 0.006 + Math.random() * 0.01,
+        isHub: idx % 9 === 0,
       }));
     };
 
@@ -420,8 +424,8 @@ function ParticleNetwork({ isDarkMode }: { isDarkMode: boolean }) {
     };
     const onMouseLeave = () => { mouse.x = -9999; mouse.y = -9999; };
 
-    const linkDist = 130;
-    const mouseDist = 200;
+    const linkDist = 150;
+    const mouseDist = 220;
 
     const tick = () => {
       ctx.clearRect(0, 0, width, height);
@@ -433,6 +437,7 @@ function ParticleNetwork({ isDarkMode }: { isDarkMode: boolean }) {
         if (p.y < 0 || p.y > height) p.vy *= -1;
         p.x = Math.max(0, Math.min(width, p.x));
         p.y = Math.max(0, Math.min(height, p.y));
+        p.pulse += p.pulseSpeed;
       }
 
       for (let i = 0; i < particles.length; i++) {
@@ -441,7 +446,7 @@ function ParticleNetwork({ isDarkMode }: { isDarkMode: boolean }) {
           const dx = a.x - b.x, dy = a.y - b.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < linkDist) {
-            ctx.strokeStyle = `rgba(${lineColor}, ${0.16 * (1 - dist / linkDist)})`;
+            ctx.strokeStyle = `rgba(${lineColor}, ${0.32 * (1 - dist / linkDist)})`;
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
@@ -453,17 +458,31 @@ function ParticleNetwork({ isDarkMode }: { isDarkMode: boolean }) {
         const dxm = particles[i].x - mouse.x, dym = particles[i].y - mouse.y;
         const dm = Math.sqrt(dxm * dxm + dym * dym);
         if (dm < mouseDist) {
-          ctx.strokeStyle = `rgba(${lineColor}, ${0.35 * (1 - dm / mouseDist)})`;
-          ctx.lineWidth = 1.2;
+          ctx.strokeStyle = `rgba(${lineColor}, ${0.6 * (1 - dm / mouseDist)})`;
+          ctx.lineWidth = 1.3;
           ctx.beginPath();
           ctx.moveTo(particles[i].x, particles[i].y);
           ctx.lineTo(mouse.x, mouse.y);
           ctx.stroke();
         }
 
-        ctx.fillStyle = `rgba(${dotColor}, 0.55)`;
+        // Trade-pulse glow — simulates market activity ticking across the network
+        const p = particles[i];
+        const pulseWave = (Math.sin(p.pulse) + 1) / 2; // 0..1
+        const baseRadius = p.isHub ? 3 : 1.8;
+        const radius = baseRadius + pulseWave * (p.isHub ? 2.5 : 1.2);
+        const glowAlpha = 0.55 + pulseWave * 0.4;
+
+        if (pulseWave > 0.7) {
+          ctx.beginPath();
+          ctx.fillStyle = `rgba(${pulseColor}, ${(pulseWave - 0.7) * 0.5})`;
+          ctx.arc(p.x, p.y, radius * 2.4, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        ctx.fillStyle = `rgba(${p.isHub ? pulseColor : dotColor}, ${Math.min(glowAlpha, 0.95)})`;
         ctx.beginPath();
-        ctx.arc(particles[i].x, particles[i].y, 1.8, 0, Math.PI * 2);
+        ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
         ctx.fill();
       }
 
