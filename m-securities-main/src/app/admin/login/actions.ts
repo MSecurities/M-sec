@@ -29,11 +29,16 @@ export async function passwordLogin(password: string): Promise<{ ok: boolean; er
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
   if (error) {
+    if (error.code === 'over_request_rate_limit') return { ok: false, error: 'Хэт олон оролдлого. Түр хүлээгээд дахин оролдоно уу.' };
+    // only a rejected password counts as a wrong guess; anything else is a setup or network problem
+    if (error.code !== 'invalid_credentials') {
+      console.error('[admin login]', error.code, error.status, error.message);
+      return { ok: false, error: `Нэвтрэх үйлчилгээтэй холбогдож чадсангүй (${error.code ?? error.status ?? 'алдаа'}). Серверийн Supabase тохиргоог шалгана уу.` };
+    }
     fails.set(ip, cur ? { ...cur, n: cur.n + 1 } : { n: 1, first: now });
     await new Promise(r => setTimeout(r, 600)); // slows guessing a little more
-    if (error.code === 'over_request_rate_limit') return { ok: false, error: 'Хэт олон оролдлого. Түр хүлээгээд дахин оролдоно уу.' };
     return { ok: false, error: 'Нууц үг буруу байна.' };
   }
   fails.delete(ip);
