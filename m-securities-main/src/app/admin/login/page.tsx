@@ -27,7 +27,18 @@ export default function AdminLogin() {
     e.preventDefault();
     if (!pw || busy || ok) return;
     setBusy(true); setError('');
-    const r = await passwordLogin(pw).catch(() => ({ ok: false, error: 'Сервертэй холбогдож чадсангүй.' }));
+    let reached = true;
+    const r = await passwordLogin(pw).catch((err: unknown) => {
+      reached = false;
+      // a page loaded before a new deployment no longer finds its server action: reload once
+      if (/Server Action/i.test(String(err)) && !sessionStorage.getItem('admin-login-reloaded')) {
+        sessionStorage.setItem('admin-login-reloaded', '1');
+        location.reload();
+        return { ok: false, error: 'Сайт шинэчлэгдсэн байна. Хуудас дахин ачаалж байна…' };
+      }
+      return { ok: false, error: 'Сервертэй холбогдож чадсангүй. Хуудсаа дахин ачаалаад (F5) оролдоно уу.' };
+    });
+    if (reached) sessionStorage.removeItem('admin-login-reloaded');
     setBusy(false);
     if (!r.ok) {
       setError(r.error ?? 'Нууц үг буруу байна.');
