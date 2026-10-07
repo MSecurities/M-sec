@@ -4,11 +4,20 @@ import { NextResponse, type NextRequest } from 'next/server';
 // Admin area only: refreshes the Supabase session cookie and sends signed-out visitors to the login page.
 // Whether the signed-in user is an admin is checked again in the admin layout and enforced by RLS.
 export async function middleware(request: NextRequest) {
+  // Without the Supabase settings (they are inlined at build time) say so instead of crashing the route
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL, key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+  if (!url || !key) {
+    return new NextResponse(
+      'Админ хэсгийн тохиргоо дутуу байна: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, ADMIN_EMAIL хувьсагчдыг серверт тохируулаад дахин build (Redeploy) хийнэ үү.',
+      { status: 503, headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store' } },
+    );
+  }
+
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+    url,
+    key,
     {
       cookies: {
         getAll() {
