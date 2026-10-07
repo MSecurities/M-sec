@@ -1,0 +1,59 @@
+/* Site footer, ported from reference/msecurities-hero.html ("FOOTER").
+   Tokens repeat the home sections' (home/home.module.css) because the footer renders on every page;
+   dark mode follows the site's `.dark` class on <html>. */
+.ft{
+  --bg:#F3FBF9; --surface:#FFFFFF; --ink:#0F1B2D; --muted:#5B6878; --line:rgba(15,27,45,.10);
+  --teal:#14B8A6; --teal-2:#2DD4BF; --dot:20,184,166;
+  --ease:cubic-bezier(.22,1,.36,1); --spring:cubic-bezier(.34,1.56,.64,1);
+}
+:global(.dark) .ft{ --bg:#06121C; --surface:#0E1E2C; --ink:#EAF2F7; --muted:#9AAABB; --line:rgba(234,242,247,.12);
+  --teal:#2DD4BF; --teal-2:#5EEAD4; --dot:45,212,191;}
+
+.ft{position:relative;background:var(--bg);border-top:1px solid var(--line);overflow:hidden;color:var(--ink);
+  font-family:var(--font-onest),system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;line-height:normal;transition:background .5s}
+:where(.ft) :focus-visible{outline:2px solid var(--teal);outline-offset:3px;border-radius:10px}
+/* the price ticker is fixed to the bottom of the other pages; keep the last row clear of it */
+.tick{padding-bottom:60px}
+.ft-in{max-width:1280px;margin:0 auto;padding:80px 64px 40px;display:grid;grid-template-columns:1.2fr .85fr 1.45fr 1fr;gap:48px}
+.ft-logo{display:flex;width:fit-content}
+.ft-logo img{display:block;height:38px;width:auto}
+.ft-brand p{margin:18px 0 0;color:var(--muted);font-size:15.5px}
+.soc{display:flex;gap:10px;margin-top:24px}
+.soc a{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);display:grid;place-items:center;color:var(--ink);transition:border-color .3s,color .3s,transform .4s var(--spring),background .3s}
+.soc a:hover{border-color:var(--teal);color:var(--teal);background:rgba(var(--dot),.08);transform:translateY(-3px)}
+.ft-col{display:flex;flex-direction:column;gap:12px}
+.ft-col h4{margin:4px 0 8px;font-size:12.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.ft-col a{font-size:15.5px;color:var(--ink);width:fit-content;background:linear-gradient(currentColor,currentColor) 0 100%/0 1px no-repeat;transition:background-size .4s var(--ease),color .3s}
+.ft-col a:hover{color:var(--teal);background-size:100% 1px}
+.ft-col address{font-style:normal;margin-top:6px;font-size:14.5px;line-height:1.6;color:var(--muted)}
+/* contact rows: icon tile + text (the hover underline sits on the text only) */
+.ft-col .ci{display:flex;align-items:center;gap:12px;background:none}
+.ft-col address.ci{align-items:flex-start}
+.cic{flex:0 0 32px;width:32px;height:32px;border-radius:10px;display:grid;place-items:center;color:var(--teal);background:rgba(var(--dot),.08);border:1px solid rgba(var(--dot),.18);
+  transition:background .3s,border-color .3s,transform .4s var(--spring)}
+address .cic{margin-top:-4px}
+.ci:hover .cic{background:rgba(var(--dot),.16);border-color:var(--teal);transform:translateY(-2px)}
+.ct{background:linear-gradient(currentColor,currentColor) 0 100%/0 1px no-repeat;transition:background-size .4s var(--ease)}
+.ci:hover .ct{background-size:100% 1px}
+.store{display:flex!important;align-items:center;gap:12px;height:56px;padding:0 18px;border-radius:14px;border:1px solid var(--line);background:var(--surface)!important;width:100%!important;max-width:240px;transition:border-color .3s,transform .4s var(--spring)!important}
+.store:hover{border-color:var(--teal);transform:translateY(-2px)}
+.store span{display:flex;flex-direction:column;font-size:16px;font-weight:700;line-height:1.1}
+.store small{font-size:11px;font-weight:500;color:var(--muted)}
+/* giant outlined wordmark; JS writes --wv (1 → 0) as it scrolls in, letters rise one after another */
+.wordmark{display:flex;justify-content:center;padding:0 2vw;font-weight:800;font-size:clamp(56px,12.6vw,210px);line-height:.82;letter-spacing:-.06em;user-select:none;
+  color:transparent;-webkit-text-stroke:1px rgba(var(--dot),.35);margin-top:20px}
+.wordmark span{display:inline-block;transform:translateY(calc(var(--wv,1) * (60% + var(--i) * 6%)));opacity:calc(1 - var(--wv,1) * .8);transition:color .4s}
+.wordmark:hover span{color:rgba(var(--dot),.08)}
+/* the brand "M" stands out: filled teal like the logo mark, the rest stays outlined */
+.wordmark .wm-m{-webkit-text-stroke:0;color:transparent;background:linear-gradient(170deg,var(--teal-2) 10%,var(--teal) 75%);-webkit-background-clip:text;background-clip:text;
+  filter:drop-shadow(0 14px 34px rgba(var(--dot),.35))}
+.ft-bot{max-width:1280px;margin:0 auto;padding:22px 64px 34px;display:flex;justify-content:space-between;align-items:center;gap:16px;border-top:1px solid var(--line);font-size:13.5px;color:var(--muted);position:relative;background:var(--bg)}
+.tags{display:flex;gap:8px}.tags i{font-style:normal;padding:6px 12px;border-radius:999px;border:1px solid var(--line);font-size:12.5px}
+@media (max-width:960px){
+  .ft-in{grid-template-columns:1fr 1fr;padding:56px 22px 30px;gap:36px}.ft-bot{flex-direction:column;align-items:flex-start;padding:20px 22px 30px}
+}
+@media (max-width:520px){ .ft-in{grid-template-columns:1fr} }
+@media (prefers-reduced-motion:reduce){
+  .wordmark{--wv:0}
+  .ft *{transition-duration:.01ms!important}
+}

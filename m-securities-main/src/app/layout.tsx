@@ -2,6 +2,8 @@
 import './styles/globals.css';
 import Navbar from './components/navbar';
 import Footer from './components/footer';
+import SiteChrome from './components/SiteChrome';
+import { THEME_INIT_SCRIPT } from './context/themeScript';
 import { Providers } from './context/providers';
 import { Roboto } from 'next/font/google';
 import defaultMetadata from './metadata';
@@ -43,15 +45,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="manifest" href="/site.webmanifest" />
         <link rel="shortcut icon" href="/favicon.ico" />
         <link rel="canonical" href="https://msecurities.mn" />
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>
       <body className="font-sans">
         <Providers>
           <div className="min-h-screen bg-white dark:bg-[#26282c] transition-colors duration-200">
-            <Navbar />
+            <SiteChrome><Navbar /></SiteChrome>
             <main>
               {children}
             </main>
-            <Footer />
+            <SiteChrome><Footer /></SiteChrome>
           </div>
         </Providers>
       </body>

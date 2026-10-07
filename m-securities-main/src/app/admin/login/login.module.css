@@ -1,0 +1,83 @@
+/* Admin sign-in, after reference/msecurities-admin-login.html: dotted horizon, glass card, a single
+   password field with caps-lock hint and reveal toggle, shake on error, unlock on success. */
+.root{
+  --bg:#F4FAF9; --surface:#FFFFFF; --ink:#0F1B2D; --muted:#5B6878; --line:rgba(15,27,45,.10);
+  --teal:#14B8A6; --teal-ink:#FFFFFF; --dot:20,184,166; --gold:#D99A1E; --err:#E5484D;
+  --ease:cubic-bezier(.22,1,.36,1); --spring:cubic-bezier(.34,1.56,.64,1);
+  position:fixed;inset:0;z-index:60;overflow:hidden;display:grid;place-items:center;background:var(--bg);color:var(--ink);
+  font-family:var(--font-onest),system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;
+  padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)
+}
+:global(.dark) .root{--bg:#06121C;--surface:#0E1E2C;--ink:#EAF2F7;--muted:#9AAABB;--line:rgba(234,242,247,.12);--teal:#2DD4BF;--teal-ink:#04211E;--dot:45,212,191;--gold:#F0B848;--err:#FF6B6E}
+.root button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+.root :focus-visible{outline:2px solid var(--teal);outline-offset:3px;border-radius:10px}
+
+/* background: dotted horizon + soft glow */
+.bg{position:absolute;inset:0;z-index:0;pointer-events:none}
+.bg::before{content:"";position:absolute;left:50%;top:-30vh;width:120vh;height:80vh;transform:translateX(-50%);background:radial-gradient(closest-side,rgba(var(--dot),.18),transparent 70%)}
+.orb{position:absolute;left:50%;top:78vh;width:180vw;aspect-ratio:1;border-radius:50%;transform:translateX(-50%);
+  background:radial-gradient(rgba(var(--dot),.45) 1px,transparent 1.6px) 0 0/16px 16px;border-top:1px solid rgba(var(--dot),.45);
+  box-shadow:0 -40px 120px -30px rgba(var(--dot),.35);
+  -webkit-mask-image:radial-gradient(ellipse 40% 22% at 50% 0%,#000 25%,transparent 75%);mask-image:radial-gradient(ellipse 40% 22% at 50% 0%,#000 25%,transparent 75%);
+  animation:rise 1.6s var(--ease) both}
+@keyframes rise{from{transform:translate(-50%,12vh);opacity:0}}
+@keyframes up{from{opacity:0;transform:translateY(16px)}}
+
+.wrap{position:relative;z-index:1;width:min(420px,calc(100vw - 32px));display:flex;flex-direction:column;align-items:center}
+.brand{display:flex;flex-direction:column;align-items:center;gap:14px;margin-bottom:28px;animation:up .8s var(--ease) .1s both}
+.logo{height:38px;width:auto}
+.role{display:inline-flex;align-items:center;gap:8px;height:26px;padding:0 12px;border-radius:999px;font-size:11.5px;font-weight:700;letter-spacing:.22em;color:var(--teal);background:rgba(var(--dot),.10);border:1px solid rgba(var(--dot),.25)}
+
+.card{position:relative;overflow:hidden;width:100%;padding:34px 32px 30px;border-radius:24px;background:color-mix(in srgb,var(--surface) 88%,transparent);
+  -webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4);border:1px solid var(--line);
+  box-shadow:0 40px 90px -50px rgba(15,27,45,.45),inset 0 1px 0 rgba(255,255,255,.35);animation:up .9s var(--ease) .2s both}
+:global(.dark) .card{box-shadow:0 40px 90px -50px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.05)}
+.card::before{content:"";position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(var(--dot),.8),transparent)}
+.lock{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;color:var(--teal);background:rgba(var(--dot),.12);margin-bottom:20px;transition:background .4s,color .4s,transform .5s var(--spring)}
+.ok .lock{background:var(--teal);color:var(--teal-ink);transform:scale(1.06)}
+.shackle{transition:transform .5s var(--spring);transform-origin:12px 10px}
+.ok .shackle{transform:translateY(-3px) rotate(-18deg)}
+.card h1{margin:0;font-size:26px;font-weight:800;letter-spacing:-.025em}
+.sub{margin:6px 0 0;font-size:15px;color:var(--muted)}
+
+.form{margin-top:26px}
+.label-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.label-row label{font-size:14px;font-weight:600}
+.caps{font-size:12.5px;font-weight:600;color:var(--gold);display:flex;align-items:center;gap:6px;opacity:0;transform:translateY(4px);transition:opacity .25s,transform .25s}
+.caps.on{opacity:1;transform:none}
+.field{position:relative}
+.field input{width:100%;height:58px;padding:0 56px 0 48px;border-radius:14px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:500 17px var(--font-onest),system-ui,sans-serif;letter-spacing:.06em;outline:none;transition:border-color .25s,box-shadow .25s,background .25s}
+.field input::placeholder{letter-spacing:0;color:var(--muted);opacity:.7;font-size:15px}
+.field input:focus{border-color:var(--teal);box-shadow:0 0 0 4px rgba(var(--dot),.15);background:var(--surface)}
+.field input:focus-visible{outline:none}
+.key{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;transition:color .25s}
+.field input:focus ~ .key{color:var(--teal)}
+.eye{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:11px;display:grid;place-items:center;color:var(--muted);transition:background .2s,color .2s}
+.eye:hover{background:rgba(var(--dot),.10);color:var(--teal)}
+.slash{transition:stroke-dashoffset .3s var(--ease);stroke-dasharray:20;stroke-dashoffset:0}
+.eye[aria-pressed="true"] .slash{stroke-dashoffset:20}
+.err input{border-color:var(--err);box-shadow:0 0 0 4px color-mix(in srgb,var(--err) 18%,transparent)}
+.shake{animation:shake .42s}
+@keyframes shake{20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(2px)}}
+.msg{min-height:20px;margin:10px 2px 0;font-size:13.5px;color:var(--err);display:flex;align-items:center;gap:6px}
+
+.go{position:relative;overflow:hidden;width:100%;height:56px;margin-top:14px;border-radius:14px;background:var(--teal)!important;color:var(--teal-ink)!important;font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:10px;
+  box-shadow:0 14px 34px -14px rgba(var(--dot),.9);transition:transform .4s var(--spring),box-shadow .3s,opacity .3s}
+.go:hover{box-shadow:0 18px 40px -14px rgba(var(--dot),1)}
+.go:active{transform:scale(.98)}
+.go:disabled{opacity:.55;cursor:not-allowed;box-shadow:none}
+.go svg{transition:transform .35s var(--spring),opacity .2s}
+.go:hover:not(:disabled) svg{transform:translateX(4px)}
+.lbl{transition:opacity .2s}
+.spin{position:absolute;inset:0;display:grid;place-items:center;opacity:0;transition:opacity .2s}
+.spin::before{content:"";width:22px;height:22px;border-radius:50%;border:2.5px solid color-mix(in srgb,var(--teal-ink) 35%,transparent);border-top-color:var(--teal-ink);animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading .lbl,.loading > svg{opacity:0}
+.loading .spin{opacity:1}
+.go::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.45),transparent);transform:skewX(-20deg);animation:shine 5s ease-in-out 1.5s infinite}
+@keyframes shine{0%{left:-60%}20%,100%{left:130%}}
+
+.foot{margin:22px 0 0;font-size:13.5px;color:var(--muted);text-align:center;animation:up .9s var(--ease) .35s both;display:flex;align-items:center;gap:8px}
+.theme{position:absolute;right:18px;top:calc(18px + env(safe-area-inset-top,0px));z-index:2;width:42px;height:42px;border-radius:12px;border:1px solid var(--line)!important;background:var(--surface)!important;display:grid;place-items:center;color:var(--ink)}
+@media (prefers-reduced-motion:reduce){.root *,.root *::before,.root *::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+@media (max-width:420px){.card{padding:28px 22px 24px}}

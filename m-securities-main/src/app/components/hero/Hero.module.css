@@ -1,0 +1,114 @@
+/* Hero styles ported 1:1 from reference/msecurities-hero.html.
+   Values, keyframes, easings and delays are unchanged. Differences are scoping only:
+   - tokens live on .hero instead of :root, so they don't leak into the navbar or the
+     sections below (globals.css already defines --muted / --teal on :root);
+   - dark mode follows the site's `.dark` class on <html> instead of [data-theme="dark"];
+   - `h1` / `#globe` selectors became the .title / .globe classes. */
+
+.hero{
+  --bg:#F3FBF9; --bg-a:#DDF6F0; --bg-b:#E3F7FB; --surface:#FFFFFF; --ink:#0F1B2D; --muted:#5B6878; --line:rgba(15,27,45,.10);
+  --teal:#14B8A6; --teal-2:#2DD4BF; --teal-ink:#FFFFFF; --head-2:#22C9B0; --gold:#D99A1E;
+  --dot:20,184,166; --dotgold:217,154,30; --glass:rgba(255,255,255,.72);
+  --ease:cubic-bezier(.22,1,.36,1); --spring:cubic-bezier(.34,1.56,.64,1);
+}
+:global(.dark) .hero{ --bg:#06121C; --bg-a:#0A2A2C; --bg-b:#0A1D33; --surface:#0E1E2C; --ink:#EAF2F7; --muted:#9AAABB; --line:rgba(234,242,247,.12);
+  --teal:#2DD4BF; --teal-2:#5EEAD4; --teal-ink:#04211E; --head-2:#2DD4BF; --gold:#F0B848; --dot:45,212,191; --dotgold:240,184,72; --glass:rgba(10,24,36,.72);}
+
+/* reference `body` base, scoped to the hero (line-height resets Tailwind preflight's 1.5) */
+.hero{color:var(--ink);font-family:var(--font-onest),system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;line-height:normal}
+:where(.hero) :focus-visible{outline:2px solid var(--teal);outline-offset:3px;border-radius:10px}
+
+/* shared with the reference header's .trade button */
+.cta-1::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.5),transparent);transform:skewX(-20deg);animation:shine 5s ease-in-out 3s infinite}
+@keyframes shine{0%{left:-60%}20%,100%{left:130%}}
+.cta-1 svg{transition:transform .35s var(--spring)}
+.cta-1:hover svg{transform:translate(2px,-2px)}
+
+/* HERO */
+.hero{position:relative;min-height:100vh;min-height:100svh;overflow:hidden;isolation:isolate;display:flex;flex-direction:column}
+.bg{position:absolute;inset:0;z-index:-2;background:
+  radial-gradient(60% 50% at 15% 10%,var(--bg-a),transparent 70%),
+  radial-gradient(50% 50% at 90% 80%,var(--bg-b),transparent 70%),
+  radial-gradient(500px circle at var(--mx,50%) var(--my,30%),rgba(var(--dot),.10),transparent 60%),var(--bg);transition:background .5s}
+.globe{position:absolute;inset:0;width:100%;height:100%;z-index:-1;touch-action:pan-y;cursor:grab;
+  -webkit-mask-image:linear-gradient(to bottom,transparent var(--m1,44%),#000 var(--m2,72%));mask-image:linear-gradient(to bottom,transparent var(--m1,44%),#000 var(--m2,72%))}
+.globe.drag{cursor:grabbing}
+.content{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;padding:clamp(120px,17vh,170px) 24px 0;pointer-events:none}
+.content a,.content button{pointer-events:auto}
+/* HERO → SERVICES TRANSITION: bottom fade into the page colour */
+.hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:220px;z-index:0;pointer-events:none;background:linear-gradient(to bottom,transparent,var(--bg))}
+.content,.globe{will-change:transform,opacity}
+
+/* T1 hero dive: the scene's extra height is scroll distance while the hero stays pinned
+   (progress is written by Hero.tsx) */
+.scene{position:relative;height:240vh}
+.scene .hero{position:sticky;top:0;height:100vh;height:100svh;min-height:0}
+.intro{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);z-index:2;text-align:center;padding:0 24px;pointer-events:none;opacity:0}
+.eyebrow{display:inline-flex;align-items:center;gap:12px;font-size:13px;font-weight:700;letter-spacing:.2em;color:var(--teal)}
+.eyebrow i{display:block;width:28px;height:1px;background:currentColor;opacity:.6;transform:scaleX(var(--ei,0))}
+.eyebrow i:first-child{transform-origin:right}.eyebrow i:last-child{transform-origin:left}
+.intro h2{margin:18px auto 0;max-width:1100px;font-weight:800;font-size:clamp(34px,5vw,68px);line-height:1.08;letter-spacing:-.03em;text-wrap:balance;text-shadow:0 2px 40px var(--bg)}
+.intro h2 .w{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.08em;margin-bottom:-.08em}
+.intro h2 .wi{display:inline-block;transform:translateY(calc((1 - var(--wp,0)) * 105%));opacity:var(--wp,0)}
+.intro h2 .hl{color:var(--head-2)}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes up{to{opacity:1;transform:none}}
+.title{margin:30px 0 0;font-weight:800;font-size:clamp(42px,7vw,92px);line-height:1.02;letter-spacing:-.035em}
+.title .ln{display:block}
+.title .w{display:inline-block;overflow:hidden;vertical-align:top;padding:0 .02em .1em;margin-bottom:-.1em}
+.title .wi{display:inline-block;transform:translateY(108%);animation:wordUp 1.05s var(--ease) forwards;animation-delay:calc(var(--i)*95ms + 600ms)}
+@keyframes wordUp{to{transform:none}}
+.title .ln2 .wi{color:var(--head-2)}
+.bl{position:relative;display:inline-block;padding-bottom:.5em}
+.bridge{position:absolute;left:-3%;bottom:0;width:106%;height:auto;overflow:visible;pointer-events:none;display:block}
+.bridge path{stroke:var(--head-2);stroke-dasharray:1;stroke-dashoffset:1}
+.bridge .dk{stroke-width:4;animation:draw 1s var(--ease) 1.5s forwards}
+.bridge .tw{stroke-width:4;animation:draw .55s var(--ease) 2.05s forwards}.bridge .t2{animation-delay:2.15s}
+.bridge .cb{stroke-width:2.2;animation:draw .7s var(--ease) 2.45s forwards}.bridge .c2{animation-delay:2.6s;animation-duration:.9s}.bridge .c3{animation-delay:2.95s}
+.bridge .hg{stroke-width:1.3;opacity:.5;animation:draw .35s var(--ease) forwards;animation-delay:calc(var(--i)*30ms + 2.75s)}
+.bridge .pulse{stroke:var(--gold);stroke-width:4.5;stroke-dasharray:.06 1.2;stroke-dashoffset:.06;opacity:0;animation:travel 3.4s cubic-bezier(.45,0,.55,1) 3.7s infinite}
+.bridge .p2{stroke-width:3;animation-delay:5.4s}
+@keyframes travel{0%{stroke-dashoffset:.06;opacity:0}10%{opacity:1}85%{opacity:1}100%{stroke-dashoffset:-1;opacity:0}}
+:global(.dark) .bridge .pulse{filter:drop-shadow(0 0 5px var(--gold))}
+.sub{margin:20px 0 0;max-width:540px;font-size:clamp(16px,1.35vw,19px);line-height:1.6;color:var(--muted);opacity:0;transform:translateY(12px);animation:up .9s var(--ease) 1.25s forwards}
+.ctas{margin-top:38px;display:flex;flex-wrap:wrap;justify-content:center;gap:14px;opacity:0;transform:translateY(12px);animation:up .9s var(--ease) 1.4s forwards}
+.cta{position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:10px;height:56px;padding:0 30px;border-radius:999px;font-size:16px;font-weight:600;transition:transform .45s var(--spring),box-shadow .3s,border-color .3s,background .3s}
+.cta:active{transform:scale(.96)}
+.cta-1{background:var(--teal);color:var(--teal-ink);box-shadow:0 10px 30px -10px rgba(var(--dot),.9)}
+.cta-1:hover{box-shadow:0 16px 40px -10px rgba(var(--dot),1)}
+.cta-2{background:var(--surface);border:1px solid var(--line);box-shadow:0 6px 20px -10px rgba(15,27,45,.2)}
+.cta-2:hover{border-color:var(--teal)}
+.cta-2 svg{color:var(--teal)}
+.cta-2 .b{transform-origin:bottom;animation:bars 1.6s ease-in-out infinite}
+.cta-2 .b:nth-child(2){animation-delay:.2s}.cta-2 .b:nth-child(3){animation-delay:.4s}
+@keyframes bars{50%{transform:scaleY(.55)}}
+.more{margin-top:auto;padding:40px 0 28px;display:flex;flex-direction:column;align-items:center;gap:12px;opacity:0;animation:fade 1s ease 2.4s forwards}
+@keyframes fade{to{opacity:1}}
+.more .row{white-space:nowrap;display:flex;align-items:center;gap:16px;font-size:12.5px;font-weight:600;letter-spacing:.16em;color:var(--muted)}
+.more .row i{display:block;width:64px;height:1px;background:var(--line);transform:scaleX(0);animation:grow 1s var(--ease) 2.6s forwards}
+.more .row i:first-child{transform-origin:right}.more .row i:last-child{transform-origin:left}
+@keyframes grow{to{transform:scaleX(1)}}
+.more .chev{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--glass);backdrop-filter:blur(8px);display:grid;place-items:center;color:var(--teal);animation:bob 2s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(5px)}}
+
+@media (max-width:520px){
+  /* Phones: start the copy right under the navbar so the buttons end above Mongolia
+     on the globe; the min-height keeps room for it on short screens (e.g. iPhone SE). */
+  .hero{min-height:max(100svh,680px)}
+  .content{padding-top:96px}
+  .title{margin-top:0}
+  .sub{text-wrap:balance}
+  .cta{height:52px;padding:0 24px;font-size:15px;width:100%;justify-content:center}
+  .ctas{width:100%;max-width:340px}
+  .more .row{gap:10px;font-size:11.5px;letter-spacing:.12em} .more .row i{width:28px}
+}
+@media (prefers-reduced-motion:reduce){
+  .hero *,.hero *::before,.hero *::after{animation-duration:.01ms!important;animation-delay:0s!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  /* no pin: the services heading sits under the hero copy in its final state */
+  .scene{height:auto}
+  .scene .hero{position:relative;height:auto;min-height:100vh;min-height:100svh}
+  .intro{position:relative;transform:none;opacity:1;padding:40px 24px}
+  .intro h2 .wi{transform:none;opacity:1}
+  .eyebrow i{transform:none}
+}
+@media (prefers-reduced-motion:reduce) and (max-width:520px){ .scene .hero{min-height:max(100svh,680px)} }

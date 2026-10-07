@@ -1,7 +1,9 @@
 'use client';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import LanguageSwitcher from './language-switcher';
+import { TRADE_URL } from '../../lib/links';
 import DarkModeToggle from './dark-mode-toggle';
 import { useLanguage } from '../context/LanguageContext';
 import { useDarkMode } from '../context/DarkModeContext';
@@ -15,12 +17,20 @@ const Navbar = () => {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+  // Home and the service pages open on a full-bleed hero, so the bar starts fully transparent there
+  const overHero = pathname === '/' || pathname.startsWith('/services/') || pathname.startsWith('/faq/');
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', handleScroll);
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 24);
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      navRef.current?.style.setProperty('--nav-progress', String(max > 0 ? Math.min(1, window.scrollY / max) : 0));
+    };
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [pathname]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -43,9 +53,12 @@ const Navbar = () => {
     setIsMenuOpen(false);
   };
 
-  const navBg = isDarkMode
-    ? scrolled ? 'bg-[#0a0c10]/95 backdrop-blur-md border-b border-white/6' : 'bg-[#0a0c10]/80 backdrop-blur-sm'
-    : scrolled ? 'bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm' : 'bg-white/80 backdrop-blur-sm';
+  // Once scrolled, the bar separates from the page: near-opaque fill, soft shadow, slimmer height
+  const navBg = scrolled
+    ? isDarkMode ? 'bg-[#0a0c10]/[.92] backdrop-blur-md shadow-[0_4px_12px_rgba(0,0,0,0.35)]' : 'bg-white/[.92] backdrop-blur-md shadow-[0_4px_12px_rgba(15,27,45,0.08)]'
+    : overHero ? 'bg-transparent'
+    : isDarkMode ? 'bg-[#0a0c10]/80 backdrop-blur-sm' : 'bg-white/80 backdrop-blur-sm';
+  const ease = 'duration-[350ms] ease-[cubic-bezier(0.2,0.8,0.2,1)] motion-reduce:transition-none';
 
   const renderDropdownButton = (name: string, label: string) => (
     <button
@@ -84,8 +97,8 @@ const Navbar = () => {
   );
 
   return (
-    <nav ref={navRef} className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${navBg}`}>
-      <div className="max-w-7xl mx-auto px-6 py-3.5">
+    <nav ref={navRef} className={`fixed top-0 left-0 right-0 z-50 transition-[background-color,box-shadow,backdrop-filter] ${ease} ${navBg}`}>
+      <div className={`max-w-7xl mx-auto px-6 transition-[padding] ${ease} ${scrolled ? 'py-[9px]' : 'py-3.5'}`}>
         <div className="flex items-center justify-between">
 
           {/* Logo */}
@@ -96,7 +109,7 @@ const Navbar = () => {
                 alt="M Securities"
                 width={140}
                 height={36}
-                className="h-8 w-auto object-contain"
+                className={`w-auto object-contain transition-[height] ${ease} ${scrolled ? 'h-7' : 'h-8'}`}
               />
             </Link>
             {/* MMI link */}
@@ -115,11 +128,11 @@ const Navbar = () => {
             <div className="relative">
               {renderDropdownButton('about', t('navbar.about'))}
               {renderDropdownMenu('about', [
-                { href: "/about/introduction", label: t('navbar.sections.introduction') },
-                { href: "/about/vision", label: t('navbar.sections.vision') },
-                { href: "/about/goal", label: t('navbar.sections.goal') },
-                { href: "/about/values", label: t('navbar.sections.values') },
-                { href: "/about/team", label: t('navbar.sections.team') },
+                { href: "/about#introduction", label: t('navbar.sections.introduction') },
+                { href: "/about#vision", label: t('navbar.sections.vision') },
+                { href: "/about#goal", label: t('navbar.sections.goal') },
+                { href: "/about#values", label: t('navbar.sections.values') },
+                { href: "/about#team", label: t('navbar.sections.team') },
               ])}
             </div>
             <div className="relative">
@@ -138,21 +151,22 @@ const Navbar = () => {
                 { href: "/research/weekly", label: t('navbar.sections.weekly') },
               ])}
             </div>
-            <div className="relative">
-              {renderDropdownButton('faqs', t('navbar.faqs'))}
-              {renderDropdownMenu('faqs', [
-                { href: "/faq/common-questions", label: t('navbar.sections.commonQuestions') },
-                { href: "/faq/manage-account", label: t('navbar.sections.manageAccount') },
-                { href: "/faq/contact", label: t('navbar.sections.contact') },
-              ])}
-            </div>
+            {/* one page left under FAQ, so a plain link instead of a dropdown */}
+            <Link href="/faq/common-questions" onClick={handleLinkClick}
+              aria-current={pathname.startsWith('/faq') ? 'page' : undefined}
+              className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200
+                ${pathname.startsWith('/faq')
+                  ? 'text-teal-500 dark:text-teal-400'
+                  : 'text-gray-600 dark:text-gray-300 hover:text-teal-500 dark:hover:text-teal-400'}`}>
+              {t('navbar.faqs')}
+            </Link>
           </div>
 
           {/* Right */}
           <div className="hidden md:flex items-center gap-3">
             <LanguageSwitcher />
             <DarkModeToggle />
-            <Link href="https://trader.msecurities.mn/auth/login?callbackUrl=/dashboard/profile/info/stock">
+            <Link href={TRADE_URL}>
               <button className="px-5 py-2.5 rounded-lg text-sm font-semibold text-white
                 bg-gradient-to-r from-teal-500 to-cyan-500
                 shadow-lg shadow-teal-500/20
@@ -180,11 +194,11 @@ const Navbar = () => {
             <div className="p-4 space-y-1">
               {[
                 { key: 'about', label: t('navbar.about'), items: [
-                  { href: "/about/introduction", label: t('navbar.sections.introduction') },
-                  { href: "/about/vision", label: t('navbar.sections.vision') },
-                  { href: "/about/goal", label: t('navbar.sections.goal') },
-                  { href: "/about/values", label: t('navbar.sections.values') },
-                  { href: "/about/team", label: t('navbar.sections.team') },
+                  { href: "/about#introduction", label: t('navbar.sections.introduction') },
+                  { href: "/about#vision", label: t('navbar.sections.vision') },
+                  { href: "/about#goal", label: t('navbar.sections.goal') },
+                  { href: "/about#values", label: t('navbar.sections.values') },
+                  { href: "/about#team", label: t('navbar.sections.team') },
                 ]},
                 { key: 'services', label: t('navbar.services'), items: [
                   { href: "/services/broker", label: t('navbar.sections.broker') },
@@ -195,11 +209,6 @@ const Navbar = () => {
                   { href: "/research/news", label: t('navbar.sections.news') },
                   { href: "/research/analysis", label: t('navbar.sections.analysis') },
                   { href: "/research/weekly", label: t('navbar.sections.weekly') },
-                ]},
-                { key: 'faqs', label: t('navbar.faqs'), items: [
-                  { href: "/faq/common-questions", label: t('navbar.sections.commonQuestions') },
-                  { href: "/faq/manage-account", label: t('navbar.sections.manageAccount') },
-                  { href: "/faq/contact", label: t('navbar.sections.contact') },
                 ]},
               ].map(section => (
                 <div key={section.key}>
@@ -227,13 +236,18 @@ const Navbar = () => {
                   )}
                 </div>
               ))}
+              <Link href="/faq/common-questions" onClick={handleLinkClick}
+                className={`block px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                  ${isDarkMode ? 'text-gray-200 hover:bg-white/5' : 'text-gray-700 hover:bg-gray-50'}`}>
+                {t('navbar.faqs')}
+              </Link>
               <div className={`pt-3 mt-3 border-t flex items-center justify-between
                 ${isDarkMode ? 'border-white/8' : 'border-gray-100'}`}>
                 <div className="flex items-center gap-3">
-                  <LanguageSwitcher />
+                  <LanguageSwitcher up />
                   <DarkModeToggle />
                 </div>
-                <Link href="https://trader.msecurities.mn/auth/login?callbackUrl=/dashboard/profile/info/stock">
+                <Link href={TRADE_URL}>
                   <button className="px-4 py-2 rounded-lg text-sm font-semibold text-white
                     bg-gradient-to-r from-teal-500 to-cyan-500">
                     {t('navbar.trade')}
@@ -244,6 +258,12 @@ const Navbar = () => {
           </div>
         )}
       </div>
+
+      {/* Scroll progress along the bottom edge, shown once the bar has separated */}
+      <div aria-hidden="true"
+        className={`absolute inset-x-0 bottom-0 h-0.5 origin-left bg-gradient-to-r from-teal-500 to-cyan-500
+          [transform:scaleX(var(--nav-progress,0))] [transition:opacity_.4s_cubic-bezier(0.2,0.8,0.2,1),transform_.1s_linear] motion-reduce:transition-none
+          ${scrolled && !isMenuOpen ? 'opacity-100' : 'opacity-0'}`} />
     </nav>
   );
 };

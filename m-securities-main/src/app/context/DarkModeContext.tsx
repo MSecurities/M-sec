@@ -8,22 +8,16 @@ interface DarkModeContextType {
 
 const DarkModeContext = createContext<DarkModeContextType | undefined>(undefined);
 
+// Children always render (also on the server, so pages ship their content in the HTML). isDarkMode
+// starts false to match the server markup and picks up the real theme right after mount.
 export function DarkModeProvider({ children }: { children: React.ReactNode }) {
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [mounted, setMounted] = useState(false);
 
-  // Initial setup
   useEffect(() => {
-    // Check localStorage and system preference
-    const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const savedTheme = localStorage.getItem('theme');
-    
-    const initialTheme = savedTheme === 'dark' || (!savedTheme && darkModeQuery.matches);
-    setIsDarkMode(initialTheme);
-    
-    // Apply the theme
-    document.documentElement.classList.toggle('dark', initialTheme);
-    setMounted(true);
+    const dark = savedTheme === 'dark' || (!savedTheme && matchMedia('(prefers-color-scheme: dark)').matches);
+    document.documentElement.classList.toggle('dark', dark);
+    setIsDarkMode(dark);
   }, []);
 
   const toggleDarkMode = () => {
@@ -34,10 +28,6 @@ export function DarkModeProvider({ children }: { children: React.ReactNode }) {
       return newValue;
     });
   };
-
-  if (!mounted) {
-    return null;
-  }
 
   return (
     <DarkModeContext.Provider value={{ isDarkMode, toggleDarkMode }}>
@@ -52,4 +42,4 @@ export function useDarkMode() {
     throw new Error('useDarkMode must be used within a DarkModeProvider');
   }
   return context;
-} 
+}

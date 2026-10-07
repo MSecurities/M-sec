@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Админ — M Securities</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4FAF9; --surface:#FFFFFF; --ink:#0F1B2D; --muted:#5B6878; --line:rgba(15,27,45,.10);
+  --teal:#14B8A6; --teal-ink:#FFFFFF; --dot:20,184,166; --gold:#D99A1E; --err:#E5484D;
+  --ease:cubic-bezier(.22,1,.36,1); --spring:cubic-bezier(.34,1.56,.64,1);
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#06121C;--surface:#0E1E2C;--ink:#EAF2F7;--muted:#9AAABB;--line:rgba(234,242,247,.12);--teal:#2DD4BF;--teal-ink:#04211E;--dot:45,212,191;--gold:#F0B848;--err:#FF6B6E}}
+:root[data-theme="dark"]{--bg:#06121C;--surface:#0E1E2C;--ink:#EAF2F7;--muted:#9AAABB;--line:rgba(234,242,247,.12);--teal:#2DD4BF;--teal-ink:#04211E;--dot:45,212,191;--gold:#F0B848;--err:#FF6B6E}
+:root[data-theme="light"]{--bg:#F4FAF9;--surface:#FFFFFF;--ink:#0F1B2D;--muted:#5B6878;--line:rgba(15,27,45,.10);--teal:#14B8A6;--teal-ink:#FFFFFF;--dot:20,184,166;--gold:#D99A1E;--err:#E5484D}
+*,*::before,*::after{box-sizing:inherit}
+html,body{height:100%}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:"Onest",system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;display:grid;place-items:center;overflow:hidden;position:relative}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--teal);outline-offset:3px;border-radius:10px}
+
+/* background: dotted horizon + soft glow */
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none}
+.bg::before{content:"";position:absolute;left:50%;top:-30vh;width:120vh;height:80vh;transform:translateX(-50%);background:radial-gradient(closest-side,rgba(var(--dot),.18),transparent 70%)}
+.orb{position:absolute;left:50%;top:78vh;width:180vw;aspect-ratio:1;border-radius:50%;transform:translateX(-50%);
+  background:radial-gradient(rgba(var(--dot),.45) 1px,transparent 1.6px) 0 0/16px 16px;border-top:1px solid rgba(var(--dot),.45);
+  box-shadow:0 -40px 120px -30px rgba(var(--dot),.35);
+  -webkit-mask-image:radial-gradient(ellipse 40% 22% at 50% 0%,#000 25%,transparent 75%);mask-image:radial-gradient(ellipse 40% 22% at 50% 0%,#000 25%,transparent 75%);
+  animation:rise 1.6s var(--ease) both}
+@keyframes rise{from{transform:translate(-50%,12vh);opacity:0}}
+
+.wrap{position:relative;z-index:1;width:min(420px,calc(100vw - 32px));display:flex;flex-direction:column;align-items:center}
+.brand{display:flex;flex-direction:column;align-items:center;gap:14px;margin-bottom:28px;animation:up .8s var(--ease) .1s both}
+.logo{display:flex;align-items:center;gap:5px;font-weight:700;font-size:26px;letter-spacing:-.02em}
+.logo .m{width:38px;height:38px;border-radius:10px;border:3px solid var(--teal);display:grid;place-items:center;font-size:22px;font-weight:800;background:rgba(var(--dot),.10)}
+.role{display:inline-flex;align-items:center;gap:8px;height:26px;padding:0 12px;border-radius:999px;font-size:11.5px;font-weight:700;letter-spacing:.22em;color:var(--teal);background:rgba(var(--dot),.10);border:1px solid rgba(var(--dot),.25)}
+.role svg{flex-shrink:0}
+
+.card{width:100%;padding:34px 32px 30px;border-radius:24px;background:color-mix(in srgb,var(--surface) 88%,transparent);backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);
+  border:1px solid var(--line);box-shadow:0 40px 90px -50px rgba(15,27,45,.45),inset 0 1px 0 rgba(255,255,255,.35);animation:up .9s var(--ease) .2s both;position:relative;overflow:hidden}
+:root[data-theme="dark"] .card{box-shadow:0 40px 90px -50px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.05)}
+.card::before{content:"";position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(var(--dot),.8),transparent)}
+@keyframes up{from{opacity:0;transform:translateY(16px)}}
+.lock{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;color:var(--teal);background:rgba(var(--dot),.12);margin-bottom:20px;transition:background .4s,color .4s,transform .5s var(--spring)}
+.card.ok .lock{background:var(--teal);color:var(--teal-ink);transform:scale(1.06)}
+.lock .shackle{transition:transform .5s var(--spring);transform-origin:12px 10px}
+.card.ok .lock .shackle{transform:translateY(-3px) rotate(-18deg)}
+h1{margin:0;font-size:26px;font-weight:800;letter-spacing:-.025em}
+.sub{margin:6px 0 0;font-size:15px;color:var(--muted)}
+
+form{margin-top:26px}
+.label-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+label{font-size:14px;font-weight:600}
+.caps{font-size:12.5px;font-weight:600;color:var(--gold);display:flex;align-items:center;gap:6px;opacity:0;transform:translateY(4px);transition:opacity .25s,transform .25s}
+.caps.on{opacity:1;transform:none}
+.field{position:relative}
+.field input{width:100%;height:58px;padding:0 56px 0 48px;border-radius:14px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:500 17px "Onest",system-ui,sans-serif;letter-spacing:.06em;outline:none;transition:border-color .25s,box-shadow .25s,background .25s}
+.field input::placeholder{letter-spacing:0;color:var(--muted);opacity:.7;font-size:15px}
+.field input:focus{border-color:var(--teal);box-shadow:0 0 0 4px rgba(var(--dot),.15);background:var(--surface)}
+.field .key{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;transition:color .25s}
+.field input:focus~.key{color:var(--teal)}
+.eye{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:11px;display:grid;place-items:center;color:var(--muted);transition:background .2s,color .2s}
+.eye:hover{background:rgba(var(--dot),.10);color:var(--teal)}
+.eye .slash{transition:stroke-dashoffset .3s var(--ease);stroke-dasharray:20;stroke-dashoffset:0}
+.eye[aria-pressed="true"] .slash{stroke-dashoffset:20}
+.field.err input{border-color:var(--err);box-shadow:0 0 0 4px color-mix(in srgb,var(--err) 18%,transparent)}
+.field.err{animation:shake .42s}
+@keyframes shake{20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(2px)}}
+.msg{min-height:20px;margin:10px 2px 0;font-size:13.5px;color:var(--err);display:flex;align-items:center;gap:6px}
+
+.go{position:relative;overflow:hidden;width:100%;height:56px;margin-top:14px;border-radius:14px;background:var(--teal);color:var(--teal-ink);font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:10px;
+  box-shadow:0 14px 34px -14px rgba(var(--dot),.9);transition:transform .4s var(--spring),box-shadow .3s,opacity .3s,background .3s}
+.go:hover{box-shadow:0 18px 40px -14px rgba(var(--dot),1)}
+.go:active{transform:scale(.98)}
+.go:disabled{opacity:.55;cursor:not-allowed;box-shadow:none}
+.go svg{transition:transform .35s var(--spring)}.go:hover:not(:disabled) svg{transform:translateX(4px)}
+.go .lbl,.go>svg{transition:opacity .2s}
+.go .spin{position:absolute;inset:0;display:grid;place-items:center;opacity:0;transition:opacity .2s}
+.go .spin::before{content:"";width:22px;height:22px;border-radius:50%;border:2.5px solid color-mix(in srgb,var(--teal-ink) 35%,transparent);border-top-color:var(--teal-ink);animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.go.loading .lbl,.go.loading>svg{opacity:0}.go.loading .spin{opacity:1}
+.go::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.45),transparent);transform:skewX(-20deg);animation:shine 5s ease-in-out 1.5s infinite}
+@keyframes shine{0%{left:-60%}20%,100%{left:130%}}
+
+.foot{margin-top:22px;font-size:13.5px;color:var(--muted);text-align:center;animation:up .9s var(--ease) .35s both;display:flex;align-items:center;gap:8px}
+.theme{position:fixed;right:18px;top:calc(18px + env(safe-area-inset-top,0px));z-index:2;width:42px;height:42px;border-radius:12px;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;color:var(--ink)}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+@media (max-width:420px){.card{padding:28px 22px 24px}}
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true"><div class="orb"></div></div>
+<button class="theme" id="theme" aria-label="Өнгөний горим солих"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 11.2A6 6 0 0 1 6.8 3.5a6 6 0 1 0 7.7 7.7Z"/></svg></button>
+
+<main class="wrap">
+  <div class="brand">
+    <div class="logo" aria-label="M Securities"><span class="m">M</span>securities</div>
+    <span class="role"><svg width="12" height="12" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 1.5 15 3.7V8.4c0 3.4-2.6 6.2-6 7.1-3.4-.9-6-3.7-6-7.1V3.7Z"/></svg>АДМИН</span>
+  </div>
+
+  <section class="card" id="card" aria-labelledby="t">
+    <div class="lock" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path class="shackle" d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/><path d="M12 14.5v2"/></svg></div>
+    <h1 id="t">Нэвтрэх</h1>
+    <p class="sub">Сайтын агуулгыг удирдах хэсэг</p>
+
+    <form id="f" novalidate>
+      <div class="label-row"><label for="pw">Нууц үг</label><span class="caps" id="caps" aria-live="polite"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2 3 8h3v5h4V8h3Z"/></svg>Caps Lock асаалттай</span></div>
+      <div class="field" id="fld">
+        <input id="pw" name="password" type="password" autocomplete="current-password" placeholder="Нууц үгээ оруулна уу" required autofocus aria-describedby="msg">
+        <svg class="key" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6.5" cy="13.5" r="3.5"/><path d="M9 11 17 3M14 6l2 2M12 8l1.5 1.5"/></svg>
+        <button type="button" class="eye" id="eye" aria-label="Нууц үг харах" aria-pressed="false"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.8 10S5 4.2 10 4.2 18.2 10 18.2 10 15 15.8 10 15.8 1.8 10 1.8 10Z"/><circle cx="10" cy="10" r="2.6"/><path class="slash" d="M3 17 17 3"/></svg></button>
+      </div>
+      <p class="msg" id="msg" role="alert"></p>
+      <button class="go" id="go" type="submit" disabled><span class="lbl">Нэвтрэх</span><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="spin"></span></button>
+    </form>
+  </section>
+
+  <p class="foot"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="6.3"/><path d="M8 7.2v4M8 4.8v.1"/></svg>Нууц үгээ мартсан бол системийн админд хандана уу.</p>
+</main>
+
+<script>
+(function(){
+  const root=document.documentElement, pw=document.getElementById('pw'), eye=document.getElementById('eye'), go=document.getElementById('go'),
+        f=document.getElementById('f'), fld=document.getElementById('fld'), msg=document.getElementById('msg'), caps=document.getElementById('caps'), card=document.getElementById('card');
+  // theme
+  try{ const t=localStorage.getItem('msec-theme'); if(t) root.dataset.theme=t; }catch(e){}
+  document.getElementById('theme').addEventListener('click',()=>{ const dark=root.dataset.theme?root.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches; root.dataset.theme=dark?'light':'dark'; try{localStorage.setItem('msec-theme',root.dataset.theme)}catch(e){} });
+  // show / hide
+  eye.addEventListener('click',()=>{ const show=pw.type==='password'; pw.type=show?'text':'password'; eye.setAttribute('aria-pressed',show); eye.setAttribute('aria-label',show?'Нууц үг нуух':'Нууц үг харах'); pw.focus(); });
+  // enable button, caps lock hint
+  pw.addEventListener('input',()=>{ go.disabled=!pw.value; fld.classList.remove('err'); msg.textContent=''; });
+  const capsCheck=e=>{ if(e.getModifierState) caps.classList.toggle('on',e.getModifierState('CapsLock')); };
+  pw.addEventListener('keydown',capsCheck); pw.addEventListener('keyup',capsCheck); pw.addEventListener('blur',()=>caps.classList.remove('on'));
+  // submit — PROTOTYPE ONLY: replace with a POST to your auth endpoint (server must verify, rate-limit and set an httpOnly session cookie)
+  f.addEventListener('submit',async e=>{ e.preventDefault(); if(!pw.value||go.classList.contains('loading')) return;
+    go.classList.add('loading'); go.disabled=true; msg.textContent='';
+    await new Promise(r=>setTimeout(r,1100));
+    const ok = pw.value.length>=8; // demo rule for the prototype
+    go.classList.remove('loading');
+    if(ok){ card.classList.add('ok'); go.querySelector('.lbl').textContent='Амжилттай'; }
+    else { go.disabled=false; fld.classList.remove('err'); void fld.offsetWidth; fld.classList.add('err'); msg.textContent='Нууц үг буруу байна.'; pw.select(); }
+  });
+})();
+</script>
+</body>
+</html>

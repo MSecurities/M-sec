@@ -267,34 +267,18 @@ export const translations = {
       },
       team: {
         title: "Our Team",
-        members: {
-          member1: {
-            name: "Munkhjargal Kh",
-            position: "CEO",
-          },
-          member2: {
-            name: "Narankhuu S",
-            position: "Broker",
-          },
-          member3: {
-            name: "Nomundari B",
-            position: "Broker",
-          },
-          member4: {
-            name: "Nyamdorj M",
-            position: "IT Specialist",
-          },
-
-          member5: {
-            name: "Ariunzaya B",
-            position: "Chief Accountant",
-          },
-
-          member6: {
-            name: "Telmen B",
-            position: "Legal Specialist",
-          },
-        },
+        list: [
+          { name: "Munkhjargal Kh.", position: "Chief Executive Officer" },
+          { name: "Nomingerel T.", position: "Chief Accountant" },
+          { name: "Telmen B.", position: "Legal Specialist" },
+          { name: "Munkh-Orgil U.", position: "IT Specialist" },
+          { name: "Nomundari B.", position: "Domestic Trading Broker" },
+          { name: "Narankhuu S.", position: "Foreign Trading Broker" },
+          { name: "Khadbaatar D.", position: "Broker" },
+          { name: "Odkhuu B.", position: "Broker" },
+          { name: "Amarsanaa O.", position: "Broker" },
+          { name: "Khuslen B.", position: "Broker" },
+        ],
       },
     },
     services: {
@@ -302,7 +286,7 @@ export const translations = {
       broker: {
         title: "Broker Services",
         description:
-          "M Securities SC is committed to helping you take full advantage of investment opportunities. Our experienced team offers comprehensive brokerage services tailored to your investment portfolio, including financial situation analysis and risk assessment.",
+          "We help you invest in the securities market and reach your financial goals. Our professional team brings you reliable brokerage services.",
         requiredDocs: {
           title: "Required Documents",
           citizen: {
@@ -703,40 +687,26 @@ export const translations = {
       },
       team: {
         title: "Манай баг",
-        members: {
-          member1: {
-            name: "Х. Мөнхжаргал",
-            position: "Гүйцэтгэх захирал",
-          },
-          member2: {
-            name: "С. Наранхүү",
-            position: "Брокер",
-          },
-          member3: {
-            name: "Б. Номундарь",
-            position: "Брокер",
-          },
-          member4: {
-            name: "Б. Хүслэн",
-            position: "Брокер",
-          },
-          member5: {
-            name: "Б. Ариунзаяа",
-            position: "Ерөнхий Нягтлан бодогч",
-          },
-          member6: {
-            name: "Б. Тэлмэн",
-            position: "Хуулийн мэргэжилтэн",
-          },
-        },
+        list: [
+          { name: "Х. Мөнхжаргал", position: "Гүйцэтгэх захирал" },
+          { name: "Т. Номингэрэл", position: "Ерөнхий нягтлан бодогч" },
+          { name: "Б. Тэлмэн", position: "Хуулийн мэргэжилтэн" },
+          { name: "У. Мөнх-Оргил", position: "Мэдээллийн технологийн мэргэжилтэн" },
+          { name: "Б. Номундарь", position: "Дотоод арилжааны брокер" },
+          { name: "С. Наранхүү", position: "Гадаад арилжааны брокер" },
+          { name: "Д. Хадбаатар", position: "Брокер" },
+          { name: "Б. Одхүү", position: "Брокер" },
+          { name: "О. Амарсанаа", position: "Брокер" },
+          { name: "Б. Хүслэн", position: "Брокер" },
+        ],
       },
     },
     services: {
       title: "Үйлчилгээнүүд",
       broker: {
-        title: "Брокерын үйлчилгээ",
+        title: "Брокерийн үйлчилгээ",
         description:
-          "М Секьюритис ҮЦК нь танд үнэт цаасны зах зээл дэх хөрөнгө оруулалтын боломжуудыг ашиглан хөрөнгө оруулалт хийхэд тань туслахад бэлэн байна. Манай мэргэжлийн баг үнэт цаасны брокерын үйлчилгээг үзүүлж байна.",
+          "Үнэт цаасны зах зээлд хөрөнгө оруулж, санхүүгийн зорилгодоо хүрэхэд тань бид тусална. Мэргэжлийн баг, найдвартай брокерийн үйлчилгээг танд хүргэж байна.",
         requiredDocs: {
           title: "Данс нээлгэхэд шаардлагатай бичиг баримтууд",
           citizen: {
@@ -746,7 +716,7 @@ export const translations = {
           legalEntity: {
             title: "Хуулийн этгээд",
             items: [
-              "Данс нээх болон брокерын үйлчилгээ авах хүсэлт (2 хувь албан бичиг) ",
+              "Данс нээх болон брокерийн үйлчилгээ авах хүсэлт (2 хувь албан бичиг) ",
               "Улсын бүртгэлийн гэрчилгээ (2 хувь нотариатаар баталгаажуулсан хуулбар)",
               "Хуулийн этгээдийн дүрэм (2 хувь нотариатаар баталгаажуулсан хуулбар)",
               "Дансыг удирдах эрх бүхий этгээдийн гарын үсэг, тамга (2 хувь нотариатаар баталгаажуулсан хуулбар)",
@@ -765,11 +735,11 @@ export const translations = {
         },
       },
       miningBroker: {
-        title: "Уул уурхайн брокерын үйлчилгээ",
+        title: "Уул уурхайн брокерийн үйлчилгээ",
         requiredDocs: {
           title: "Шаардлагатай бичиг баримтууд",
           items: [
-            "Брокерын үйлчилгээ авсан тухай албан ёсны баримт",
+            "Брокерийн үйлчилгээ авсан тухай албан ёсны баримт",
             "Хуулийн этгээдийн улсын бүртгэлийн гэрчилгээ",
             "Компанийн дүрэм",
             "Эрх бүхий этгээдийн бичиг баримт",
@@ -1133,14 +1103,18 @@ export const translations = {
       },
       team: {
         title: "我们的团队",
-        members: {
-          member1: { name: "Munkhjargal Kh", position: "首席执行官" },
-          member2: { name: "Narankhuu S", position: "经纪人" },
-          member3: { name: "Nomundari B", position: "经纪人" },
-          member4: { name: "Nyamdorj M", position: "IT 专员" },
-          member5: { name: "Ariunzaya B", position: "总会计师" },
-          member6: { name: "Telmen B", position: "法律专员" },
-        },
+        list: [
+          { name: "Munkhjargal Kh.", position: "首席执行官" },
+          { name: "Nomingerel T.", position: "总会计师" },
+          { name: "Telmen B.", position: "法律专员" },
+          { name: "Munkh-Orgil U.", position: "信息技术专员" },
+          { name: "Nomundari B.", position: "国内交易经纪人" },
+          { name: "Narankhuu S.", position: "境外交易经纪人" },
+          { name: "Khadbaatar D.", position: "经纪人" },
+          { name: "Odkhuu B.", position: "经纪人" },
+          { name: "Amarsanaa O.", position: "经纪人" },
+          { name: "Khuslen B.", position: "经纪人" },
+        ],
       },
     },
     services: {
@@ -1148,7 +1122,7 @@ export const translations = {
       broker: {
         title: "证券经纪服务",
         description:
-          "M Securities 证券公司随时准备协助您把握证券市场中的投资机会并开展投资。我们的专业团队为您提供证券经纪服务。",
+          "我们助您投资证券市场，实现财务目标。专业团队为您提供可靠的证券经纪服务。",
         requiredDocs: {
           title: "申请开立账户应出具文件",
           citizen: {

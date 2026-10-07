@@ -1,386 +1,298 @@
 'use client';
-import { useLanguage } from '../../context/LanguageContext';
-import { useDarkMode } from '../../context/DarkModeContext';
-import {
-  BanknotesIcon,
-  CpuChipIcon,
-  BuildingLibraryIcon,
-  UsersIcon,
-  ChartBarIcon,
-  ArrowTrendingUpIcon,
-  GlobeAltIcon,
-  ShieldCheckIcon,
-  DocumentTextIcon,
-  ScaleIcon,
-  ClipboardDocumentListIcon,
-  MapPinIcon,
-  PhoneIcon,
-  EnvelopeIcon,
-  ClockIcon,
-} from '@heroicons/react/24/outline';
+import { useEffect, useRef, useState } from 'react';
+import type { KeyboardEvent, ReactNode } from 'react';
+import { miningArt } from '../../components/shared/miningArt';
+import { clamp, onScrollFrame, prefersReducedMotion } from '../../components/home/shared';
+import { Bento, Contact, Cta, Hero, RefPage, SecHead, VzTeam, cssVars, jumpTo, useTr } from '../../components/services/parts';
+import m from './mining.module.css';
+
+const PLATFORM_URL = 'https://mining.msecurities.mn/dashboard/app';
+const ART = miningArt(m.spark);
+
+const Ic = ({ children }: { children: ReactNode }) => (
+  <svg width="20" height="20" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{children}</svg>
+);
+
+/* ---------- hero art ---------- */
+const R0 = 'M0 250 L120 180 L210 225 L330 120 L450 210 L560 150 L690 230 L800 110 L930 205 L1040 160 L1160 225 L1280 140 L1440 210';
+const R1 = 'M0 290 L150 240 L270 275 L400 210 L540 270 L680 225 L820 285 L960 230 L1100 280 L1240 235 L1440 280';
+const Mountains = () => (
+  <svg className={m['mh-mtn']} viewBox="0 0 1440 360" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+    <path className={m.rg} pathLength={1} d={R0} />
+    <path className={`${m.rf} ${m.f0}`} d={`${R0} V360 H0Z`} />
+    <path className={`${m.rg} ${m.r1}`} pathLength={1} d={R1} />
+    <path className={`${m.rf} ${m.f1}`} d={`${R1} V360 H0Z`} />
+    <path className={m.vein} pathLength={1} d="M40 340 C 200 300, 300 330, 470 296 S 740 316, 880 290 S 1140 306, 1400 268" />
+    {[[470, 296], [880, 290], [1400, 268]].map(([cx, cy], o) => <circle key={cx} className={m.ore} cx={cx} cy={cy} r="4" style={cssVars({ '--o': o })} />)}
+  </svg>
+);
+
+/* ---------- bento visuals ---------- */
+const TICKS = [[38, 120, 48, 120], [41.5, 97.8, 51, 100.8], [51.8, 77.7, 59.8, 83.6], [67.7, 61.8, 73.6, 69.8], [87.8, 51.5, 90.8, 61], [110, 48, 110, 58],
+  [132.2, 51.5, 129.2, 61], [152.3, 61.8, 146.4, 69.8], [168.2, 77.7, 160.2, 83.6], [178.5, 97.8, 169, 100.8], [182, 120, 172, 120]];
+const VzGauge = () => (
+  <svg className={m.gauge} viewBox="0 0 220 140" aria-hidden="true">
+    <defs><linearGradient id="svc-gg" x1="0" x2="1"><stop offset="0" style={{ stopColor: 'var(--teal)' }} /><stop offset="1" style={{ stopColor: 'rgba(var(--dot),.15)' }} /></linearGradient></defs>
+    <path className={m.gt} d="M30 120 A80 80 0 0 1 190 120" />
+    <path className={m.ga} pathLength={1} d="M30 120 A80 80 0 0 1 190 120" />
+    {TICKS.map(([x1, y1, x2, y2]) => <line key={`${x1}-${y1}`} className={m.tk} x1={x1} y1={y1} x2={x2} y2={y2} />)}
+    <g className={m.nd}><line x1="110" y1="120" x2="110" y2="58" /><circle cx="110" cy="120" r="7" /></g>
+    <text x="110" y="104" textAnchor="middle" className={m.pct}>%</text>
+  </svg>
+);
+const VzTerm = () => (
+  <div className={m.term} aria-hidden="true">
+    <div className={m['tm-bar']}><i></i><i></i></div>
+    {[72, 48, 86, 60, 38].map((w, r) => <div key={r} className={m['tm-row']} style={cssVars({ '--r': r })}><b style={cssVars({ '--w': `${w}%` })}></b><span></span></div>)}
+    <svg viewBox="0 0 200 40"><path pathLength={1} d="M0 32 L25 26 L50 29 L75 18 L100 22 L125 12 L150 16 L175 6 L200 9" /></svg>
+  </div>
+);
+const BANK = 'M2 6.5 9 2.5l7 4M3 6.5h12M4.5 8v5M7.5 8v5M10.5 8v5M13.5 8v5M2.5 15.5h13';
+const VzBank = () => (
+  <svg className={m.bank} viewBox="0 0 240 140" aria-hidden="true">
+    <rect className={m.nb} x="20" y="44" width="62" height="52" rx="14" />
+    <g transform="translate(37 55)" className={m.bic}><path stroke="currentColor" fill="none" strokeWidth="1.5" d={BANK} /></g>
+    <rect className={m.nb} x="158" y="44" width="62" height="52" rx="14" />
+    <g transform="translate(175 55)" className={m.bic}>
+      <path stroke="currentColor" fill="none" strokeWidth="1.5" d="M10.5 1.5H5a1.5 1.5 0 0 0-1.5 1.5v12A1.5 1.5 0 0 0 5 16.5h8a1.5 1.5 0 0 0 1.5-1.5V5.5Z" />
+      <path stroke="currentColor" fill="none" strokeWidth="1.5" d="M10.5 1.5v4h4M6.5 10h5M6.5 13h3" />
+    </g>
+    <path className={m.fl} d="M88 62 H152" /><path className={m.fl} d="M152 80 H88" />
+    <circle className={`${m.pk} ${m.p1}`} r="4" /><circle className={`${m.pk} ${m.p2}`} r="4" />
+  </svg>
+);
+
+/* ---------- roadmap ---------- */
+type Phase = { state: 'past' | 'now' | 'next'; label: string; date: string; items: string[] };
+// The rail fills with scroll up to "today", placed from the real date inside the transition period
+// (2022-01-01 → 2027-04-01); the countdown to full transition hides once that date has passed.
+function Roadmap({ phases, kick, title, sub }: { phases: Phase[]; kick: string; title: string; sub: string }) {
+  const { tr } = useTr();
+  const ref = useRef<HTMLElement>(null);
+  const tlRef = useRef<HTMLDivElement>(null);
+  const [days, setDays] = useState(0);
+
+  useEffect(() => {
+    const sec = ref.current, tl = tlRef.current;
+    if (!sec || !tl) return;
+    const now = Date.now(), s0 = Date.UTC(2022, 0, 1), s1 = Date.UTC(2027, 3, 1);
+    const pos = now >= s1 ? 2 / 3 + .02 : 1 / 3 + clamp((now - s0) / (s1 - s0)) / 3;
+    setDays(Math.ceil((s1 - now) / 864e5));
+    sec.style.setProperty('--tp', String(pos));
+    if (prefersReducedMotion()) { sec.style.setProperty('--tf', String(pos)); sec.style.setProperty('--to', '1'); return; }
+    return onScrollFrame(() => {
+      const vh = innerHeight, q = clamp((vh * .85 - tl.getBoundingClientRect().top) / (vh * .45));
+      sec.style.setProperty('--tf', String(q * pos)); sec.style.setProperty('--to', q > .95 ? '1' : '0');
+    });
+  }, []);
+
+  return (
+    <section ref={ref} id="roadmap" data-io className={m.road} aria-labelledby="road-title">
+      <SecHead kick={kick} title={title} titleId="road-title" sub={sub} />
+      <div ref={tlRef} className={m.tl}>
+        <div className={m['tl-rail']}>
+          <span className={m['tl-fill']} />
+          <span className={m['tl-today']}>
+            <b>{tr('Өнөөдөр', 'Today', '今天')}</b>
+            <em>{days > 0 ? tr(`Бүрэн шилжилт хүртэл ${days} хоног`, `${days} days until full transition`, `距全面转型还有 ${days} 天`) : ''}</em>
+          </span>
+        </div>
+        <div className={m['tl-phases']}>
+          {phases.map((ph, i) => (
+            <article key={ph.state} className={`${m.phz} ${m[ph.state]}`} style={cssVars({ '--p': i })}>
+              <span className={m['phz-node']} />
+              <span className={m['phz-k']}>{ph.label}</span>
+              <span className={m['phz-d']}>{ph.date}</span>
+              <ul>{ph.items.map(it => <li key={it}>{it}</li>)}</ul>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- fees ---------- */
+type Who = 'all' | 'seller' | 'buyer';
+type FeeRow = { who: 'seller' | 'buyer' | 'both'; party: string; type: string; amount: string; hl: boolean };
+// "All / Seller / Buyer" switch: the chosen side's rows light up, the other side's dim
+function Fees({ rows, cols, choices, kick, title, note }: { rows: FeeRow[]; cols: string[]; choices: [Who, string][]; kick: string; title: string; note: string }) {
+  const [w, setW] = useState<Who>('all');
+  const btns = useRef<(HTMLButtonElement | null)[]>([]);
+  const ind = useRef<HTMLSpanElement>(null);
+  const sel = choices.findIndex(([k]) => k === w);
+  const sig = choices.map(([, l]) => l).join('|');
+
+  useEffect(() => {
+    const place = () => {
+      const b = btns.current[sel], i = ind.current;
+      if (!b || !i) return;
+      i.style.left = b.offsetLeft + 'px'; i.style.width = b.offsetWidth + 'px';
+    };
+    place();
+    document.fonts?.ready.then(place);
+    addEventListener('resize', place);
+    return () => removeEventListener('resize', place);
+  }, [sel, sig]);
+
+  const onKey = (e: KeyboardEvent) => {
+    const n = choices.length;
+    const next = { ArrowRight: sel + 1, ArrowDown: sel + 1, ArrowLeft: sel - 1 + n, ArrowUp: sel - 1 + n, Home: 0, End: n - 1 }[e.key];
+    if (next === undefined) return;
+    e.preventDefault();
+    setW(choices[next % n][0]); btns.current[next % n]?.focus();
+  };
+
+  return (
+    <section id="fees" data-io className={m.fee} aria-labelledby="fee-title">
+      <SecHead kick={kick} title={title} titleId="fee-title" />
+      <div className={m['fee-wrap']}>
+        <div className={m.seg} role="radiogroup" aria-label={cols[0]} onKeyDown={onKey}>
+          <span ref={ind} className={m['seg-ind']} aria-hidden="true" />
+          {choices.map(([k, label], i) => (
+            <button key={k} ref={el => { btns.current[i] = el; }} type="button" role="radio" aria-checked={k === w} tabIndex={k === w ? 0 : -1} onClick={() => setW(k)}>{label}</button>
+          ))}
+        </div>
+        <div className={m.ftable} role="table" aria-label={title} data-w={w}>
+          <div className={`${m.tr} ${m.th}`} role="row">{cols.map(c => <span key={c} role="columnheader">{c}</span>)}</div>
+          {rows.map(r => (
+            <div key={r.who} className={m.tr} data-who={r.who} role="row">
+              <span role="cell" className={m.who}>{r.party}</span>
+              <span role="cell">{r.type}</span>
+              <span role="cell" className={`${m.amt}${r.hl ? ` ${m.hl}` : ''}`}>{r.amount}</span>
+            </div>
+          ))}
+        </div>
+        <p className={m.fnote}>* {note}</p>
+      </div>
+    </section>
+  );
+}
+
+const GoIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3h7v7M13 3 4 12" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+);
 
 const MiningBrokerService = () => {
-  const { language } = useLanguage();
-  const { isDarkMode } = useDarkMode();
-
-  const bg = isDarkMode ? 'bg-[#080a0d]' : 'bg-gradient-to-b from-teal-50/60 via-white to-teal-50/30';
-  const cardBg = isDarkMode ? 'bg-[#111318]' : 'bg-white';
-  const cardBorder = isDarkMode ? 'border-white/6' : 'border-gray-200';
-  const textPrimary = isDarkMode ? 'text-white' : 'text-gray-900';
-  const textSecondary = isDarkMode ? 'text-gray-400' : 'text-gray-500';
-  const sectionAlt = isDarkMode ? 'bg-[#0d0f14]' : 'bg-white';
-  const iconBg = isDarkMode ? 'bg-teal-500/10' : 'bg-teal-50';
+  const { tr, language } = useTr();
+  const L = <T,>(mn: T, en: T, zh: T) => (language === 'mn' ? mn : language === 'zh' ? zh : en);
 
   const advantages = [
-    { Icon: BanknotesIcon, title: language === 'mn' ? 'Хамгийн бага шимтгэл' : language === 'zh' ? '最低手续费' : 'Lowest Fees', desc: language === 'mn' ? 'Зах зээл дээрх хамгийн өрсөлдөхүйц шимтгэлийн хувь хэмжээ.' : language === 'zh' ? '市场上最具竞争力的费率。' : 'Most competitive fee rates in the market.' },
-    { Icon: CpuChipIcon, title: language === 'mn' ? 'Цогц платформ' : language === 'zh' ? '综合平台' : 'Comprehensive Platform', desc: language === 'mn' ? 'Өөрсдийн хөгжүүлсэн арилжааны платформ — хурдан, найдвартай.' : language === 'zh' ? '自主研发的交易平台，快速可靠。' : 'In-house trading platform — fast and reliable.' },
-    { Icon: BuildingLibraryIcon, title: language === 'mn' ? 'Банкны хамтын ажиллагаа' : language === 'zh' ? '银行合作' : 'Bank Partnership', desc: language === 'mn' ? 'Аккредитив болон бусад төлбөрийн шийдлийг банктай хамтран гүйцэтгэнэ.' : language === 'zh' ? '与银行合作提供信用证及其他支付解决方案。' : 'Letter of credit and payment solutions with banking partners.' },
-    { Icon: UsersIcon, title: language === 'mn' ? 'Туршлагатай баг' : language === 'zh' ? '专业团队' : 'Expert Team', desc: language === 'mn' ? 'Арилжааны туршлагатай, ёс суртахуунтай мэргэжлийн хамт олон.' : language === 'zh' ? '经验丰富、职业道德高尚的专业团队。' : 'Experienced and ethical professional team.' },
+    { viz: <VzGauge />, icon: <Ic><rect x="1.5" y="4.5" width="15" height="9" rx="1.5" /><circle cx="9" cy="9" r="2" /><path d="M4 7v4M14 7v4" /></Ic>,
+      title: tr('Хамгийн бага шимтгэл', 'Lowest Fees', '最低手续费'), desc: tr('Зах зээл дээрх хамгийн өрсөлдөхүйц шимтгэлийн хувь хэмжээ.', 'Most competitive fee rates in the market.', '市场上最具竞争力的费率。') },
+    { viz: <VzTerm />, icon: <Ic><rect x="4.5" y="4.5" width="9" height="9" rx="1.5" /><rect x="7" y="7" width="4" height="4" rx=".5" /><path d="M7 2v2.5M11 2v2.5M7 13.5V16M11 13.5V16M2 7h2.5M2 11h2.5M13.5 7H16M13.5 11H16" /></Ic>,
+      title: tr('Цогц платформ', 'Comprehensive Platform', '综合平台'), desc: tr('Өөрсдийн хөгжүүлсэн арилжааны платформ — хурдан, найдвартай.', 'In-house trading platform — fast and reliable.', '自主研发的交易平台，快速可靠。') },
+    { viz: <VzBank />, icon: <Ic><path d={BANK} /></Ic>,
+      title: tr('Банкны хамтын ажиллагаа', 'Bank Partnership', '银行合作'), desc: tr('Аккредитив болон бусад төлбөрийн шийдлийг банктай хамтран гүйцэтгэнэ.', 'Letter of credit and payment solutions with banking partners.', '与银行合作提供信用证及其他支付解决方案。') },
+    { viz: <VzTeam />, icon: <Ic><circle cx="6.5" cy="6" r="2.6" /><path d="M1.8 15c.4-2.8 2.3-4.4 4.7-4.4s4.3 1.6 4.7 4.4" /><path d="M12 3.6a2.5 2.5 0 0 1 0 4.8M13.4 10.8c1.5.5 2.5 1.9 2.8 4.2" /></Ic>,
+      title: tr('Туршлагатай баг', 'Expert Team', '专业团队'), desc: tr('Арилжааны туршлагатай, ёс суртахуунтай мэргэжлийн хамт олон.', 'Experienced and ethical professional team.', '经验丰富、职业道德高尚的专业团队。') },
   ];
 
-  const miningProducts = [
-    { Icon: ChartBarIcon, name: language === 'mn' ? 'Нүүрс' : language === 'zh' ? '煤炭' : 'Coal', active: true, accent: '#64748B' },
-    { Icon: ArrowTrendingUpIcon, name: language === 'mn' ? 'Зэсийн баяжмал' : language === 'zh' ? '铜精矿' : 'Copper Concentrate', active: true, accent: '#D97706' },
-    { Icon: GlobeAltIcon, name: language === 'mn' ? 'Төмрийн хүдэр' : language === 'zh' ? '铁矿石' : 'Iron Ore', active: true, accent: '#B45309' },
-    { Icon: DocumentTextIcon, name: language === 'mn' ? 'Бусад эрдэс' : language === 'zh' ? '其他矿产' : 'Other Minerals', active: false, accent: '#0F9D8A' },
+  // Before the exchange → the transition we are in now → broker-only trading
+  const phases: Phase[] = [
+    { state: 'past', label: tr('Өмнөх үе', 'Previous Era', '历史阶段'), date: tr('2021 хүртэл', 'Until 2021', '截至2021年'),
+      items: L(['Бирж байхгүй', 'Шууд гүйлгээ', 'Үнэ ил тод бус'], ['No exchange', 'Direct transactions', 'Non-transparent pricing'], ['无交易所', '直接交易', '价格不透明']) },
+    { state: 'now', label: tr('Шилжилтийн үе', 'Transition', '过渡期'), date: tr('2022 — 2027.03.31', '2022 — Mar 31, 2027', '2022年—2027年3月31日'),
+      items: L(['МХБ эсвэл брокер — 2 сонголт', 'Хагас бирж төвтэй', 'Хууль эцэслэгдэж байна'], ['2 options: MSE or broker', 'Semi-centralized', 'Regulations finalizing'], ['MSE或经纪商 — 2种选择', '半集中化', '法规完善中']) },
+    { state: 'next', label: tr('Бүрэн шилжилт', 'Full Transition', '全面转型'), date: tr('2027.04.01-ээс', 'From Apr 1, 2027', '2027年4月1日起'),
+      items: L(['Зөвхөн брокероор', 'Бүрэн бирж төвтэй', 'МХБ үргэлжлүүлнэ'], ['Broker only', 'Fully centralized', 'MSE continues'], ['仅限经纪商', '全面集中化', 'MSE持续运营']) },
+  ];
+
+  const active = tr('Арилжаанд', 'Active', '交易中');
+  const products = [
+    { name: tr('Нүүрс', 'Coal', '煤炭') },
+    { name: tr('Зэсийн баяжмал', 'Copper Concentrate', '铜精矿') },
+    { name: tr('Төмрийн хүдэр', 'Iron Ore', '铁矿石') },
+    { name: tr('Бусад эрдэс', 'Other Minerals', '其他矿产') },
+  ];
+
+  const byAgreement = tr('Гэрээгээр тохиролцоно.', 'Agreed by contract.', '以合同约定。');
+  const seller = tr('Худалдагч', 'Seller', '卖方'), buyer = tr('Худалдан авагч', 'Buyer', '买方');
+  const fees: FeeRow[] = [
+    { who: 'seller', party: seller, type: tr('Захиалга бүртгэлийн хураамж', 'Order registration fee', '委托登记费'), amount: byAgreement, hl: true },
+    { who: 'buyer', party: buyer, type: tr('Арилжааны дүнгийн хувь', 'Percentage of trade value', '交易金额百分比'), amount: byAgreement, hl: true },
+    { who: 'both', party: tr('Талууд', 'Parties', '双方'), type: tr('МХБ-ийн биржийн хураамж', 'MSE exchange fee', '交易所费用'), amount: tr('МХБ-ийн журмын дагуу', 'Per MSE regulations', '按交易所规定'), hl: false },
   ];
 
   const laws = [
-    { Icon: DocumentTextIcon, src: 'УИХ · 2022.12.23', title: language === 'mn' ? 'Уул Уурхайн Бүтээгдэхүүний Биржийн тухай хууль' : language === 'zh' ? '矿产品交易所法' : 'Mining Products Exchange Law', desc: language === 'mn' ? 'Арилжааг шударга, нээлттэй зохион байгуулж, зах зээлийн бодит үнэ тогтох боломжийг бүрдүүлнэ.' : language === 'zh' ? '以公平、透明的方式组织交易，确保市场价格真实形成。' : 'Organize trading fairly and transparently, enabling real market price formation.', href: 'https://legalinfo.mn/mn/detail?lawId=16532653439101' },
-    { Icon: ScaleIcon, src: 'СЗХ · 2024.03.29 · Тогтоол №133', title: language === 'mn' ? 'Брокерийн шимтгэлийн зохицуулалт' : language === 'zh' ? '经纪手续费监管规定' : 'Broker Fee Regulation', desc: language === 'mn' ? 'Шимтгэлийг хэт өндрөөр тогтоох, ялгавартай байдлаас сэргийлж арилжааны шударга нөхцлийг хангана.' : language === 'zh' ? '防止过高收费和差别对待，确保公平交易条件。' : 'Prevent excessive fees and discrimination, ensuring fair trading conditions.', href: 'https://www.frc.mn' },
-    { Icon: ClipboardDocumentListIcon, src: 'МХБ · Арилжааны журам', title: language === 'mn' ? 'Уул Уурхайн Бүтээгдэхүүний арилжааны журам' : language === 'zh' ? '矿产品交易规则' : 'Mining Products Trading Rules', desc: language === 'mn' ? 'Захиалга бүртгэх, арилжаа зохион байгуулах, мэдээллийн ил тод байдлыг хангахтай холбоотой харилцаа.' : language === 'zh' ? '规范委托登记、交易组织及信息透明度相关事宜。' : 'Governs order registration, trade organization and information transparency.', href: 'https://mse.mn/mn/content/list/253' },
-  ];
-
-  const contactInfo = [
-    { Icon: MapPinIcon, text: language === 'mn' ? 'Нью Хориязонс Оффис 401, Улаанбаатар' : language === 'zh' ? '新地平线办公室401，乌兰巴托' : 'New Horizons Office 401, Ulaanbaatar' },
-    { Icon: PhoneIcon, text: '+976-72270008' },
-    { Icon: EnvelopeIcon, text: 'info@msecurities.mn' },
-    { Icon: ClockIcon, text: language === 'mn' ? 'Даваа–Баасан · 09:00–18:00' : language === 'zh' ? '周一至周五 09:00–18:00' : 'Mon–Fri · 09:00–18:00' },
+    { icon: <Ic><path d="M10.5 1.5H5a1.5 1.5 0 0 0-1.5 1.5v12A1.5 1.5 0 0 0 5 16.5h8a1.5 1.5 0 0 0 1.5-1.5V5.5Z" /><path d="M10.5 1.5v4h4M6.5 10h5M6.5 13h3" /></Ic>,
+      src: 'УИХ · 2022.12.23', title: tr('Уул Уурхайн Бүтээгдэхүүний Биржийн тухай хууль', 'Mining Products Exchange Law', '矿产品交易所法'),
+      desc: tr('Арилжааг шударга, нээлттэй зохион байгуулж, зах зээлийн бодит үнэ тогтох боломжийг бүрдүүлнэ.', 'Organize trading fairly and transparently, enabling real market price formation.', '以公平、透明的方式组织交易，确保市场价格真实形成。'),
+      href: 'https://legalinfo.mn/mn/detail?lawId=16532653439101' },
+    { icon: <Ic><path d="M9 2v14M5 16h8M3 5h12M5 5l-2.5 6a2.5 2.5 0 0 0 5 0Zm8 0-2.5 6a2.5 2.5 0 0 0 5 0Z" /></Ic>,
+      src: 'СЗХ · 2024.03.29 · Тогтоол №133', title: tr('Брокерийн шимтгэлийн зохицуулалт', 'Broker Fee Regulation', '经纪手续费监管规定'),
+      desc: tr('Шимтгэлийг хэт өндрөөр тогтоох, ялгавартай байдлаас сэргийлж арилжааны шударга нөхцлийг хангана.', 'Prevent excessive fees and discrimination, ensuring fair trading conditions.', '防止过高收费和差别对待，确保公平交易条件。'),
+      href: 'https://www.frc.mn' },
+    { icon: <Ic><rect x="4" y="3" width="10" height="13" rx="1.5" /><path d="M7 3V2h4v1M6.5 7.5h5M6.5 10.5h5M6.5 13.5h3" /></Ic>,
+      src: 'МХБ · Арилжааны журам', title: tr('Уул Уурхайн Бүтээгдэхүүний арилжааны журам', 'Mining Products Trading Rules', '矿产品交易规则'),
+      desc: tr('Захиалга бүртгэх, арилжаа зохион байгуулах, мэдээллийн ил тод байдлыг хангахтай холбоотой харилцаа.', 'Governs order registration, trade organization and information transparency.', '规范委托登记、交易组织及信息透明度相关事宜。'),
+      href: 'https://mse.mn/uploads/images/2025-02-24-%D1%83%D1%83%D0%BB_%D1%83%D1%83%D1%80%D1%85%D0%B0%D0%B9%D0%BD_%D0%B0%D1%80%D0%B8%D0%BB%D0%B6%D0%B0%D0%B0%D0%BD%D1%8B_%D0%B6%D1%83%D1%80%D0%B0%D0%BC.pdf' },
   ];
 
   return (
-    <div className={`min-h-screen pt-20 transition-colors duration-300 ${bg}`}>
+    <RefPage>
+      <Hero
+        titleId="bh-title"
+        lines={L([['Уул', 'уурхайн'], ['цахим', 'арилжаа']], [['Mining', 'Products'], ['Online', 'Trading']], [['矿产品'], ['在线交易']])}
+        sub={tr('М Секьюритис ҮЦК нь СЗХ-ны уул уурхайн бүтээгдэхүүний биржийн арилжааны зуучлагч (брокер)-ийн үйл ажиллагаа эрхлэх тусгай зөвшөөрөлтэй, Монголын хөрөнгийн биржийн уул уурхайн бүтээгдэхүүний арилжааны брокерийн гишүүн байгууллага юм. Бид уул уурхайн бүтээгдэхүүний арилжаанд мэргэжлийн, найдвартай брокерийн үйлчилгээг үзүүлэн ажиллаж байна.',
+          'M Securities is licensed by the Financial Regulatory Commission to act as an exchange trading intermediary (broker) for mining products, and is a broker member of the Mongolian Stock Exchange for mining product trading. We provide professional, reliable brokerage services in mining product trading.',
+          'M Securities 证券公司持有金融监管委员会颁发的矿产品交易所交易中介（经纪商）业务许可，是蒙古证券交易所矿产品交易的经纪会员单位。我们为矿产品交易提供专业、可靠的经纪服务。')}
+        actions={<>
+          <Cta href={PLATFORM_URL} primary external magnetic>{tr('Арилжаа хийх', 'Start Trading', '开始交易')}</Cta>
+          <Cta href="#contact" onClick={jumpTo('contact')}>{tr('Брокертой холбогдох', 'Contact Broker', '联系经纪人')}</Cta>
+        </>}
+        art={<Mountains />}
+      />
 
-      {/* ── HERO ── */}
-      <section className={`relative min-h-[80vh] flex flex-col items-center justify-center text-center overflow-hidden px-6
-        ${isDarkMode ? 'bg-[#080a0d]' : 'bg-gradient-to-br from-teal-50 via-white to-cyan-50'}`}>
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full blur-[120px]
-            ${isDarkMode ? 'opacity-10 bg-teal-400' : 'opacity-25 bg-teal-200'}`} />
-          {!isDarkMode && <>
-            <div className="absolute -top-20 -left-20 w-[350px] h-[350px] rounded-full blur-[100px] opacity-20 bg-teal-300" />
-            <div className="absolute -bottom-20 -right-20 w-[350px] h-[350px] rounded-full blur-[100px] opacity-20 bg-cyan-300" />
-          </>}
+      <Bento id="advantages" kick={tr('Бидний давуу тал', 'Our Advantages', '我们的优势')} title={tr('Яагаад М Секьюритис?', 'Why M Securities?', '为什么选择 M Securities?')} items={advantages} />
 
-          {/* Uul uurkhai vibe — faint fractured rock / ore-vein texture, pure style */}
-          <svg className={`absolute inset-0 w-full h-full ${isDarkMode ? 'opacity-[0.16]' : 'opacity-[0.08]'}`} preserveAspectRatio="none" viewBox="0 0 1400 700">
-            <defs>
-              <linearGradient id="oreVein" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#D97706" />
-                <stop offset="50%" stopColor="#F59E0B" />
-                <stop offset="100%" stopColor="#0F9D8A" />
-              </linearGradient>
-            </defs>
-            {/* Angular rock-fragment silhouettes */}
-            <polygon points="0,700 0,520 180,460 260,560 140,700" fill={isDarkMode ? '#1a1d24' : '#0F9D8A'} fillOpacity="0.5" />
-            <polygon points="1400,700 1400,480 1220,420 1120,560 1260,700" fill={isDarkMode ? '#1a1d24' : '#0F9D8A'} fillOpacity="0.5" />
-            <polygon points="1400,0 1400,140 1240,90 1180,0" fill={isDarkMode ? '#1a1d24' : '#0F9D8A'} fillOpacity="0.4" />
-            {/* Cracks / ore veins running through the rock */}
-            <path d="M 30,680 L 120,540 L 95,480 L 190,410 L 175,340" fill="none" stroke="url(#oreVein)" strokeWidth="3" strokeLinecap="round" />
-            <path d="M 1370,660 L 1260,540 L 1290,470 L 1200,400 L 1220,320" fill="none" stroke="url(#oreVein)" strokeWidth="3" strokeLinecap="round" />
-            <path d="M 1380,20 L 1300,80 L 1320,130 L 1250,170" fill="none" stroke="url(#oreVein)" strokeWidth="2.5" strokeLinecap="round" />
-          </svg>
+      <Roadmap
+        phases={phases}
+        kick={tr('Арилжааны хөгжил', 'Trading Development', '交易发展')}
+        title={tr('Бүрэн биржийн арилжаанд шилжих замнал', 'Roadmap to Full Exchange Trading', '全面转向交易所交易的路线图')}
+        sub={tr('2027 оны 4 дүгээр сараас уул уурхайн арилжааг зөвхөн брокероор дамжуулж гүйцэтгэнэ.', 'From April 2027, mining product trading must be conducted through brokers.', '2027年4月起，矿产品交易须通过经纪商进行。')}
+      />
+
+      <section id="products" data-io className={m.prods} aria-labelledby="prod-title">
+        <SecHead kick={tr('Арилжигдаж буй бүтээгдэхүүн', 'Trading Products', '交易产品')} title={tr('Уул уурхайн бүтээгдэхүүн', 'Mining Products', '矿产品')} titleId="prod-title" />
+        <div className={m['pd-grid']}>
+          {products.map((pr, i) => (
+            <article key={i} className={m.pd} style={cssVars({ '--i': i })}>
+              <div className={m['pd-art']}><svg className={m.art} viewBox="0 0 84 64" aria-hidden="true">{ART[i]}</svg></div>
+              <h3>{pr.name}</h3>
+              <span className={`${m.st} ${m.on}`}><i></i>{active}</span>
+            </article>
+          ))}
         </div>
+      </section>
 
-        <div className="relative z-10 max-w-3xl mx-auto">
-          <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium mb-10 border
-            ${isDarkMode ? 'bg-white/4 border-white/10 text-gray-300' : 'bg-white/80 border-teal-200 text-teal-700 shadow-sm'}`}>
-            <ShieldCheckIcon className="w-3.5 h-3.5" />
-            {language === 'mn' ? 'Уул уурхайн брокер · МХБ-ийн зөвшөөрөлтэй' : language === 'zh' ? '矿业经纪 · 持牌运营' : 'Mining Broker · MSE Licensed'}
-          </div>
+      <Fees
+        rows={fees}
+        cols={[tr('Оролцогч', 'Participant', '参与方'), tr('Шимтгэлийн төрөл', 'Fee Type', '费用类型'), tr('Хэмжээ', 'Amount', '金额')]}
+        choices={[['all', tr('Бүгд', 'All', '全部')], ['seller', seller], ['buyer', buyer]]}
+        kick={tr('Үнэ тариф', 'Pricing', '费率')}
+        title={tr('Брокерийн шимтгэл', 'Broker Fees', '经纪手续费')}
+        note={tr('Харилцагчтай харилцан тохиролцсоны үндсэн дээр шимтгэлийг тохируулах боломжтой.', 'Fees are negotiable with clients.', '费率可与客户协商确定。')}
+      />
 
-          <h1 className={`text-5xl sm:text-6xl md:text-7xl font-bold leading-tight tracking-tight mb-6 ${textPrimary}`}>
-            {language === 'mn' ? (<>Уул уурхайн<br /><span className="text-teal-400">цахим арилжаа</span></>) :
-             language === 'zh' ? (<>矿产品<br /><span className="text-teal-400">在线交易</span></>) :
-             (<>Mining Products<br /><span className="text-teal-400">Online Trading</span></>)}
-          </h1>
-
-          <p className={`text-lg sm:text-xl leading-relaxed mb-12 max-w-xl mx-auto ${textSecondary}`}>
-            {language === 'mn' ? 'М Секьюритис ҮЦК нь СЗХ-оос тусгай зөвшөөрөл авсан, Монголын Хөрөнгийн Биржээр дамжуулан уул уурхайн бүтээгдэхүүний арилжааг мэргэжлийн түвшинд хэрэгжүүлдэг брокер компани.'
-              : language === 'zh' ? 'M Securities 持有金融监管委员会颁发的专项许可证，通过蒙古证券交易所专业开展矿产品交易。'
-              : 'M Securities holds a special license from the FRC and professionally conducts mining product trading through the Mongolian Stock Exchange.'}
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="https://mining.msecurities.mn/dashboard/app" target="_blank" rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full text-base font-semibold text-white
-                bg-teal-500 hover:bg-teal-400 transition-all hover:-translate-y-0.5 shadow-lg shadow-teal-500/20">
-              {language === 'mn' ? 'Арилжаанд нэвтрэх' : language === 'zh' ? '进入交易平台' : 'Enter Trading Platform'}
-              <ArrowTrendingUpIcon className="w-4 h-4" />
+      <section id="legal" data-io className={m.legal} aria-labelledby="law-title">
+        <SecHead kick={tr('Эрх зүйн орчин', 'Legal Framework', '法律环境')} title={tr('Холбогдох хууль, дүрэм', 'Relevant Laws & Regulations', '相关法律法规')} titleId="law-title" />
+        <div className={m.laws}>
+          {laws.map((l, i) => (
+            <a key={l.href} href={l.href} target="_blank" rel="noopener noreferrer" className={m.law} style={cssVars({ '--i': i })}>
+              <span className={m['law-ic']}>{l.icon}</span>
+              <span className={m['law-tx']}><small>{l.src}</small><b>{l.title}</b><span>{l.desc}</span></span>
+              <span className={m['law-go']}><GoIcon /></span>
             </a>
-            <a href="#contact"
-              className={`inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full text-base font-semibold border transition-all hover:-translate-y-0.5
-                ${isDarkMode ? 'bg-white/6 text-white border-white/10 hover:bg-white/10' : 'bg-white text-gray-800 border-gray-200 shadow-sm hover:border-teal-300'}`}>
-              {language === 'mn' ? 'Брокертой холбогдох' : language === 'zh' ? '联系经纪人' : 'Contact Broker'}
-            </a>
-          </div>
-        </div>
-
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
-          <div className={`w-px h-10 bg-gradient-to-b from-transparent ${isDarkMode ? 'to-white/20' : 'to-teal-300/40'}`} />
-          <div className={`w-1 h-1 rounded-full animate-bounce ${isDarkMode ? 'bg-white/20' : 'bg-teal-400/50'}`} />
+          ))}
         </div>
       </section>
 
-      {/* ── ДАВУУ ТАЛ ── */}
-      <section className={`py-20 px-6 ${sectionAlt}`}>
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-14">
-            <p className="text-xs font-semibold uppercase tracking-widest text-teal-400 mb-3">
-              {language === 'mn' ? 'Бидний давуу тал' : language === 'zh' ? '我们的优势' : 'Our Advantages'}
-            </p>
-            <h2 className={`text-3xl sm:text-4xl font-bold ${textPrimary}`}>
-              {language === 'mn' ? 'Яагаад М Секьюритис?' : language === 'zh' ? '为什么选择 M Securities?' : 'Why M Securities?'}
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {advantages.map(f => (
-              <div key={f.title} className={`rounded-2xl border p-6 transition-all hover:-translate-y-1
-                ${cardBg} ${cardBorder} ${isDarkMode ? 'hover:border-teal-500/20' : 'hover:border-teal-200 hover:shadow-md'}`}>
-                <div className={`w-11 h-11 rounded-xl flex items-center justify-center mb-4 ${iconBg}`}>
-                  <f.Icon className="w-5 h-5 text-teal-500" />
-                </div>
-                <h3 className={`font-semibold mb-2 ${textPrimary}`}>{f.title}</h3>
-                <p className={`text-sm leading-relaxed ${textSecondary}`}>{f.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── ШИЛЖИЛТИЙН ҮЕ ШАТ ── */}
-      <section className={`py-20 px-6 ${bg}`}>
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-14">
-            <p className="text-xs font-semibold uppercase tracking-widest text-teal-400 mb-3">
-              {language === 'mn' ? 'Арилжааны хөгжил' : language === 'zh' ? '交易发展' : 'Trading Development'}
-            </p>
-            <h2 className={`text-3xl sm:text-4xl font-bold mb-4 ${textPrimary}`}>
-              {language === 'mn' ? 'Бүрэн биржийн арилжаанд шилжих замнал' : language === 'zh' ? '全面转向交易所交易的路线图' : 'Roadmap to Full Exchange Trading'}
-            </h2>
-            <p className={`text-base max-w-xl mx-auto ${textSecondary}`}>
-              {language === 'mn' ? '2027 оны 4 дүгээр сараас уул уурхайн арилжааг зөвхөн брокероор дамжуулж гүйцэтгэнэ.'
-                : language === 'zh' ? '2027年4月起，矿产品交易须通过经纪商进行。'
-                : 'From April 2027, mining product trading must be conducted through brokers.'}
-            </p>
-          </div>
-          <div className={`grid grid-cols-1 md:grid-cols-3 rounded-2xl overflow-hidden border ${cardBorder}`}>
-            {[
-              {
-                label: language === 'mn' ? 'Өмнөх үе' : language === 'zh' ? '历史阶段' : 'Previous Era',
-                date: language === 'mn' ? '2021 хүртэл' : language === 'zh' ? '截至2021年' : 'Until 2021',
-                items: language === 'mn' ? ['Бирж байхгүй', 'Шууд гүйлгээ', 'Үнэ ил тод бус']
-                  : language === 'zh' ? ['无交易所', '直接交易', '价格不透明']
-                  : ['No exchange', 'Direct transactions', 'Non-transparent pricing'],
-                active: false,
-              },
-              {
-                label: language === 'mn' ? 'Шилжилтийн үе' : language === 'zh' ? '过渡期' : 'Transition',
-                date: language === 'mn' ? '2022 — 2027.03.31' : language === 'zh' ? '2022年—2027年3月31日' : '2022 — Mar 31, 2027',
-                items: language === 'mn' ? ['МХБ эсвэл брокер — 2 сонголт', 'Хагас бирж төвтэй', 'Хууль эцэслэгдэж байна']
-                  : language === 'zh' ? ['MSE或经纪商 — 2种选择', '半集中化', '法规完善中']
-                  : ['2 options: MSE or broker', 'Semi-centralized', 'Regulations finalizing'],
-                active: true,
-              },
-              {
-                label: language === 'mn' ? 'Бүрэн шилжилт' : language === 'zh' ? '全面转型' : 'Full Transition',
-                date: language === 'mn' ? '2027.04.01-ээс' : language === 'zh' ? '2027年4月1日起' : 'From Apr 1, 2027',
-                items: language === 'mn' ? ['Зөвхөн брокероор', 'Бүрэн бирж төвтэй', 'МХБ үргэлжлүүлнэ']
-                  : language === 'zh' ? ['仅限经纪商', '全面集中化', 'MSE持续运营']
-                  : ['Broker only', 'Fully centralized', 'MSE continues'],
-                active: true,
-              },
-            ].map((p, i) => (
-              <div key={i} className={`p-7 border-r last:border-r-0 ${cardBorder}
-                ${p.active ? isDarkMode ? 'bg-teal-500/5' : 'bg-teal-50/50' : isDarkMode ? 'bg-[#111318]' : 'bg-white'}`}>
-                <span className={`text-xs font-semibold uppercase tracking-widest ${p.active ? 'text-teal-400' : textSecondary}`}>{p.label}</span>
-                <p className={`font-semibold mt-1 mb-5 text-sm ${p.active ? 'text-teal-400' : textSecondary}`}>{p.date}</p>
-                <ul className="space-y-2.5">
-                  {p.items.map((item, j) => (
-                    <li key={j} className={`text-sm flex items-start gap-2 ${textSecondary}`}>
-                      <span className="text-teal-400 mt-0.5 flex-shrink-0">•</span>{item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── БҮТЭЭГДЭХҮҮН ── */}
-      <section className={`py-20 px-6 ${sectionAlt}`}>
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <p className="text-xs font-semibold uppercase tracking-widest text-teal-400 mb-3">
-              {language === 'mn' ? 'Арилжигдаж буй бүтээгдэхүүн' : language === 'zh' ? '交易产品' : 'Trading Products'}
-            </p>
-            <h2 className={`text-3xl font-bold ${textPrimary}`}>
-              {language === 'mn' ? 'Уул уурхайн бүтээгдэхүүн' : language === 'zh' ? '矿产品' : 'Mining Products'}
-            </h2>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            {miningProducts.map(p => (
-              <div key={p.name} className={`rounded-2xl border p-6 text-center transition-all hover:-translate-y-1
-                ${cardBg} ${cardBorder}`}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = `${p.accent}55`; }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = ''; }}>
-                <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4"
-                  style={{ backgroundColor: `${p.accent}1A` }}>
-                  <p.Icon className="w-7 h-7" style={{ color: p.accent }} />
-                </div>
-                <div className={`text-sm font-semibold mb-3 ${textPrimary}`}>{p.name}</div>
-                <span className="text-xs px-2.5 py-1 rounded-full font-medium"
-                  style={p.active
-                    ? { backgroundColor: `${p.accent}1A`, color: p.accent }
-                    : { backgroundColor: isDarkMode ? 'rgba(255,255,255,0.05)' : '#F3F4F6', color: isDarkMode ? '#6B7280' : '#6B7280' }}>
-                  {p.active
-                    ? (language === 'mn' ? 'Арилжаанд' : language === 'zh' ? '交易中' : 'Active')
-                    : (language === 'mn' ? 'Удахгүй' : language === 'zh' ? '即将推出' : 'Coming Soon')}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── ШИМТГЭЛ ── */}
-      <section id="fees" className={`py-20 px-6 ${bg}`}>
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <p className="text-xs font-semibold uppercase tracking-widest text-teal-400 mb-3">
-              {language === 'mn' ? 'Үнэ тариф' : language === 'zh' ? '费率' : 'Pricing'}
-            </p>
-            <h2 className={`text-3xl font-bold ${textPrimary}`}>
-              {language === 'mn' ? 'Брокерийн шимтгэл' : language === 'zh' ? '经纪手续费' : 'Broker Fees'}
-            </h2>
-          </div>
-          <div className={`rounded-2xl overflow-hidden border ${cardBorder}`}>
-            <table className="w-full text-sm">
-              <thead>
-                <tr className={`border-b ${cardBorder} ${isDarkMode ? 'bg-white/3' : 'bg-gray-50'}`}>
-                  <th className={`px-6 py-4 text-left text-xs font-semibold uppercase tracking-wide ${textSecondary}`}>{language === 'mn' ? 'Оролцогч' : language === 'zh' ? '参与方' : 'Participant'}</th>
-                  <th className={`px-6 py-4 text-left text-xs font-semibold uppercase tracking-wide ${textSecondary}`}>{language === 'mn' ? 'Шимтгэлийн төрөл' : language === 'zh' ? '费用类型' : 'Fee Type'}</th>
-                  <th className={`px-6 py-4 text-left text-xs font-semibold uppercase tracking-wide ${textSecondary}`}>{language === 'mn' ? 'Хэмжээ' : language === 'zh' ? '金额' : 'Amount'}</th>
-                </tr>
-              </thead>
-              <tbody className={`divide-y ${cardBorder}`}>
-                {[
-                  { party: language === 'mn' ? 'Худалдагч' : language === 'zh' ? '卖方' : 'Seller', type: language === 'mn' ? 'Захиалга бүртгэлийн хураамж' : language === 'zh' ? '委托登记费' : 'Order registration fee', amount: language === 'mn' ? 'Тохиролцооны үндсэн дээр' : language === 'zh' ? '协商确定' : 'By agreement', highlight: true },
-                  { party: language === 'mn' ? 'Худалдан авагч' : language === 'zh' ? '买方' : 'Buyer', type: language === 'mn' ? 'Арилжааны дүнгийн хувь' : language === 'zh' ? '交易金额百分比' : 'Percentage of trade value', amount: language === 'mn' ? 'Тохиролцооны үндсэн дээр' : language === 'zh' ? '协商确定' : 'By agreement', highlight: true },
-                  { party: language === 'mn' ? 'Аль аль тал' : language === 'zh' ? '双方' : 'Both parties', type: language === 'mn' ? 'МХБ-ийн биржийн хураамж' : language === 'zh' ? '交易所费用' : 'MSE exchange fee', amount: language === 'mn' ? 'МХБ-ийн журмын дагуу' : language === 'zh' ? '按交易所规定' : 'Per MSE regulations', highlight: false },
-                ].map((row, i) => (
-                  <tr key={i} className={i % 2 === 0 ? (isDarkMode ? 'bg-[#111318]' : 'bg-white') : (isDarkMode ? 'bg-white/2' : 'bg-gray-50/50')}>
-                    <td className={`px-6 py-4 font-medium ${textPrimary}`}>{row.party}</td>
-                    <td className={`px-6 py-4 ${textSecondary}`}>{row.type}</td>
-                    <td className={`px-6 py-4 font-semibold ${row.highlight ? 'text-teal-400' : textSecondary}`}>{row.amount}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <p className={`text-xs mt-3 ${textSecondary}`}>* {language === 'mn' ? 'Харилцагчтай харилцан тохиролцсоны үндсэн дээр шимтгэлийг тохируулах боломжтой.' : language === 'zh' ? '费率可与客户协商确定。' : 'Fees are negotiable with clients.'}</p>
-        </div>
-      </section>
-
-      {/* ── ХУУЛИЙН ОРЧИН ── */}
-      <section className={`py-20 px-6 ${sectionAlt}`}>
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <p className="text-xs font-semibold uppercase tracking-widest text-teal-400 mb-3">
-              {language === 'mn' ? 'Эрх зүйн орчин' : language === 'zh' ? '法律环境' : 'Legal Framework'}
-            </p>
-            <h2 className={`text-3xl font-bold ${textPrimary}`}>
-              {language === 'mn' ? 'Холбогдох хууль, дүрэм' : language === 'zh' ? '相关法律法规' : 'Relevant Laws & Regulations'}
-            </h2>
-          </div>
-          <div className="space-y-3">
-            {laws.map(l => (
-              <a key={l.title} href={l.href} target="_blank" rel="noopener noreferrer"
-                className={`flex items-start gap-4 p-5 rounded-2xl border transition-all hover:-translate-y-0.5
-                  ${cardBg} ${cardBorder} ${isDarkMode ? 'hover:border-teal-500/20 hover:bg-white/3' : 'hover:border-teal-200 hover:shadow-md'}`}>
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${iconBg}`}>
-                  <l.Icon className="w-5 h-5 text-teal-500" />
-                </div>
-                <div className="flex-1">
-                  <span className="text-xs font-semibold text-teal-400 uppercase tracking-wide">{l.src}</span>
-                  <h4 className={`font-semibold mt-1 mb-1 ${textPrimary}`}>{l.title}</h4>
-                  <p className={`text-sm ${textSecondary}`}>{l.desc}</p>
-                </div>
-                <ArrowTrendingUpIcon className={`w-4 h-4 flex-shrink-0 mt-1 rotate-45 ${textSecondary}`} />
-              </a>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── ХОЛБОО БАРИХ ── */}
-      <section id="contact" className={`py-20 px-6 ${bg}`}>
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <p className="text-xs font-semibold uppercase tracking-widest text-teal-400 mb-3">
-              {language === 'mn' ? 'Холбоо барих' : language === 'zh' ? '联系我们' : 'Contact'}
-            </p>
-            <h2 className={`text-3xl font-bold ${textPrimary}`}>
-              {language === 'mn' ? 'Брокертой холбогдох' : language === 'zh' ? '联系经纪人' : 'Contact Our Broker'}
-            </h2>
-          </div>
-          <div className={`rounded-3xl border p-8 sm:p-10 ${cardBg} ${cardBorder}`}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-              <div>
-                <h3 className={`text-lg font-semibold mb-6 ${textPrimary}`}>М Секьюритис ҮЦК</h3>
-                <div className="space-y-4">
-                  {contactInfo.map(c => (
-                    <div key={c.text} className="flex items-start gap-3">
-                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${iconBg}`}>
-                        <c.Icon className="w-4 h-4 text-teal-500" />
-                      </div>
-                      <span className={`text-sm pt-1 ${textSecondary}`}>{c.text}</span>
-                    </div>
-                  ))}
-                </div>
-                <a href="https://mining.msecurities.mn/dashboard/app" target="_blank" rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full text-sm font-semibold text-white mt-6
-                    bg-teal-500 hover:bg-teal-400 transition-all hover:-translate-y-0.5 shadow-lg shadow-teal-500/20">
-                  {language === 'mn' ? 'Арилжааны платформ руу орох' : language === 'zh' ? '进入交易平台' : 'Enter Trading Platform'}
-                  <ArrowTrendingUpIcon className="w-4 h-4" />
-                </a>
-              </div>
-              <form className="space-y-3">
-                {[
-                  { type: 'text', placeholder: language === 'mn' ? 'Бүтэн нэр' : language === 'zh' ? '全名' : 'Full Name' },
-                  { type: 'email', placeholder: language === 'mn' ? 'Имэйл хаяг' : language === 'zh' ? '电子邮件' : 'Email Address' },
-                  { type: 'tel', placeholder: language === 'mn' ? 'Утасны дугаар' : language === 'zh' ? '电话号码' : 'Phone Number' },
-                  { type: 'text', placeholder: language === 'mn' ? 'Компанийн нэр' : language === 'zh' ? '公司名称' : 'Company Name' },
-                ].map(f => (
-                  <input key={f.placeholder} type={f.type} placeholder={f.placeholder}
-                    className={`w-full px-4 py-3 rounded-xl border text-sm outline-none transition-colors
-                      ${isDarkMode ? 'bg-white/4 border-white/8 text-white placeholder-gray-600 focus:border-teal-500/50' : 'bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400 focus:border-teal-400'}`} />
-                ))}
-                <textarea rows={3} placeholder={language === 'mn' ? 'Санал, хүсэлт' : language === 'zh' ? '留言' : 'Message'}
-                  className={`w-full px-4 py-3 rounded-xl border text-sm outline-none transition-colors resize-none
-                    ${isDarkMode ? 'bg-white/4 border-white/8 text-white placeholder-gray-600 focus:border-teal-500/50' : 'bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400 focus:border-teal-400'}`} />
-                <button type="submit"
-                  className="w-full py-3.5 rounded-xl text-sm font-semibold text-white bg-teal-500 hover:bg-teal-400 transition-all">
-                  {language === 'mn' ? 'Хүсэлт илгээх' : language === 'zh' ? '提交申请' : 'Submit Request'} →
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </section>
-
-    </div>
+      <Contact
+        subject={tr('Уул уурхайн брокер - Холбоо барих хүсэлт', 'Mining Broker - Contact Request', '矿业经纪 - 联系请求')}
+        cta={{ href: PLATFORM_URL, label: tr('Арилжааны платформ руу орох', 'Enter Trading Platform', '进入交易平台') }}
+      />
+    </RefPage>
   );
 };
 

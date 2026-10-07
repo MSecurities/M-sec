@@ -1,0 +1,73 @@
+/* Team block of the About page (on the service-page tokens from components/services/parts): the CEO on
+   a wide card, specialists and brokers on cards with silhouette avatars. */
+
+/* ===== GROUPS ===== */
+.group{position:relative;min-width:0}
+.body{display:flex;flex-direction:column;gap:56px}
+.gh{display:flex;align-items:center;gap:10px;margin:0 0 20px;font-size:13px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.gh svg{color:var(--teal)}
+.gh em{font-style:normal;min-width:24px;height:22px;padding:0 7px;border-radius:11px;display:grid;place-items:center;font-size:12px;letter-spacing:0;background:rgba(var(--dot),.12);color:var(--teal)}
+.gh::after{content:"";flex:1;height:1px;background:var(--line);margin-left:6px}
+
+/* avatar silhouette (shared) */
+.sil{display:block;width:100%;height:100%}
+.skin{fill:color-mix(in srgb,var(--teal) 26%,var(--surface))}
+.hair{fill:color-mix(in srgb,var(--teal) 62%,var(--surface))}
+
+/* ===== CEO ===== */
+.lead{position:relative;overflow:hidden;isolation:isolate;display:flex;align-items:center;gap:44px;padding:40px 48px;border-radius:30px;border:1px solid var(--line);
+  background:radial-gradient(600px 380px at 0% 0%,rgba(var(--dotgold),.14),transparent 70%),radial-gradient(500px 360px at 100% 100%,rgba(var(--dot),.12),transparent 70%),var(--surface);
+  box-shadow:0 50px 100px -70px rgba(0,0,0,.6);opacity:0;transform:translateY(26px);transition:opacity .9s var(--ease),transform 1s var(--ease)}
+[data-in] .lead{opacity:1;transform:none}
+.lead-av{position:relative;flex-shrink:0;width:200px;height:200px;border-radius:50%;overflow:hidden;
+  background:radial-gradient(circle at 50% 30%,rgba(var(--dotgold),.22),rgba(var(--dot),.10) 70%);box-shadow:0 0 0 1px rgba(var(--dotgold),.35),0 0 0 10px rgba(var(--dotgold),.07)}
+.lead-av .skin{fill:color-mix(in srgb,var(--gold) 30%,var(--surface))}
+.lead-av .hair{fill:color-mix(in srgb,var(--gold) 72%,var(--surface))}
+:global(.dark) .lead-av .skin{fill:color-mix(in srgb,var(--gold) 46%,var(--surface))}
+:global(.dark) .lead-av .hair{fill:color-mix(in srgb,var(--gold) 88%,var(--surface))}
+.lead-tx{position:relative;z-index:1;display:flex;flex-direction:column;align-items:flex-start;gap:10px}
+.pos{display:inline-flex;align-items:center;height:30px;padding:0 14px;border-radius:999px;font-size:13px;font-weight:700;letter-spacing:.04em;color:var(--gold);background:rgba(var(--dotgold),.12);border:1px solid rgba(var(--dotgold),.3)}
+.lead-tx h4{margin:6px 0 0;font-size:clamp(32px,4vw,52px);font-weight:800;line-height:1.05;letter-spacing:-.04em}
+.rule{width:56px;height:3px;border-radius:2px;background:linear-gradient(90deg,var(--gold),var(--teal));margin:8px 0 2px}
+.org{font-size:15px;font-weight:600;color:var(--muted)}
+.wm{position:absolute;right:-20px;bottom:-90px;z-index:-1;font-size:340px;font-weight:800;line-height:1;letter-spacing:-.06em;color:transparent;-webkit-text-stroke:1.5px rgba(var(--dot),.16);pointer-events:none;transition:transform 1.2s var(--ease)}
+.lead:hover .wm{transform:translate(-14px,-10px)}
+
+/* ===== CARDS ===== */
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.card{position:relative;overflow:hidden;isolation:isolate;display:flex;align-items:center;gap:20px;padding:22px 24px;border-radius:24px;border:1px solid var(--line);background:var(--surface);
+  opacity:0;transform:translateY(22px);transition:opacity .8s var(--ease),transform .9s var(--ease),border-color .35s,box-shadow .5s var(--ease)}
+[data-in] .card{opacity:1;transform:none;transition-delay:calc(var(--k) * 70ms),calc(var(--k) * 70ms),0s,0s}
+.card::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(260px circle at var(--x,50%) var(--y,50%),rgba(var(--dot),.12),transparent 70%);opacity:0;transition:opacity .4s}
+.card:hover{border-color:rgba(var(--dot),.5);box-shadow:0 30px 70px -48px rgba(var(--dot),.85)}
+.card:hover::before{opacity:1}
+.av{position:relative;flex-shrink:0;width:84px;height:84px;border-radius:50%;background:radial-gradient(circle at 50% 30%,rgba(var(--dot),.16),rgba(var(--dot),.05) 70%);box-shadow:0 0 0 1px rgba(var(--dot),.22)}
+.av .sil{border-radius:50%;overflow:hidden;transition:transform .6s var(--spring)}
+.card:hover .av .sil{transform:scale(1.06)}
+.badge{position:absolute;right:-4px;bottom:-2px;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;color:var(--teal-ink);background:var(--teal);border:3px solid var(--surface);transition:transform .5s var(--spring)}
+.card:hover .badge{transform:rotate(-12deg) scale(1.08)}
+.tx{min-width:0}
+.tx h4{margin:0;font-size:18.5px;font-weight:700;letter-spacing:-.015em;line-height:1.3}
+.tx p{margin:6px 0 0;font-size:14.5px;line-height:1.45;color:var(--muted)}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width:1024px){
+  .grid,.three{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:760px){
+  .lead{flex-direction:column;text-align:center;gap:24px;padding:34px 24px}
+  .lead-tx{align-items:center}
+  .lead-av{width:150px;height:150px}
+  .wm{font-size:240px;bottom:-60px}
+}
+@media (max-width:640px){
+  .body{gap:40px}
+  .grid,.three{grid-template-columns:1fr;gap:12px}
+  .card{padding:16px 18px;gap:16px;border-radius:20px}
+  .av{width:66px;height:66px}
+  .badge{width:26px;height:26px}
+  .tx h4{font-size:17px}
+}
+@media (prefers-reduced-motion:reduce){
+  .lead,.card{opacity:1!important;transform:none!important}
+}
