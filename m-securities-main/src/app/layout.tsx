@@ -3,6 +3,7 @@ import './styles/globals.css';
 import Navbar from './components/navbar';
 import Footer from './components/footer';
 import SiteChrome from './components/SiteChrome';
+import SnowEffect from './components/SnowEffect';
 import { THEME_INIT_SCRIPT } from './context/themeScript';
 import { Providers } from './context/providers';
 import { Roboto } from 'next/font/google';
@@ -56,6 +57,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </main>
             <SiteChrome><Footer /></SiteChrome>
           </div>
+          <SiteChrome><SnowEffect /></SiteChrome>
         </Providers>
       </body>
     </html>
