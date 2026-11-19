@@ -117,7 +117,6 @@ const safeUrl = (u?: string) => {
 };
 // beehiiv's CDN URLs carry resize options; the plain variant keeps the original size
 const imgUrl = (n: Node) => safeUrl(n.attrs.src || n.attrs['data-src'] || (n.attrs.srcset || '').split(/[\s,]+/)[0]);
-const altText = (s?: string) => (s || '').replace(/[\[\]]/g, m => (m === '[' ? '(' : ')')).replace(/\s+/g, ' ').trim();
 const isEl = (c: Node | string): c is Node => typeof c !== 'string';
 
 function inline(nodes: (Node | string)[]): string {
@@ -170,10 +169,10 @@ function blocks(nodes: (Node | string)[], out: string[]) {
         break;
       }
       case 'hr': out.push('---'); break;
-      case 'img': { const src = imgUrl(c); if (src) out.push(`![${altText(c.attrs.alt)}](${src})`); break; }
+      case 'img': { const src = imgUrl(c); if (src) out.push(`![](${src})`); break; } // alt would show as a caption
       case 'a': { // a linked image (banner/button): the picture, then the link under it
         const img = findImg(c), src = img && imgUrl(img), href = safeUrl(c.attrs.href);
-        if (src) out.push(`![${altText(img!.attrs.alt)}](${src})`);
+        if (src) out.push(`![](${src})`);
         if (href) out.push(`[Дэлгэрэнгүй →](${href})`);
         break;
       }
@@ -219,7 +218,9 @@ function htmlToMarkdown(html: string): string {
   for (const b of out) {
     if (b === '---' && (!clean.length || clean[clean.length - 1] === '---')) continue;
     if (/^[-—–_=\s]{3,}$/.test(b)) { if (clean.length && clean[clean.length - 1] !== '---') clean.push('---'); continue; }
-    if (/plain text version of this post|View online|Read online|Unsubscribe|Update your email preferences|Powered by beehiiv|Manage your subscription|You received this email|Sign up|Login|Log in/i.test(b) && b.length < 300) continue;
+    const plain = b.replace(/\]\([^)]*\)/g, ']');
+    if (/powered by beehiiv/i.test(plain)) continue;
+    if (/plain text version of this post|View online|Read online|Unsubscribe|Update your email preferences|Manage your subscription|You received this email/i.test(plain) && plain.length < 300) continue;
     clean.push(b);
   }
   while (clean[clean.length - 1] === '---') clean.pop();
