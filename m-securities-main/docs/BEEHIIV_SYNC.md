@@ -33,7 +33,12 @@ msecurities.mn-ийн **Судалгаа → Долоо хоногийн той�
 ## A. Supabase Edge Function (одоо идэвхтэй)
 
 Function: `https://ujqqljngplnlmszvercz.supabase.co/functions/v1/beehiiv-sync`
-(Settings → *Verify JWT with legacy secret* асаалттай: anon key-тэй дуудна.)
+
+**Нэвтрэлт:** Settings → *Verify JWT with legacy secret* **унтраалттай**. Функц өөрөө шалгадаг: зөвхөн төслийн
+**secret key** (`apikey: sb_secret_…` эсвэл `Authorization: Bearer …`) илгээсэн дуудлагыг зөвшөөрнө, бусад нь 401.
+
+**Ажиллах горим:** анхдагчаар 202 хариуг шууд өгөөд ажлыг ар талд (`EdgeRuntime.waitUntil`) хийнэ — Supabase Cron-ийн
+HTTP timeout дээд тал нь 5 сек. Үр дүнг харах бол `"wait": true` илгээнэ; ар талын ажлын дүн Logs-д `[beehiiv-sync]` гэж бичигдэнэ.
 
 ### Secrets (Edge Functions → Secrets)
 | Нэр | Утга |
@@ -45,10 +50,11 @@ Function: `https://ujqqljngplnlmszvercz.supabase.co/functions/v1/beehiiv-sync`
 
 ### Дуудах параметр (JSON body эсвэл query)
 - `since`: `YYYY-MM-DD` — энэ өдрөөс хойш нийтлэгдсэнийг татна. Анхдагч: сүүлийн 30 хоног.
-- `dry`: `true` — юу ч бичихгүй, юу нэмэгдэхийг харуулна.
+- `dry`: `true` — юу ч бичихгүй, юу нэмэгдэхийг харуулна (үр дүнг шууд буцаана).
+- `wait`: `true` — ажлыг дуустал хүлээж үр дүнг буцаана.
 
 ### 1) Шалгах (dry run)
-Dashboard → Edge Functions → beehiiv-sync → **Test**, body:
+Dashboard → Edge Functions → beehiiv-sync → **Test** (Headers-д `apikey` = secret key нэмэх), body:
 ```json
 { "since": "2026-01-01", "dry": true }
 ```
@@ -56,28 +62,14 @@ Dashboard → Edge Functions → beehiiv-sync → **Test**, body:
 
 ### 2) Өмнөх бүх дугаарыг нэг удаа оруулах
 ```json
-{ "since": "2026-01-01" }
+{ "since": "2026-01-01", "wait": true }
 ```
+✅ **2026-11-19-нд хийгдсэн:** 24 дугаар нэмэгдсэн, 2 нь өмнө байсан (08.31–09.04, 11.02–11.06).
 Хариунд `added` / `exists` / `skipped` / `error` гэсэн жагсаалт ирнэ. Сайт ISR-ээр 5 минутын дотор шинэчлэгдэнэ.
 
 ### 3) Өдөр бүрийн хуваарь
-Dashboard → **Integrations → Cron** → *Create job*:
-- Schedule: `0 13 * * *` (21:00 УБ)
-- Type: **Supabase Edge Function** → `beehiiv-sync`, method `POST`, body `{}`, Authorization: anon key
-
-Эсвэл SQL Editor (anon key-г Vault-д `anon_key` нэрээр хадгалсны дараа):
-```sql
-select cron.schedule(
-  'beehiiv-sync-daily', '0 13 * * *',
-  $$ select net.http_post(
-       url := 'https://ujqqljngplnlmszvercz.supabase.co/functions/v1/beehiiv-sync',
-       headers := jsonb_build_object(
-         'Content-Type', 'application/json',
-         'Authorization', 'Bearer ' || (select decrypted_secret from vault.decrypted_secrets where name = 'anon_key')),
-       body := '{}'::jsonb) $$
-);
-```
-(`pg_cron`, `pg_net` extension идэвхтэй байх шаардлагатай.)
+✅ **Тохируулсан:** Integrations → Cron → job `beehiiv-sync-daily`, `0 13 * * *` (21:00 УБ), type *Supabase Edge Function*
+→ `beehiiv-sync`, POST, timeout 5000 ms, header `apikey` = secret key (Supabase-ийн «Add secret key»). `pg_cron`, `pg_net` идэвхжүүлсэн.
 
 ### Код шинэчлэх
 ```bash

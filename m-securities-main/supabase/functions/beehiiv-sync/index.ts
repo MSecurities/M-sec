@@ -1,7 +1,10 @@
 // Supabase Edge Function "beehiiv-sync": copies published beehiiv newsletters into public.posts
 // (kind 'weekly' = "Долоо хоногийн тойм" on msecurities.mn). Existing rows (same slug or beehiiv link)
-// are never changed. Secret needed: BEEHIIV_API_KEY. Query: ?since=YYYY-MM-DD (default: last 30 days),
-// ?dry=1 to preview without writing.
+// are never changed. Secret needed: BEEHIIV_API_KEY.
+// Auth: callers must send a project secret key (header `apikey: sb_secret_…` or `Authorization: Bearer …`);
+// deploy with "Verify JWT" OFF. Body/query: since=YYYY-MM-DD (default: last 30 days), dry=true (preview,
+// no writes), wait=true (run and return the result; otherwise the job runs in the background and the call
+// returns 202 at once — the Supabase Cron HTTP timeout is 5 s).
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
@@ -223,7 +226,15 @@ function htmlToMarkdown(html: string): string {
   return clean.join('\n\n').trim();
 }
 
+function secretKeys(): string[] {
+  const out = [Deno.env.get('SUPABASE_SERVICE_ROLE_KEY'), Deno.env.get('SUPABASE_SECRET_KEY')];
+  try { out.push(...Object.values(JSON.parse(Deno.env.get('SUPABASE_SECRET_KEYS') || '{}')) as string[]); } catch { /* none */ }
+  return out.filter((k): k is string => !!k);
+}
+
 Deno.serve(async (req) => {
+  const given = req.headers.get('apikey') || (req.headers.get('authorization') || '').replace(/^Bearer\s+/i, '');
+  if (!given || !secretKeys().includes(given)) return Response.json({ ok: false, error: 'unauthorized' }, { status: 401 });
   const url = new URL(req.url);
   const key = Deno.env.get('BEEHIIV_API_KEY');
   if (!key) return Response.json({ ok: false, error: 'BEEHIIV_API_KEY secret is not set' }, { status: 500 });
@@ -231,39 +242,50 @@ Deno.serve(async (req) => {
   try { body = await req.json(); } catch { /* no body */ }
   const since = String(url.searchParams.get('since') ?? body.since ?? '');
   const dry = (url.searchParams.get('dry') ?? String(body.dry ?? '')) === '1' || body.dry === true;
+  const wait = dry || body.wait === true || url.searchParams.get('wait') === '1';
   const sinceSec = /^\d{4}-\d{2}-\d{2}$/.test(since) ? Date.parse(`${since}T00:00:00+08:00`) / 1000 : Date.now() / 1000 - 30 * 86400;
 
-  let sk = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || Deno.env.get('SUPABASE_SECRET_KEY') || '';
-  if (!sk) { try { const ks = JSON.parse(Deno.env.get('SUPABASE_SECRET_KEYS') || '{}'); sk = ks.default || Object.values(ks)[0] || ''; } catch { /* none */ } }
-  if (!sk) return Response.json({ ok: false, error: 'no service key in the function environment' }, { status: 500 });
-  const db = createClient(Deno.env.get('SUPABASE_URL')!, sk as string, { auth: { persistSession: false } });
-  let posts: BP[];
-  try { posts = await fetchPosts(key, sinceSec); } catch (e) { return Response.json({ ok: false, error: (e as Error).message }, { status: 502 }); }
+  const run = async (): Promise<{ ok: boolean; error?: string; count?: number; items?: unknown[] }> => {
+    let sk = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || Deno.env.get('SUPABASE_SECRET_KEY') || '';
+    if (!sk) { try { const ks = JSON.parse(Deno.env.get('SUPABASE_SECRET_KEYS') || '{}'); sk = ks.default || Object.values(ks)[0] || ''; } catch { /* none */ } }
+    if (!sk) return { ok: false, error: 'no service key in the function environment' };
+    const db = createClient(Deno.env.get('SUPABASE_URL')!, sk as string, { auth: { persistSession: false } });
+    let posts: BP[];
+    try { posts = await fetchPosts(key!, sinceSec); } catch (e) { return { ok: false, error: (e as Error).message }; }
 
-  const items: Record<string, unknown>[] = [];
-  for (const p of posts.reverse()) { // oldest first
-    const title = cleanTitle(p.title);
-    try {
-      const f = p.content?.free ?? {};
-      const html = f.rss || f.web || f.email || '';
-      const md = html ? htmlToMarkdown(html) : '';
-      if (!title || !md) { items.push({ title: title || p.id, action: 'skipped', note: 'empty content' }); continue; }
-      const slug = slugify(title) || `weekly-${p.id.replace(/^post_/, '').slice(0, 8)}`;
-      const link = p.platform === 'email' ? null : (p.web_url || null);
-      const { data: found } = await db.from('posts').select('slug').or(link ? `slug.eq.${slug},external_url.eq."${link}"` : `slug.eq.${slug}`).limit(1);
-      if (found?.length) { items.push({ title, action: 'exists', slug: found[0].slug }); continue; }
-      const row = {
-        kind: 'weekly', status: 'published', slug,
-        published_at: ubDate(p.publish_date ?? p.displayed_date ?? Date.now() / 1000),
-        title_mn: title, summary_mn: (p.subtitle || '').trim() || firstParagraph(md) || null, body_mn: md,
-        cover_url: p.thumbnail_url || null, external_url: link, featured: false,
-      };
-      if (dry) { items.push({ title, action: 'would-add', slug, date: row.published_at, source: f.rss ? 'rss' : f.web ? 'web' : 'email', preview: md.slice(0, 600) }); continue; }
-      const { error } = await db.from('posts').insert(row);
-      items.push(error ? { title, action: 'error', note: error.message } : { title, action: 'added', slug, date: row.published_at });
-      await sleep(150); // keep created_at in publish order
-    } catch (e) { items.push({ title, action: 'error', note: (e as Error).message }); }
+    const items: Record<string, unknown>[] = [];
+    for (const p of posts.reverse()) { // oldest first
+      const title = cleanTitle(p.title);
+      try {
+        const f = p.content?.free ?? {};
+        const html = f.rss || f.web || f.email || '';
+        const md = html ? htmlToMarkdown(html) : '';
+        if (!title || !md) { items.push({ title: title || p.id, action: 'skipped', note: 'empty content' }); continue; }
+        const slug = slugify(title) || `weekly-${p.id.replace(/^post_/, '').slice(0, 8)}`;
+        const link = p.platform === 'email' ? null : (p.web_url || null);
+        const { data: found } = await db.from('posts').select('slug').or(link ? `slug.eq.${slug},external_url.eq."${link}"` : `slug.eq.${slug}`).limit(1);
+        if (found?.length) { items.push({ title, action: 'exists', slug: found[0].slug }); continue; }
+        const row = {
+          kind: 'weekly', status: 'published', slug,
+          published_at: ubDate(p.publish_date ?? p.displayed_date ?? Date.now() / 1000),
+          title_mn: title, summary_mn: (p.subtitle || '').trim() || firstParagraph(md) || null, body_mn: md,
+          cover_url: p.thumbnail_url || null, external_url: link, featured: false,
+        };
+        if (dry) { items.push({ title, action: 'would-add', slug, date: row.published_at, source: f.rss ? 'rss' : f.web ? 'web' : 'email', preview: md.slice(0, 600) }); continue; }
+        const { error } = await db.from('posts').insert(row);
+        items.push(error ? { title, action: 'error', note: error.message } : { title, action: 'added', slug, date: row.published_at });
+        await sleep(150); // keep created_at in publish order
+      } catch (e) { items.push({ title, action: 'error', note: (e as Error).message }); }
+    }
+    return { ok: !items.some(i => i.action === 'error'), count: items.length, items };
+  };
+
+  if (!wait) {
+    // Cron: answer at once, keep working after the response
+    EdgeRuntime.waitUntil(run().then(r => console.log('[beehiiv-sync]', JSON.stringify({ ok: r.ok, error: r.error,
+      added: (r.items as { action: string }[] | undefined)?.filter(x => x.action === 'added').length }))));
+    return Response.json({ ok: true, started: true }, { status: 202 });
   }
-  const ok = !items.some(i => i.action === 'error');
-  return Response.json({ ok, count: items.length, items }, { status: ok ? 200 : 500 });
+  const r = await run();
+  return Response.json(r, { status: r.ok ? 200 : 500 });
 });
