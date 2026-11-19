@@ -108,8 +108,9 @@ export async function syncBeehiiv(db: SupabaseClient, opts: { since?: string } =
   return { ok: !items.some(i => i.action === 'error'), items };
 }
 
-// Emoji and stray symbols at the start of a newsletter title ("🌍 Хөрөнгийн…") are left out on the site
-const cleanTitle = (t: string) => (t || '').replace(/^[^\p{L}\p{N}]+/u, '').replace(/\s+/g, ' ').trim();
+// Emoji in newsletter titles ("🌍 Хөрөнгийн…", "💰150 тэрбумын бонд…📉") are left out on the site
+const cleanTitle = (t: string) => (t || '').replace(/[\p{Extended_Pictographic}\u{FE0F}\u{200D}]/gu, ' ')
+  .replace(/^[^\p{L}\p{N}"«]+/u, '').replace(/\s+/g, ' ').trim();
 
 function firstParagraph(md: string): string {
   for (const block of md.split(/\n{2,}/)) {

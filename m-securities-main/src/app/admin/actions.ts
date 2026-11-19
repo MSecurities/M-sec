@@ -116,10 +116,11 @@ export async function setStatus(id: string, status: PostStatus): Promise<void> {
 }
 
 // "beehiiv-ээс татах" button on the posts list: the same sync as the daily cron, run now as the admin
-export async function syncNewsletter(): Promise<void> {
+// all = true: every newsletter ever published (one-time backfill), oldest first so the list stays in order
+export async function syncNewsletter(all = false): Promise<void> {
   const { supabase, error } = await admin();
   if (error) redirect(`/admin/posts?kind=weekly&sync=${encodeURIComponent(error)}`);
-  const r = await syncBeehiiv(supabase);
+  const r = await syncBeehiiv(supabase, all ? { since: '2000-01-01' } : {});
   r.items.filter(i => i.action === 'added').forEach(i => refresh({ kind: 'weekly', slug: i.slug! }));
   const added = r.items.filter(i => i.action === 'added').length;
   const errors = r.items.filter(i => i.action === 'error').map(i => `${i.title}: ${i.note}`);

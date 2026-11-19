@@ -5,6 +5,8 @@ import { setStatus, syncNewsletter } from '../../actions';
 import { StatusBadge } from '../ui';
 
 export const dynamic = 'force-dynamic';
+// the beehiiv buttons below may copy many newsletters in one go
+export const maxDuration = 60;
 
 type Search = { kind?: string; status?: string; q?: string; sync?: string };
 
@@ -40,10 +42,16 @@ export default async function PostList({ searchParams }: { searchParams: Promise
         </div>
         <div className="flex items-center gap-2">
           {(!kind || kind === 'weekly') && (
-            <form action={syncNewsletter}>
-              <button title="beehiiv дээр нийтэлсэн шинэ newsletter-үүдийг Долоо хоногийн тойм руу нэмнэ"
-                className="inline-flex h-10 items-center rounded-lg border border-gray-300 px-4 text-sm font-semibold hover:border-teal-500 hover:text-teal-600 dark:border-white/15">beehiiv-ээс татах</button>
-            </form>
+            <>
+              <form action={syncNewsletter.bind(null, true)}>
+                <button title="beehiiv дээр нийтлэгдсэн бүх newsletter-ийг огнооны дарааллаар нэмнэ (сайт дээр байгаа нь давхардахгүй)"
+                  className="inline-flex h-10 items-center rounded-lg px-3 text-sm font-semibold text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5">Өмнөх бүгдийг татах</button>
+              </form>
+              <form action={syncNewsletter.bind(null, false)}>
+                <button title="beehiiv дээр сүүлийн 30 хоногт нийтэлсэн шинэ newsletter-үүдийг Долоо хоногийн тойм руу нэмнэ"
+                  className="inline-flex h-10 items-center rounded-lg border border-gray-300 px-4 text-sm font-semibold hover:border-teal-500 hover:text-teal-600 dark:border-white/15">beehiiv-ээс татах</button>
+              </form>
+            </>
           )}
           <Link href={`/admin/posts/new${kind ? `?kind=${kind}` : ''}`} className="inline-flex h-10 items-center rounded-lg bg-teal-500 px-4 text-sm font-semibold text-white shadow-lg shadow-teal-500/20 hover:bg-teal-600">+ Шинэ нэмэх</Link>
         </div>
