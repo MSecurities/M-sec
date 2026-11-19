@@ -3,6 +3,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createClient } from '../../lib/supabase/server';
 import { KINDS, KIND_PATH, SLUG_RE, slugify, type PostKind, type PostStatus } from '../../lib/posts';
+import { syncBeehiiv } from '../../lib/beehiiv';
 
 export type PostInput = {
   id?: string;
@@ -112,6 +113,19 @@ export async function setStatus(id: string, status: PostStatus): Promise<void> {
   if (error) return;
   const { data } = await supabase.from('posts').update({ status }).eq('id', id).select('kind,slug').maybeSingle();
   refresh(data as { kind: PostKind; slug: string } | null);
+}
+
+// "beehiiv-ээс татах" button on the posts list: the same sync as the daily cron, run now as the admin
+// all = true: every newsletter ever published (one-time backfill), oldest first so the list stays in order
+export async function syncNewsletter(all = false): Promise<void> {
+  const { supabase, error } = await admin();
+  if (error) redirect(`/admin/posts?kind=weekly&sync=${encodeURIComponent(error)}`);
+  const r = await syncBeehiiv(supabase, all ? { since: '2000-01-01' } : {});
+  r.items.filter(i => i.action === 'added').forEach(i => refresh({ kind: 'weekly', slug: i.slug! }));
+  const added = r.items.filter(i => i.action === 'added').length;
+  const errors = r.items.filter(i => i.action === 'error').map(i => `${i.title}: ${i.note}`);
+  const msg = r.error ?? (errors.length ? `Алдаа: ${errors.join('; ')}` : added ? `${added} шинэ тойм нэмэгдлээ.` : 'Шинэ тойм алга — бүгд аль хэдийн байна.');
+  redirect(`/admin/posts?kind=weekly&sync=${encodeURIComponent(msg)}`);
 }
 
 export async function signOut(): Promise<void> {
