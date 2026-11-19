@@ -1,12 +1,12 @@
 import Link from 'next/link';
 import { createClient } from '../../../../lib/supabase/server';
 import { KINDS, KIND_LABEL, KIND_PATH, fmtDate, type PostKind, type PostStatus } from '../../../../lib/posts';
-import { setStatus } from '../../actions';
+import { setStatus, syncNewsletter } from '../../actions';
 import { StatusBadge } from '../ui';
 
 export const dynamic = 'force-dynamic';
 
-type Search = { kind?: string; status?: string; q?: string };
+type Search = { kind?: string; status?: string; q?: string; sync?: string };
 
 export default async function PostList({ searchParams }: { searchParams: Promise<Search> }) {
   const sp = await searchParams;
@@ -38,8 +38,18 @@ export default async function PostList({ searchParams }: { searchParams: Promise
           <h1 className="text-2xl font-bold tracking-tight">{kind ? KIND_LABEL[kind][0] : 'Бүх агуулга'}</h1>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{posts?.length ?? 0} бичлэг</p>
         </div>
-        <Link href={`/admin/posts/new${kind ? `?kind=${kind}` : ''}`} className="inline-flex h-10 items-center rounded-lg bg-teal-500 px-4 text-sm font-semibold text-white shadow-lg shadow-teal-500/20 hover:bg-teal-600">+ Шинэ нэмэх</Link>
+        <div className="flex items-center gap-2">
+          {(!kind || kind === 'weekly') && (
+            <form action={syncNewsletter}>
+              <button title="beehiiv дээр нийтэлсэн шинэ newsletter-үүдийг Долоо хоногийн тойм руу нэмнэ"
+                className="inline-flex h-10 items-center rounded-lg border border-gray-300 px-4 text-sm font-semibold hover:border-teal-500 hover:text-teal-600 dark:border-white/15">beehiiv-ээс татах</button>
+            </form>
+          )}
+          <Link href={`/admin/posts/new${kind ? `?kind=${kind}` : ''}`} className="inline-flex h-10 items-center rounded-lg bg-teal-500 px-4 text-sm font-semibold text-white shadow-lg shadow-teal-500/20 hover:bg-teal-600">+ Шинэ нэмэх</Link>
+        </div>
       </div>
+
+      {sp.sync && <p className="mt-4 rounded-lg bg-teal-500/10 px-3 py-2 text-sm text-teal-800 dark:text-teal-200">{sp.sync}</p>}
 
       <div className="mt-6 flex flex-wrap items-center gap-2">
         <Link href={link({ kind: undefined })} className={tab(!kind)}>Бүгд</Link>
