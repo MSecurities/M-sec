@@ -3,7 +3,7 @@ import { revalidatePath } from 'next/cache';
 import { createClient } from '@supabase/supabase-js';
 import { syncBeehiiv } from '../../../../lib/beehiiv';
 
-// Daily job (vercel.json → crons): copies new beehiiv newsletters into "Долоо хоногийн тойм".
+// Optional scheduled endpoint (add a Vercel cron for it if Supabase Cron is not used): copies new beehiiv newsletters into "Долоо хоногийн тойм".
 // Vercel calls it with "Authorization: Bearer <CRON_SECRET>"; anyone else gets 401.
 // Writes with the Supabase service-role key because no one is signed in here.
 

@@ -26,9 +26,9 @@ msecurities.mn-ийн **Судалгаа → Долоо хоногийн той�
 
 | | A. Supabase Edge Function | B. Next.js (Vercel) |
 |---|---|---|
-| Файл | `supabase/functions/beehiiv-sync/index.ts` | `src/lib/beehiiv.ts`, `src/app/api/cron/beehiiv/route.ts`, `vercel.json` |
+| Файл | `supabase/functions/beehiiv-sync/index.ts` | `src/lib/beehiiv.ts`, `src/app/api/cron/beehiiv/route.ts` |
 | Төлөв | **Deploy хийгдсэн** (`beehiiv-sync`) | Merge + env хэрэгтэй |
-| Хуваарь | Supabase Cron (доор) | Vercel Cron, өдөр бүр 13:00 UTC (21:00 УБ) |
+| Хуваарь | **Supabase Cron — даваа гараг бүр 20:00 УБ** | Vercel Cron-ыг хассан (хэрэгтэй бол `vercel.json` нэмнэ) |
 | Админ товч | — | «beehiiv-ээс татах», «Өмнөх бүгдийг татах» |
 
 ---
@@ -70,8 +70,8 @@ Dashboard → Edge Functions → beehiiv-sync → **Test** (Headers-д `apikey` 
 ✅ **2026-11-19-нд хийгдсэн:** 24 дугаар нэмэгдсэн, 2 нь өмнө байсан (08.31–09.04, 11.02–11.06).
 Хариунд `added` / `exists` / `skipped` / `error` гэсэн жагсаалт ирнэ. Сайт ISR-ээр 5 минутын дотор шинэчлэгдэнэ.
 
-### 3) Өдөр бүрийн хуваарь
-✅ **Тохируулсан:** Integrations → Cron → job `beehiiv-sync-daily`, `0 13 * * *` (21:00 УБ), type *Supabase Edge Function*
+### 3) Долоо хоног бүрийн хуваарь
+✅ **Тохируулсан:** Integrations → Cron → job `beehiiv-sync-weekly`, `0 12 * * 1` (**даваа гараг 20:00 УБ** = 12:00 GMT), type *Supabase Edge Function*
 → `beehiiv-sync`, POST, timeout 5000 ms, header `apikey` = secret key (Supabase-ийн «Add secret key»). `pg_cron`, `pg_net` идэвхжүүлсэн.
 
 ### Код шинэчлэх
@@ -93,13 +93,13 @@ supabase functions deploy beehiiv-sync --project-ref ujqqljngplnlmszvercz
 | `BEEHIIV_SYNC_SINCE` | заавал биш, анхдагч сүүлийн 30 хоног |
 | `BEEHIIV_SYNC_STATUS` | заавал биш, `draft` бол нийтлэхгүй ноорог болгож оруулна |
 
-Merge → redeploy. Vercel Cron `vercel.json`-оор `/api/cron/beehiiv`-г өдөр бүр дуудна
-(`Authorization: Bearer $CRON_SECRET`; өөр хүн дуудвал 401).
+Merge → redeploy. Хуваарийг Supabase Cron хийдэг тул `vercel.json` хасагдсан. Vercel-ээр хуваарилах бол
+`{"crons":[{"path":"/api/cron/beehiiv","schedule":"0 12 * * 1"}]}` нэмнэ (`Authorization: Bearer $CRON_SECRET`; өөр хүн дуудвал 401).
 
 Админ: `/admin/posts?kind=weekly` → **«Өмнөх бүгдийг татах»** (нэг удаа), **«beehiiv-ээс татах»** (сүүлийн 30 хоног).
 Энэ товч нэвтэрсэн админы эрхээр (RLS) ажилладаг, service key шаардахгүй.
 
-> Хэрэв A хувилбарыг ашиглах бол `vercel.json`-ийн cron-ыг хасаж болно; админ товчнууд B-ийн env (`BEEHIIV_API_KEY`) тохируулсан үед л ажиллана.
+> Админ товчнууд B-ийн env (`BEEHIIV_API_KEY`) тохируулсан үед л ажиллана.
 
 ---
 
@@ -111,6 +111,7 @@ Merge → redeploy. Vercel Cron `vercel.json`-оор `/api/cron/beehiiv`-г өд
 - beehiiv-ийн зургуудыг өөрсдийн CDN (`media.beehiiv.com`) холбоосоор харуулна; Supabase Storage руу хуулахгүй.
 - 2026-11-19: импортолсон 24 дугаараас «Powered by beehiiv» ба зургийн alt тайлбарыг SQL-ээр цэвэрлэсэн
   (`kind='weekly' and created_at >= '2026-11-19'`).
-- Зургийн хэмжээ жигд байх CSS засвар тусдаа: `src/app/components/research/prose.module.css` (PR #3) —
-  нийтлэлийн бүх зураг баганын бүтэн өргөнтэй.
+- Зургийн хэмжээ жигд байх CSS засвар (`prose.module.css`, PR #3) — 2026-11-19-нд `main`-д merge хийгдэж live болсон.
+- Хуваарь 2026-11-19-нд өдөр бүрээс **даваа гараг 20:00 УБ** болж өөрчлөгдсөн. beehiiv-ээ 20:00-оос хойш илгээвэл
+  тэр дугаар дараагийн даваа гарагт орно (сүүлийн 30 хоногийг шалгадаг тул алдагдахгүй).
 - Нууц түлхүүрүүдийг (beehiiv API key, service key, CRON_SECRET) чат, PR, кодонд бүү оруул.
