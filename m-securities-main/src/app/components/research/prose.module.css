@@ -20,5 +20,6 @@
 .prose blockquote{padding:.2em 0 .2em 1.1em;border-left:3px solid #14b8a6;opacity:.85;font-style:italic}
 .prose hr{border:0;height:1px;background:currentColor;opacity:.15;margin:2.2em 0}
 .prose figure{margin-left:0;margin-right:0}
-.prose img{display:block;max-width:100%;height:auto;border-radius:14px}
+/* every picture in an article spans the text column, so charts and photos line up at one width */
+.prose img{display:block;width:100%;max-width:100%;height:auto;border-radius:14px}
 .prose figcaption{margin-top:.6em;font-size:.85em;opacity:.65;text-align:center}
