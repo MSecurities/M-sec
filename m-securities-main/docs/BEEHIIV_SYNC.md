@@ -9,6 +9,9 @@ msecurities.mn-ийн **Судалгаа → Долоо хоногийн той�
    Агуулгыг RSS → web → email HTML дарааллаар авна. Зөвхөн и-мэйлээр илгээсэн дугаарын хувьд email HTML-ийг ашиглана.
 2. HTML-ийг сайтын Markdown формат руу хөрвүүлнэ (`src/app/components/research/Markdown.tsx`-ийн дэмждэг хэлбэр:
    гарчиг, догол мөр, жагсаалт, зураг, холбоос, тод/налуу).
+   - Зургийн alt текстийг оруулахгүй (`![](url)`): сайт alt-ыг зургийн доор тайлбар болгон харуулдаг тул графикийн тоог давтдаг байсан.
+     beehiiv-ийн жинхэнэ caption («Эх сурвалж: …») налуу мөр болж үлдэнэ.
+   - «Powered by beehiiv» холбоос, unsubscribe/view online мэт footer мөрүүдийг хасна.
 3. Supabase-ийн `public.posts` хүснэгтэд `kind = 'weekly'`, `status = 'published'` мөр болгон нэмнэ.
    - `title_mn`: beehiiv гарчиг (эмодзи хасна)
    - `slug`: гарчгаас латинаар (одоогийн `slugify`-тай ижил), жишээ `khurungiin-zakh-zeeliin-toim-2026-11-09-11-13`
@@ -106,4 +109,8 @@ Merge → redeploy. Vercel Cron `vercel.json`-оор `/api/cron/beehiiv`-г өд
 - 04.27-ны дугаарын beehiiv гарчиг «N🚀 Никкей…» гэж эхэлдэг (илүү «N») — оруулсны дараа админаас засах.
 - beehiiv ноорог (draft) дугаарууд орохгүй (`status=confirmed` л).
 - beehiiv-ийн зургуудыг өөрсдийн CDN (`media.beehiiv.com`) холбоосоор харуулна; Supabase Storage руу хуулахгүй.
+- 2026-11-19: импортолсон 24 дугаараас «Powered by beehiiv» ба зургийн alt тайлбарыг SQL-ээр цэвэрлэсэн
+  (`kind='weekly' and created_at >= '2026-11-19'`).
+- Зургийн хэмжээ жигд байх CSS засвар тусдаа: `src/app/components/research/prose.module.css` (PR #3) —
+  нийтлэлийн бүх зураг баганын бүтэн өргөнтэй.
 - Нууц түлхүүрүүдийг (beehiiv API key, service key, CRON_SECRET) чат, PR, кодонд бүү оруул.
