@@ -49,8 +49,10 @@ export default function Markdown({ text, className }: { text: string; className?
       blocks.push(<hr key={k} />); i++;
     } else if ((m = t.match(/^!\[([^\]]*)\]\(([^)\s]+)\)$/))) {
       const src = safeUrl(m[2]);
+      // Loaded right away, not lazily: an image without alt text has no height before it loads, and browsers
+      // then never start loading it (newsletter images imported from beehiiv carry no alt text).
       // eslint-disable-next-line @next/next/no-img-element
-      if (src) blocks.push(<figure key={k}><img src={src} alt={m[1]} loading="lazy" />{m[1] && <figcaption>{m[1]}</figcaption>}</figure>);
+      if (src) blocks.push(<figure key={k}><img src={src} alt={m[1]} decoding="async" />{m[1] && <figcaption>{m[1]}</figcaption>}</figure>);
       i++;
     } else if (/^>\s?/.test(t)) {
       const q: string[] = [];
