@@ -2,11 +2,11 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import type { MouseEvent, ReactNode } from 'react';
 import { clamp, onScrollFrame, prefersReducedMotion, scrollToSection } from '../../components/home/shared';
-import { RefPage, cssVars, p, useTr } from '../../components/services/parts';
+import { RefPage, cssVars, p } from '../../components/services/parts';
+import { useLanguage } from '../../context/LanguageContext';
 import f from './faq.module.css';
 
 type QA = { question: string; answer: string };
-type FAQData = { title: string; questions: QA[]; trading?: { title: string; questions: QA[] }; account?: { title: string; questions: QA[] } };
 type Group = { key: string; label: string; title: string; icon: ReactNode; items: (QA & { id: string; n: number })[] };
 
 const Ic = ({ size = 20, children }: { size?: number; children: ReactNode }) => (
@@ -85,8 +85,8 @@ function Answer({ text, terms }: { text: string; terms: string[] }) {
 
 /* ---------- page ---------- */
 const FAQ = () => {
-  const { t, tr, language } = useTr();
-  const data = t('faq.commonQuestions') as unknown as FAQData;
+  const { t, get, tr, language } = useLanguage();
+  const data = get('faq.commonQuestions');
   const [q, setQ] = useState('');
   const [open, setOpen] = useState<Set<string>>(() => new Set());
   const [active, setActive] = useState('general');
@@ -96,14 +96,14 @@ const FAQ = () => {
   // "АРИЛЖААНЫ ТАЛААР" → "Арилжааны талаар"
   const tame = (s = '') => (s && s === s.toLocaleUpperCase() && /\p{L}/u.test(s) ? s[0] + s.slice(1).toLocaleLowerCase() : s);
   const groups: Group[] = (() => {
-    const raw: [string, string, string, ReactNode, QA[] | undefined][] = [
+    const raw: [string, string, string, ReactNode, readonly QA[]][] = [
       ['general', tr('Ерөнхий', 'General', '常规'), tr('Ерөнхий асуултууд', 'General questions', '常规问题'), CHAT, data.questions],
-      ['trading', tr('Арилжаа', 'Trading', '交易'), tame(data.trading?.title), CANDLES, data.trading?.questions],
-      ['account', tr('Данс', 'Account', '账户'), tame(data.account?.title), WALLET, data.account?.questions],
+      ['trading', tr('Арилжаа', 'Trading', '交易'), tame(data.trading.title), CANDLES, data.trading.questions],
+      ['account', tr('Данс', 'Account', '账户'), tame(data.account.title), WALLET, data.account.questions],
     ];
     let n = 0;
-    return raw.filter(([, , , , items]) => Array.isArray(items) && items.length)
-      .map(([key, label, title, icon, items]) => ({ key, label, title, icon, items: items!.map((it, i) => ({ ...it, id: `q-${key}-${i}`, n: ++n })) }));
+    return raw.filter(([, , , , items]) => items.length)
+      .map(([key, label, title, icon, items]) => ({ key, label, title, icon, items: items.map((it, i) => ({ ...it, id: `q-${key}-${i}`, n: ++n })) }));
   })();
   const all = groups.flatMap(g => g.items);
 
@@ -178,13 +178,9 @@ const FAQ = () => {
     scrollToSection(`faq-${key}`, () => -(innerWidth <= 1024 ? 140 : 100));
   };
 
-  // title: "Investor Guide – Frequently Asked Questions" splits on the dash; otherwise the last word is line two
-  const dashed = (data.title || '').split(/\s+[–—-]\s+/);
-  const words = (s: string) => (language === 'zh' ? [s] : s.split(/\s+/));
-  const head = t('faq.title');
-  const lines: [string[], string[]] = dashed.length === 2 && language !== 'mn'
-    ? [words(dashed[0]), words(dashed[1])]
-    : [words(head).slice(0, -1), words(head).slice(-1)];
+  // title: the last word is the highlighted second line
+  const head = language === 'zh' ? [t('faq.title')] : t('faq.title').split(/\s+/);
+  const lines: [string[], string[]] = [head.slice(0, -1), head.slice(-1)];
   const sep = language === 'zh' ? '' : ' ';
   const wordSpans = (line: string[], offset: number) => line.map((w, k) => (
     <Fragment key={`${language}-${offset + k}`}>{k > 0 && sep}<span className={p.w}><span className={p.wi} style={cssVars({ '--i': offset + k })}>{w}</span></span></Fragment>

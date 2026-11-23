@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import type { CSSProperties } from "react";
 import { useLanguage } from "../../context/LanguageContext";
 import { useDarkMode } from "../../context/DarkModeContext";
-import { clamp, eOut, onScrollFrame, pick, prefersReducedMotion } from "./shared";
+import { clamp, eOut, onScrollFrame, prefersReducedMotion } from "./shared";
 import s from "./home.module.css";
 
 // Where the widget's data comes from: TradingView's S&P 500 stock heatmap (same dataset, size and grouping)
@@ -18,7 +18,7 @@ const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647
 const TILES = Array.from({ length: 24 * 12 }, () => rnd());
 
 export default function Heatmap() {
-  const { language } = useLanguage();
+  const { tr, language } = useLanguage();
   const { isDarkMode } = useDarkMode();
   const tradingViewRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<HTMLDivElement>(null);
@@ -72,11 +72,11 @@ export default function Heatmap() {
     <section className={s.heat} id="heatmap" aria-labelledby="heat-title">
       <div className={s["heat-head"]}>
         <div>
-          <span className={s.kick}><i></i>{pick(language, "Зах зээл", "Market", "市场")}</span>
+          <span className={s.kick}><i></i>{tr("Зах зээл", "Market", "市场")}</span>
           <h2 id="heat-title">Stock Heatmap</h2>
         </div>
         <a href={SOURCE_URL} target="_blank" rel="noopener noreferrer" className={s["heat-more"]}>
-          {pick(language, "Дэлгэрэнгүй", "More", "更多")} <svg width="15" height="15" viewBox="0 0 14 14" aria-hidden="true"><path d="M1.5 10.5 5.5 6.5 8 9l4.5-5M9 4h3.5v3.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          {tr("Дэлгэрэнгүй", "More", "更多")} <svg width="15" height="15" viewBox="0 0 14 14" aria-hidden="true"><path d="M1.5 10.5 5.5 6.5 8 9l4.5-5M9 4h3.5v3.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
         </a>
       </div>
       <div ref={frameRef} className={s["heat-frame"]}>

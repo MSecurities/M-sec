@@ -1,9 +1,5 @@
 import type { CSSProperties } from "react";
 
-// Pick the string for the current language (en is the fallback, as elsewhere on the page)
-export const pick = (language: string, mn: string, en: string, zh: string) =>
-  language === "mn" ? mn : language === "zh" ? zh : en;
-
 // --i drives the staggered delays in home.module.css
 export const vi = (i: number) => ({ "--i": i } as CSSProperties);
 

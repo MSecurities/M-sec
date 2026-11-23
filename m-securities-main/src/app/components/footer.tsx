@@ -7,7 +7,6 @@ import { usePathname } from "next/navigation";
 import { Onest } from "next/font/google";
 import { useLanguage } from "../context/LanguageContext";
 import { useDarkMode } from "../context/DarkModeContext";
-import { translations } from "../translations";
 import { clamp, eOut, onScrollFrame, prefersReducedMotion } from "./home/shared";
 import s from "./footer.module.css";
 
@@ -40,7 +39,7 @@ const socialLinks = [
 const WORDMARK = ["M", " ", ..."securities"];
 
 const Footer = () => {
-  const { t, language } = useLanguage();
+  const { t, get, tr } = useLanguage();
   const { isDarkMode } = useDarkMode();
   const widgetRef = useRef<HTMLDivElement>(null);
   const wordmarkRef = useRef<HTMLDivElement>(null);
@@ -97,9 +96,11 @@ const Footer = () => {
     });
   }, []);
 
-  const address = language === "en"
-    ? ["New Horizons Office 401, 1st Khoroo,", "Sukhbaatar District, Ulaanbaatar 14120"]
-    : ["Нью Хориязонс Оффис 401, 1-р хороо,", "Сүхбаатар дүүрэг, Улаанбаатар 14120"];
+  const address = tr(
+    ["Нью Хоризонс Оффис 401, 1-р хороо,", "Сүхбаатар дүүрэг, Улаанбаатар 14120"],
+    ["New Horizons Office 401, 1st Khoroo,", "Sukhbaatar District, Ulaanbaatar 14120"],
+    ["New Horizons Office 401 室，", "乌兰巴托市苏赫巴托区第1霍罗 14120"],
+  );
 
   return (
     <>
@@ -133,7 +134,7 @@ const Footer = () => {
               <span className={s.cic}><svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="2" y="3.5" width="14" height="11" rx="2.5" /><path d="m2.8 5 6.2 4.6L15.2 5" /></svg></span>
               <span className={s.ct}>info@msecurities.mn</span>
             </a>
-            {(translations[language].footer.contactUs.phone.numbers as string[]).map(n => (
+            {get("footer.contactUs.phone.numbers").map(n => (
               <a key={n} href={`tel:+976${n}`} className={s.ci}>
                 <span className={s.cic}><svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M6.6 2.5H4.3A1.8 1.8 0 0 0 2.5 4.4c.4 6 5.1 10.7 11.1 11.1a1.8 1.8 0 0 0 1.9-1.8v-2.3l-3-1.3-1.6 1.6a8.4 8.4 0 0 1-3.8-3.8L8.7 6.3 7.4 3.3Z" /></svg></span>
                 <span className={s.ct}>+976-{n}</span>
@@ -163,7 +164,13 @@ const Footer = () => {
         </div>
 
         <div className={s["ft-bot"]}>
-          <span>© {new Date().getFullYear()} M Securities. {t("footer.copyright")}</span>
+          <div className={s.legal}>
+            <span>© {new Date().getFullYear()} M Securities. {t("footer.copyright")}</span>
+            <nav aria-label={tr("Эрх зүйн мэдээлэл", "Legal", "法律信息")}>
+              <Link href="/terms">{tr("Үйлчилгээний нөхцөл", "Terms of Service", "服务条款")}</Link>
+              <Link href="/terms#privacy">{tr("Нууцлалын бодлого", "Privacy Policy", "隐私政策")}</Link>
+            </nav>
+          </div>
           <span className={s.tags}><i>СЗХ лицензтэй</i><i>МХБ гишүүн</i></span>
         </div>
       </footer>

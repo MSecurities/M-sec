@@ -5,7 +5,7 @@ import type { CSSProperties, MouseEvent, ReactNode } from "react";
 import Link from "next/link";
 import { Onest } from "next/font/google";
 import { useLanguage } from "../../context/LanguageContext";
-import { onScrollFrame, pick, prefersReducedMotion, scrollToSection } from "../home/shared";
+import { onScrollFrame, prefersReducedMotion, scrollToSection } from "../home/shared";
 import { useSmoothScroll } from "../smoothScroll";
 import { Skeleton } from "./visuals";
 import s from "./kit.module.css";
@@ -24,12 +24,6 @@ const onest = Onest({
 export const vi = (i: number) => ({ "--i": i } as CSSProperties);
 export const dv = (d: number) => ({ "--d": d } as CSSProperties);
 export const pad = (n: number) => String(n).padStart(2, "0");
-
-export function useTr() {
-  const { t, language } = useLanguage();
-  const tr = (mn: string, en: string, zh: string) => pick(language, mn, en, zh);
-  return { t, tr, language };
-}
 
 /* ---------- icons ---------- */
 const Svg = ({ size = 18, children }: { size?: number; children: ReactNode }) => (
@@ -81,7 +75,7 @@ type CoverProps = { crumb: string; badge: string; title: [string, string]; lead:
 // Breadcrumb + licence badge, a two-weight title that comes into focus, lead and actions on a rule,
 // then the service's dark display band.
 export function Cover({ crumb, badge, title, lead, actions, display }: CoverProps) {
-  const { tr, language } = useTr();
+  const { tr, language } = useLanguage();
   return (
     <section className={s.cover}>
       <div className={s.wrap}>
@@ -112,7 +106,7 @@ export function Cover({ crumb, badge, title, lead, actions, display }: CoverProp
 /* ---------- body: sticky index + numbered sections ---------- */
 export type TocItem = { id: string; label: string };
 export function Body({ toc, children }: { toc: TocItem[]; children: ReactNode }) {
-  const { tr } = useTr();
+  const { tr } = useLanguage();
   const [active, setActive] = useState(toc[0]?.id);
   const ids = toc.map(x => x.id).join(",");
 
@@ -192,7 +186,7 @@ export function Band({ title, lead, actions }: { title: [string, string]; lead: 
 /* ---------- other services ---------- */
 type ServiceKey = "broker" | "mining" | "foreign";
 export function NextServices({ current }: { current?: ServiceKey }) {
-  const { t, tr } = useTr();
+  const { t, tr } = useLanguage();
   const all = [
     { key: "broker", href: "/services/broker", title: t("navbar.sections.broker"),
       desc: tr("МХБ-д бүртгэлтэй хувьцаа, бонд, бусад үнэт цаасны арилжаа хийх", "Buy and sell stocks, bonds, and securities listed on the Mongolian Stock Exchange", "在蒙古证券交易所买卖股票、债券及其他证券") },
@@ -225,8 +219,8 @@ export function NextServices({ current }: { current?: ServiceKey }) {
 
 /* ---------- coming soon ---------- */
 export function ComingSoon({ name }: { name: [[string, string], [string, string], [string, string]] }) {
-  const { tr, language } = useTr();
-  const title = language === "mn" ? name[0] : language === "zh" ? name[2] : name[1];
+  const { tr, language } = useLanguage();
+  const title = tr(...name);
   return (
     <ServicePage>
       <Cover

@@ -1,6 +1,7 @@
 'use client';
 import type { ReactNode } from 'react';
-import { cssVars, useTr } from '../components/services/parts';
+import { cssVars } from '../components/services/parts';
+import { useLanguage } from '../context/LanguageContext';
 import s from './team.module.css';
 
 type Member = { name: string; position: string };
@@ -63,8 +64,8 @@ function Card({ m, meta, k }: { m: Member; meta: (typeof META)[number]; k: numbe
 
 // The team block of the About page: CEO on a wide card, then specialists and brokers
 export function TeamSection() {
-  const { t, tr } = useTr();
-  const list = (t('about.team.list') as unknown as Member[]) ?? [];
+  const { get, tr } = useLanguage();
+  const list = get('about.team.list');
   const members = list.map((m, i) => ({ m, meta: META[i] ?? { g: 'm' as const, role: 'broker' as const } }));
   const [lead, ...rest] = members;
   const specialists = rest.filter(x => x.meta.role !== 'broker');

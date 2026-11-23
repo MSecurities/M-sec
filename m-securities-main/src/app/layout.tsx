@@ -21,21 +21,17 @@ const roboto = Roboto({
 export const metadata: Metadata = {
   ...defaultMetadata,
   metadataBase: new URL('https://msecurities.mn'),
+  // './' resolves to each page's own path, so every page is canonical to itself. Pages that set their own
+  // alternates (about, research) override this. No hreflang: languages switch in place, not on /en or /mn URLs.
+  // Google Search Console verification goes here as `verification: { google: '<code>' }` once there is a real code.
   alternates: {
-    canonical: 'https://msecurities.mn',
-    languages: {
-      'en-US': '/en',
-      'mn-MN': '/mn',
-    },
-  },
-  verification: {
-    google: 'your-google-verification-code',
+    canonical: './',
   },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${roboto.variable} font-sans`}>
+    <html lang="mn" suppressHydrationWarning className={`${roboto.variable} font-sans`}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -45,7 +41,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="manifest" href="/site.webmanifest" />
         <link rel="shortcut icon" href="/favicon.ico" />
-        <link rel="canonical" href="https://msecurities.mn" />
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>
       <body className="font-sans">

@@ -3,7 +3,8 @@ import { useEffect, useRef, useState } from 'react';
 import type { KeyboardEvent, ReactNode } from 'react';
 import { miningArt } from '../../components/shared/miningArt';
 import { clamp, onScrollFrame, prefersReducedMotion } from '../../components/home/shared';
-import { Bento, Contact, Cta, Hero, RefPage, SecHead, VzTeam, cssVars, jumpTo, useTr } from '../../components/services/parts';
+import { Bento, Contact, Cta, Hero, RefPage, SecHead, VzTeam, cssVars, jumpTo } from '../../components/services/parts';
+import { useLanguage } from '../../context/LanguageContext';
 import m from './mining.module.css';
 
 const PLATFORM_URL = 'https://mining.msecurities.mn/dashboard/app';
@@ -67,7 +68,7 @@ type Phase = { state: 'past' | 'now' | 'next'; label: string; date: string; item
 // The rail fills with scroll up to "today", placed from the real date inside the transition period
 // (2022-01-01 → 2027-04-01); the countdown to full transition hides once that date has passed.
 function Roadmap({ phases, kick, title, sub }: { phases: Phase[]; kick: string; title: string; sub: string }) {
-  const { tr } = useTr();
+  const { tr } = useLanguage();
   const ref = useRef<HTMLElement>(null);
   const tlRef = useRef<HTMLDivElement>(null);
   const [days, setDays] = useState(0);
@@ -174,8 +175,7 @@ const GoIcon = () => (
 );
 
 const MiningBrokerService = () => {
-  const { tr, language } = useTr();
-  const L = <T,>(mn: T, en: T, zh: T) => (language === 'mn' ? mn : language === 'zh' ? zh : en);
+  const { tr, language } = useLanguage();
 
   const advantages = [
     { viz: <VzGauge />, icon: <Ic><rect x="1.5" y="4.5" width="15" height="9" rx="1.5" /><circle cx="9" cy="9" r="2" /><path d="M4 7v4M14 7v4" /></Ic>,
@@ -191,11 +191,11 @@ const MiningBrokerService = () => {
   // Before the exchange → the transition we are in now → broker-only trading
   const phases: Phase[] = [
     { state: 'past', label: tr('Өмнөх үе', 'Previous Era', '历史阶段'), date: tr('2021 хүртэл', 'Until 2021', '截至2021年'),
-      items: L(['Бирж байхгүй', 'Шууд гүйлгээ', 'Үнэ ил тод бус'], ['No exchange', 'Direct transactions', 'Non-transparent pricing'], ['无交易所', '直接交易', '价格不透明']) },
+      items: tr(['Бирж байхгүй', 'Шууд гүйлгээ', 'Үнэ ил тод бус'], ['No exchange', 'Direct transactions', 'Non-transparent pricing'], ['无交易所', '直接交易', '价格不透明']) },
     { state: 'now', label: tr('Шилжилтийн үе', 'Transition', '过渡期'), date: tr('2022 — 2027.03.31', '2022 — Mar 31, 2027', '2022年—2027年3月31日'),
-      items: L(['МХБ эсвэл брокер — 2 сонголт', 'Хагас бирж төвтэй', 'Хууль эцэслэгдэж байна'], ['2 options: MSE or broker', 'Semi-centralized', 'Regulations finalizing'], ['MSE或经纪商 — 2种选择', '半集中化', '法规完善中']) },
+      items: tr(['МХБ эсвэл брокер — 2 сонголт', 'Хагас бирж төвтэй', 'Хууль эцэслэгдэж байна'], ['2 options: MSE or broker', 'Semi-centralized', 'Regulations finalizing'], ['MSE或经纪商 — 2种选择', '半集中化', '法规完善中']) },
     { state: 'next', label: tr('Бүрэн шилжилт', 'Full Transition', '全面转型'), date: tr('2027.04.01-ээс', 'From Apr 1, 2027', '2027年4月1日起'),
-      items: L(['Зөвхөн брокероор', 'Бүрэн бирж төвтэй', 'МХБ үргэлжлүүлнэ'], ['Broker only', 'Fully centralized', 'MSE continues'], ['仅限经纪商', '全面集中化', 'MSE持续运营']) },
+      items: tr(['Зөвхөн брокероор', 'Бүрэн бирж төвтэй', 'МХБ үргэлжлүүлнэ'], ['Broker only', 'Fully centralized', 'MSE continues'], ['仅限经纪商', '全面集中化', 'MSE持续运营']) },
   ];
 
   const active = tr('Арилжаанд', 'Active', '交易中');
@@ -233,7 +233,7 @@ const MiningBrokerService = () => {
     <RefPage>
       <Hero
         titleId="bh-title"
-        lines={L([['Уул', 'уурхайн'], ['цахим', 'арилжаа']], [['Mining', 'Products'], ['Online', 'Trading']], [['矿产品'], ['在线交易']])}
+        lines={tr([['Уул', 'уурхайн'], ['цахим', 'арилжаа']], [['Mining', 'Products'], ['Online', 'Trading']], [['矿产品'], ['在线交易']])}
         sub={tr('М Секьюритис ҮЦК нь СЗХ-ны уул уурхайн бүтээгдэхүүний биржийн арилжааны зуучлагч (брокер)-ийн үйл ажиллагаа эрхлэх тусгай зөвшөөрөлтэй, Монголын хөрөнгийн биржийн уул уурхайн бүтээгдэхүүний арилжааны брокерийн гишүүн байгууллага юм. Бид уул уурхайн бүтээгдэхүүний арилжаанд мэргэжлийн, найдвартай брокерийн үйлчилгээг үзүүлэн ажиллаж байна.',
           'M Securities is licensed by the Financial Regulatory Commission to act as an exchange trading intermediary (broker) for mining products, and is a broker member of the Mongolian Stock Exchange for mining product trading. We provide professional, reliable brokerage services in mining product trading.',
           'M Securities 证券公司持有金融监管委员会颁发的矿产品交易所交易中介（经纪商）业务许可，是蒙古证券交易所矿产品交易的经纪会员单位。我们为矿产品交易提供专业、可靠的经纪服务。')}

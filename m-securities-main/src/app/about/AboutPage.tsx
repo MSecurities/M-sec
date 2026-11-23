@@ -3,7 +3,9 @@ import { useEffect, useRef, useState } from 'react';
 import type { MouseEvent, ReactNode } from 'react';
 import Image from 'next/image';
 import { clamp, onScrollFrame, prefersReducedMotion, scrollToSection } from '../components/home/shared';
-import { RefPage, cssVars, useTr } from '../components/services/parts';
+import { RefPage, cssVars } from '../components/services/parts';
+import { useLanguage } from '../context/LanguageContext';
+import type { Dictionary } from '../translations';
 import { TeamSection } from './TeamSection';
 import a from './about.module.css';
 
@@ -35,7 +37,7 @@ function Sec({ id, n, title, sub, alt, band, children }: { id: Section; n: numbe
 
 /* ---------- introduction: history + board ---------- */
 function Introduction() {
-  const { t } = useTr();
+  const { t } = useLanguage();
   const board = (['chairman', 'member1', 'member2'] as const).map(k => ({
     key: k, name: t(`about.introduction.board.${k}.name`), position: t(`about.introduction.board.${k}.position`),
   }));
@@ -70,7 +72,7 @@ function Introduction() {
 /* ---------- vision: the statement large on a dark band, the objective under a rule ---------- */
 // The words light up one after another as the statement scrolls through the viewport (--p, 0 → 1).
 function Vision() {
-  const { t, language } = useTr();
+  const { t, language } = useLanguage();
   const ref = useRef<HTMLParagraphElement>(null);
   const text = t('about.vision.description');
   const words = language === 'zh' ? [...text] : text.split(/\s+/);
@@ -109,8 +111,8 @@ const GOAL_ICONS = [
   <><circle cx="9" cy="8" r="3" /><path d="M3 19c.6-3.4 3-5.3 6-5.3s5.4 1.9 6 5.3" /><path d="M16 5.2a3 3 0 0 1 0 5.6M17.5 13.9c1.9.6 3.1 2.3 3.5 5.1" /></>,
 ];
 function Goal() {
-  const { t } = useTr();
-  const items = (t('about.goal.items') as unknown as string[]) ?? [];
+  const { get } = useLanguage();
+  const items = get('about.goal.items');
   return (
     <div data-io className={a.goals}>
       {items.map((g, k) => (
@@ -125,7 +127,7 @@ function Goal() {
 }
 
 /* ---------- values: seven cards, four over three ---------- */
-const VALUES: [string, ReactNode][] = [
+const VALUES: [keyof Dictionary['about']['value']['items'], ReactNode][] = [
   ['mastery', <><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="5" /><path d="m12 12 6-6M15 6h3v3" /></>],
   ['teamSpirit', <><circle cx="9" cy="8" r="3" /><path d="M3 19c.6-3.4 3-5.3 6-5.3s5.4 1.9 6 5.3" /><path d="M16 5.2a3 3 0 0 1 0 5.6M17.5 13.9c1.9.6 3.1 2.3 3.5 5.1" /></>],
   ['leadership', <path d="M5 21V4M5 4h11l-2 4 2 4H5" />],
@@ -135,7 +137,7 @@ const VALUES: [string, ReactNode][] = [
   ['sustainable', <><path d="M5 19c0-8 5-13 14-14 0 9-5 14-13 14" /><path d="M5 19c3-4 6-6.5 9.5-8.5" /></>],
 ];
 function Values() {
-  const { t } = useTr();
+  const { t } = useLanguage();
   return (
     <div data-io className={a.vals}>
       {VALUES.map(([key, icon], k) => (
@@ -154,7 +156,7 @@ function Values() {
 
 /* ---------- page ---------- */
 export default function AboutPage() {
-  const { t } = useTr();
+  const { t } = useLanguage();
   const [active, setActive] = useState<Section>('introduction');
   const bar = useRef<HTMLDivElement>(null);
 

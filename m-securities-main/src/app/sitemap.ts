@@ -28,6 +28,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'daily',
       priority: 0.9,
     },
+    {
+      url: `${baseUrl}/terms`,
+      lastModified: new Date('2025-01-02'),
+      changeFrequency: 'yearly',
+      priority: 0.3,
+    },
     // Add more URLs as needed
   ];
 } 

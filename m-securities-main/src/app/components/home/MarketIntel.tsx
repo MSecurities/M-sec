@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import { useLanguage } from "../../context/LanguageContext";
-import { clamp, eOut, onScrollFrame, pick, prefersReducedMotion, vi } from "./shared";
+import { clamp, eOut, onScrollFrame, prefersReducedMotion, vi } from "./shared";
 import s from "./home.module.css";
 
 const MMI_URL = "https://mmi.msecurities.mn";
@@ -40,8 +40,7 @@ const TITLE: Record<string, [string, boolean][]> = {
 };
 
 export default function MarketIntel() {
-  const { language } = useLanguage();
-  const tr = (mn: string, en: string, zh: string) => pick(language, mn, en, zh);
+  const { tr, language } = useLanguage();
   const sectionRef = useRef<HTMLElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const leadRef = useRef<HTMLParagraphElement>(null);

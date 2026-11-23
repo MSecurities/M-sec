@@ -23,7 +23,7 @@ const onest = Onest({
 const vi = (i: number) => ({ "--i": i } as CSSProperties);
 
 export default function Hero() {
-  const { t, language } = useLanguage();
+  const { t, tr, language } = useLanguage();
   const sceneRef = useRef<HTMLElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -31,7 +31,6 @@ export default function Hero() {
   const globeRef = useRef<HTMLCanvasElement | null>(null);
   const cam = useRef<GlobeCamera>({ K: 0, covered: false });
   const magneticRef = useRef<HTMLAnchorElement>(null);
-  const tr = (mn: string, en: string, zh: string) => (language === "mn" ? mn : language === "zh" ? zh : en);
 
   // Headline words per line; each word slides up on its own delay
   const headline =

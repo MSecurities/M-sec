@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import type { CSSProperties } from "react";
 import Link from "next/link";
 import { useLanguage } from "../../context/LanguageContext";
-import { clamp, ease, eOut, isFullScreenLayout, onScrollFrame, pick, prefersReducedMotion, vi } from "./shared";
+import { clamp, ease, eOut, isFullScreenLayout, onScrollFrame, prefersReducedMotion, vi } from "./shared";
 import { miningArt } from "../shared/miningArt";
 import s from "./home.module.css";
 
@@ -13,8 +13,7 @@ const ART = miningArt(s.spark);
 const d = (n: number) => ({ "--d": n } as CSSProperties);
 
 export default function Mining() {
-  const { language } = useLanguage();
-  const tr = (mn: string, en: string, zh: string) => pick(language, mn, en, zh);
+  const { tr, language } = useLanguage();
   const sectionRef = useRef<HTMLElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const mtnRef = useRef<HTMLDivElement>(null);

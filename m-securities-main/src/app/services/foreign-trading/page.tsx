@@ -7,14 +7,15 @@ import {
   ChartBarIcon,
   DevicePhoneMobileIcon,
 } from '@heroicons/react/24/outline';
-import { Band, Body, Btn, Cover, NextServices, Rows, Sec, ServicePage, s, useTr } from '../../components/services/kit';
+import { Band, Body, Btn, Cover, NextServices, Rows, Sec, ServicePage, s } from '../../components/services/kit';
+import { useLanguage } from '../../context/LanguageContext';
 import { ClockBoard } from '../../components/services/visuals';
 import type { Market } from '../../components/services/visuals';
 
 const APP_URL = 'https://apps.apple.com/mn/app/id1455928972';
 
 const ForeignTradingPage = () => {
-  const { t, tr, language } = useTr();
+  const { t, tr, language } = useLanguage();
 
   const features = [
     { icon: <GlobeAltIcon />, title: tr('Дэлхийн тэргүүлэх биржүүд', 'Global Leading Exchanges', '全球领先交易所'), desc: tr('NYSE, NASDAQ, LSE болон бусад дэлхийн тэргүүлэх хөрөнгийн биржүүд дээр хөрөнгө оруулах боломж.', 'Access NYSE, NASDAQ, LSE and other leading global stock exchanges.', '可在NYSE、纳斯达克、伦交所等全球主要交易所投资。') },

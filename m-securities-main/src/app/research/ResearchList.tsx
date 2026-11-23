@@ -1,7 +1,8 @@
 'use client';
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
-import { RefPage, cssVars, useTr } from '../components/services/parts';
+import { RefPage, cssVars } from '../components/services/parts';
+import { useLanguage } from '../context/LanguageContext';
 import { KINDS, KIND_LABEL, KIND_PATH, fmtDate, pick, postHref, type Lang, type Post, type PostKind } from '../../lib/posts';
 import r from './research.module.css';
 
@@ -21,18 +22,17 @@ const Arrow = ({ out }: { out?: boolean }) => (
 
 // Research section header: title of the current list and links to the other two
 export function ResearchHead({ kind, count }: { kind: PostKind; count?: number }) {
-  const { tr, language } = useTr();
-  const li = language === 'en' ? 1 : language === 'zh' ? 2 : 0;
+  const { tr } = useLanguage();
   return (
     <header className={r.head}>
       <div className={r['head-bg']} />
       <span className={r.kick}><i />{tr('Судалгаа', 'Research', '研究')}</span>
-      <h1 className={r.h1}>{KIND_LABEL[kind][li]}</h1>
+      <h1 className={r.h1}>{tr(...KIND_LABEL[kind])}</h1>
       {count !== undefined && <p className={r.count}>{count} {tr('бичлэг', count === 1 ? 'post' : 'posts', '篇')}</p>}
       <nav className={r.tabs} aria-label={tr('Судалгааны хэсгүүд', 'Research sections', '研究栏目')}>
         {KINDS.map(k => (
           <Link key={k} href={KIND_PATH[k]} className={r.tab} aria-current={k === kind ? 'page' : undefined}>
-            <KindIcon kind={k} size={17} />{KIND_LABEL[k][li]}
+            <KindIcon kind={k} size={17} />{tr(...KIND_LABEL[k])}
           </Link>
         ))}
       </nav>
@@ -41,7 +41,7 @@ export function ResearchHead({ kind, count }: { kind: PostKind; count?: number }
 }
 
 function Card({ p, lang, lead, i }: { p: Post; lang: Lang; lead?: boolean; i: number }) {
-  const { tr } = useTr();
+  const { tr } = useLanguage();
   const { href, external } = postHref(p);
   const title = pick(p, 'title', lang), summary = pick(p, 'summary', lang), cat = pick(p, 'category', lang);
   const inner = (
@@ -71,7 +71,7 @@ function Card({ p, lang, lead, i }: { p: Post; lang: Lang; lead?: boolean; i: nu
 }
 
 export default function ResearchList({ kind, posts }: { kind: PostKind; posts: Post[] }) {
-  const { tr, language } = useTr();
+  const { tr, language } = useLanguage();
   const lang = language as Lang;
   const [cat, setCat] = useState('');
   const cats = useMemo(() => [...new Set(posts.map(p => pick(p, 'category', lang)).filter(Boolean))], [posts, lang]);
@@ -107,7 +107,7 @@ export default function ResearchList({ kind, posts }: { kind: PostKind; posts: P
 }
 
 function Empty({ kind }: { kind: PostKind }) {
-  const { tr } = useTr();
+  const { tr } = useLanguage();
   return (
     <div className={r.empty}>
       <span><KindIcon kind={kind} size={28} /></span>
@@ -118,7 +118,7 @@ function Empty({ kind }: { kind: PostKind }) {
 
 /* ---------- weekly: the latest review open, the archive below ---------- */
 function Weekly({ posts }: { posts: Post[] }) {
-  const { tr, language } = useTr();
+  const { tr, language } = useLanguage();
   const lang = language as Lang;
   const [latest, ...archive] = posts;
   return (

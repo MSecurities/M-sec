@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
-import { RefPage, useTr } from '../components/services/parts';
+import { RefPage } from '../components/services/parts';
+import { useLanguage } from '../context/LanguageContext';
 import Markdown from '../components/research/Markdown';
 import prose from '../components/research/prose.module.css';
 import { KIND_LABEL, KIND_PATH, fmtDate, pick, type Lang, type Post } from '../../lib/posts';
@@ -8,9 +9,8 @@ import { KindIcon } from './ResearchList';
 import r from './research.module.css';
 
 export default function ResearchArticle({ post: p }: { post: Post }) {
-  const { tr, language } = useTr();
+  const { tr, language } = useLanguage();
   const lang = language as Lang;
-  const li = lang === 'en' ? 1 : lang === 'zh' ? 2 : 0;
   const title = pick(p, 'title', lang), summary = pick(p, 'summary', lang), body = pick(p, 'body', lang), cat = pick(p, 'category', lang);
 
   return (
@@ -20,7 +20,7 @@ export default function ResearchArticle({ post: p }: { post: Post }) {
         <div className={r.aw}>
           <Link href={KIND_PATH[p.kind]} className={r.back}>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M13 8H3M7 4 3 8l4 4" /></svg>
-            {KIND_LABEL[p.kind][li]}
+            {tr(...KIND_LABEL[p.kind])}
           </Link>
           <div className={r.meta}>
             {cat && <span className={r.cat}>{cat}</span>}

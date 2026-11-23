@@ -4,7 +4,7 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import type { CSSProperties, FormEvent, MouseEvent, ReactNode } from "react";
 import { Onest } from "next/font/google";
 import { useLanguage } from "../../context/LanguageContext";
-import { clamp, onScrollFrame, pick, prefersReducedMotion, scrollToSection } from "../home/shared";
+import { clamp, onScrollFrame, prefersReducedMotion, scrollToSection } from "../home/shared";
 import { useSmoothScroll } from "../smoothScroll";
 import p from "./parts.module.css";
 
@@ -19,12 +19,6 @@ export const onest = Onest({
 });
 
 export const cssVars = (v: Record<string, string | number>) => v as CSSProperties;
-
-export function useTr() {
-  const { t, language } = useLanguage();
-  const tr = (mn: string, en: string, zh: string) => pick(language, mn, en, zh);
-  return { t, tr, language };
-}
 
 /* ---------- icons ---------- */
 export const TrendIcon = () => (
@@ -102,7 +96,7 @@ type HeroProps = {
 // rising word by word, lead, actions; the art sits along the bottom. Scrolling away lifts and fades
 // the copy (--bp, 0 → 1 over the first screen).
 export function Hero({ titleId, lines, sub, actions, art, underline }: HeroProps) {
-  const { language } = useTr();
+  const { language } = useLanguage();
   const ref = useRef<HTMLElement>(null);
   const sep = language === "zh" ? "" : " ";
 
@@ -209,7 +203,7 @@ const REQUIRED: Field[] = ["name", "email", "phone"];
 // Company details with the Mongolia map, and the request form: floating labels, required fields
 // shake when empty, the button spins while sending and turns gold with a check when sent (Formspree).
 export function Contact({ subject, cta }: { subject: string; cta: { href: string; label: string } }) {
-  const { tr } = useTr();
+  const { tr } = useLanguage();
   const empty: Record<Field, string> = { name: "", email: "", phone: "", company: "", message: "" };
   const [form, setForm] = useState(empty);
   const [bad, setBad] = useState<Field[]>([]);

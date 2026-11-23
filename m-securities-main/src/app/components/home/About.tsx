@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { useLanguage } from "../../context/LanguageContext";
-import { clamp, eOut, onScrollFrame, pick, prefersReducedMotion } from "./shared";
+import { clamp, eOut, onScrollFrame, prefersReducedMotion } from "./shared";
 import s from "./home.module.css";
 
 // Heading split into the two sliding lines: [left line, right line (teal), trailing word (ink)]
@@ -18,7 +18,7 @@ const HANGERS = [[140, 122], [180, 111], [220, 99], [260, 86], [300, 71], [340, 
 const CABLES = ["M0 150Q200 120 400 30", "M400 30Q800 230 1200 30", "M1200 30Q1400 120 1600 150"];
 
 export default function About() {
-  const { t, language } = useLanguage();
+  const { t, tr, language } = useLanguage();
   const sectionRef = useRef<HTMLElement>(null);
   const headRef = useRef<HTMLHeadingElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
@@ -48,7 +48,7 @@ export default function About() {
   return (
     <section ref={sectionRef} className={s.about} id="about" aria-labelledby="about-title">
       <div className={s["about-in"]}>
-        <span className={s.kick}><i></i>{pick(language, "Бидний тухай", "About Us", "关于我们")}</span>
+        <span className={s.kick}><i></i>{tr("Бидний тухай", "About Us", "关于我们")}</span>
         <h2 ref={headRef} id="about-title" aria-label={t("home.about.title")}>
           <span className={`${s.sl} ${s["sl-l"]}`} aria-hidden="true">{l1}</span>
           <span className={`${s.sl} ${s["sl-r"]}`} aria-hidden="true">{l2}{language === "zh" ? "" : " "}<em>{l3}</em></span>
@@ -56,7 +56,7 @@ export default function About() {
         <div ref={bodyRef} className={s["about-body"]}>
           <p>{t("home.about.description")}</p>
           <Link href="/about" className={`${s.btn} ${s["btn-g"]} ${s["about-btn"]}`}>
-            <span>{pick(language, "Дэлгэрэнгүй", "Learn More", "了解更多")}</span>
+            <span>{tr("Дэлгэрэнгүй", "Learn More", "了解更多")}</span>
             <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </Link>
         </div>

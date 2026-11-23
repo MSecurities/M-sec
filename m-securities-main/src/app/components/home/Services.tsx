@@ -4,7 +4,7 @@ import { Fragment, useEffect, useRef } from "react";
 import type { MouseEvent, ReactNode } from "react";
 import Link from "next/link";
 import { useLanguage } from "../../context/LanguageContext";
-import { clamp, isFullScreenLayout, onScrollFrame, pick, prefersReducedMotion, scrollToSection, vi } from "./shared";
+import { clamp, isFullScreenLayout, onScrollFrame, prefersReducedMotion, scrollToSection, vi } from "./shared";
 import s from "./home.module.css";
 
 const ArrowRight = () => (
@@ -63,10 +63,9 @@ const VizGlobal = () => (
 type Card = { title: string; desc: string; href: string; viz: ReactNode };
 
 export default function Services() {
-  const { t, language } = useLanguage();
+  const { t, tr, language } = useLanguage();
   const sectionRef = useRef<HTMLElement>(null);
   const spanRef = useRef<HTMLDivElement>(null);
-  const tr = (mn: string, en: string, zh: string) => pick(language, mn, en, zh);
 
   // The section heading (#svc-title) surfaces over the globe at the end of the hero dive (Hero.tsx).
   const more = tr("Дэлгэрэнгүй", "Learn more", "了解更多");

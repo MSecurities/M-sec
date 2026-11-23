@@ -11,7 +11,7 @@ const defaultMetadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://msecurities.mn',
+    url: './', // each page's own URL (resolved against metadataBase), so shares link to the page, not the homepage
     siteName: 'M Securities',
     title: 'M Securities - Your Trusted Investment Partner',
     description: 'Professional securities trading and investment services in Mongolia',

@@ -2,7 +2,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { KeyboardEvent, ReactNode } from 'react';
 import { prefersReducedMotion } from '../../components/home/shared';
-import { Bento, Contact, Cta, Hero, RefPage, SecHead, VzTeam, cssVars, jumpTo, useTr } from '../../components/services/parts';
+import { Bento, Contact, Cta, Hero, RefPage, SecHead, VzTeam, cssVars, jumpTo } from '../../components/services/parts';
+import { useLanguage } from '../../context/LanguageContext';
 import { TRADE_URL } from '../../../lib/links';
 import b from './broker.module.css';
 
@@ -152,7 +153,7 @@ const VzOtc = () => (
 );
 
 /* ---------- required documents ---------- */
-type DocGroup = { key: string; icon: ReactNode; title: string; items: string[] };
+type DocGroup = { key: string; icon: ReactNode; title: string; items: readonly string[] };
 // "Name (copies / note)" → the note becomes a tag under the name
 const splitNote = (s: string): [string, string] => {
   const t = s.trim(), i = t.search(/[（(]/);
@@ -162,7 +163,7 @@ const splitNote = (s: string): [string, string] => {
 // sheet of the paper stack shows the chosen type and swaps on change; a gold stamp lands once every
 // document of that type is ticked.
 function Docs({ groups, kick, title }: { groups: DocGroup[]; kick: string; title: string }) {
-  const { tr } = useTr();
+  const { tr } = useLanguage();
   const [sel, setSel] = useState(0);
   const [done, setDone] = useState<Record<string, boolean>>({});
   const [swaps, setSwaps] = useState(0);
@@ -251,7 +252,7 @@ function Docs({ groups, kick, title }: { groups: DocGroup[]; kick: string; title
 }
 
 const BrokerService = () => {
-  const { t, tr, language } = useTr();
+  const { t, get, tr, language } = useLanguage();
 
   const advantages = [
     { viz: <VzTiles />, icon: <Ic><rect x="2.5" y="2.5" width="5" height="5" rx="1" /><rect x="10.5" y="2.5" width="5" height="5" rx="1" /><rect x="2.5" y="10.5" width="5" height="5" rx="1" /><rect x="10.5" y="10.5" width="5" height="5" rx="1" /></Ic>,
@@ -268,7 +269,7 @@ const BrokerService = () => {
   const groups: DocGroup[] = ([['citizen', USER], ['legalEntity', ORG], ['foreignCitizen', GLOBE]] as const).map(([key, icon]) => ({
     key, icon,
     title: t(`services.broker.requiredDocs.${key}.title`),
-    items: t(`services.broker.requiredDocs.${key}.items`) as unknown as string[],
+    items: get(`services.broker.requiredDocs.${key}.items`),
   }));
 
   const title = t('services.broker.title');
